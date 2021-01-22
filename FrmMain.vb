@@ -305,6 +305,17 @@ Public Class FrmMain
 
             ' TD Element: 14- >  <div class="tableLabel">Date of Death:</div>
             ' TD Element: 15- >  1916-12-20<div style='float:right;'>Other Casualties on this            <a href ='view-paginated.php?page=1&DoD_YYYY=1916&DoD_MM=12&DoD_DD=20' target='new'>Date</a></div>
+            FindOne = FindCountry(cnt).IndexOf(">Date of Death:")
+            If FindOne >= 0 Then
+                dbDateOfDeath = FindCountry(cnt + 1) ' No change
+            End If
+
+            ' TD Element: 16- >  <div class="tableLabel">Age:</div>
+            ' TD Element: 17- >  37
+            FindOne = FindCountry(cnt).IndexOf(">Age:")
+            If FindOne >= 0 Then
+                dbDateOfDeath = FindCountry(cnt + 1) ' No change
+            End If
         Next cnt
 
 
