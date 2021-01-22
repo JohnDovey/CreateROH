@@ -341,7 +341,7 @@ Public Class FrmMain
             End If
             ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
             ' TD Element: 21- >  <div>Son of Mrs. Elizabeth Ann And the late Thomas Abbey, of 146, Cathcart Rd., Queenstown, Cape Province. His brother also died in service</div>
-            FindOne = FindCountry(cnt).IndexOf(">>Additional<")
+            FindOne = FindCountry(cnt).IndexOf(">Additional<")
             If FindOne >= 0 Then
                 dbAddInfo = FindCountry(cnt + 1) ' No change
                 Console.WriteLine("Add Info: [{0}]", dbAddInfo)
@@ -385,6 +385,32 @@ Public Class FrmMain
                     dbLocalityID = dbLocalityID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
                     Console.WriteLine("LocalityID: [{0}]", dbLocalityID)
                 End If
+            End If
+            ' TD Element:26- >  <div class="tableLabel">Cemetery:</div>
+            ' TD Element: 27- >  CAPE TOWN(PLUMSTEAD) CEMETERY<div style='float:right;margin-top:10px;"'>Other Casualties commemorated in this <a href='view-paginated.php?page=1&cemetery=463' target='new'>Cemetery</a></div> 
+            FindOne = FindCountry(cnt).IndexOf(">Cemetery:")
+            If FindOne >= 0 Then
+                dbCemetery = FindCountry(cnt + 1)
+                dbCemeteryID = FindCountry(cnt + 1)
+
+                FindTwo = dbCemetery.IndexOf("<div")
+                If FindTwo >= 0 Then
+                    dbCemetery = dbCemetery.Substring(0, FindTwo)
+                    Console.WriteLine("Cemetery: [{0}]", dbCemetery)
+                End If
+                FindTwo = dbCemeteryID.IndexOf("cemetery=")
+                If FindTwo >= 0 Then
+                    FindThree = dbCemeteryID.IndexOf("'", FindTwo)
+                    dbCemeteryID = dbCemeteryID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
+                    Console.WriteLine("CemeteryID: [{0}]", dbCemeteryID)
+                End If
+            End If
+            ' TD Element:29- >  <div class="tableLabel">Grave Reference:</div>
+            ' TD Element: 30- >  Bl. UR. 15.
+            FindOne = FindCountry(cnt).IndexOf(">Grave Reference:")
+            If FindOne >= 0 Then
+                dbGraveReference = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Grave Ref: [{0}]", dbGraveReference)
             End If
 
         Next cnt
