@@ -170,7 +170,7 @@ Public Class FrmMain
 
             ' Load array with all <td> elements
             Dim FindInfo(50) As String
-            Console.Write("Find Country")
+            'Console.Write("Find Data")
             Dim htmlNodes = doc.DocumentNode.SelectNodes("//tr")
             cnt = 0
             For Each childnode As HtmlNode In htmlNodes.Descendants.Where(Function(n) n.Name = "td")
@@ -182,7 +182,7 @@ Public Class FrmMain
                 FindInfo(cnt) = Trim(FindInfo(cnt))
                 tmpText = vbCrLf & "TD Element:" & cnt & "- >  " & FindInfo(cnt)
                 TxtLog.AppendText(tmpText)
-                Console.WriteLine(tmpText)
+                'Console.WriteLine(tmpText)
                 cnt += 1
                 highCnt = cnt
             Next
@@ -220,13 +220,13 @@ Public Class FrmMain
             Dim dbLocalityID As String = "0"
 
             For cnt = 0 To (highCnt - 1)
-                Console.WriteLine("Cnt: " & cnt)
+                'Console.WriteLine("Cnt: " & cnt)
                 ' TD Element:0- >  <div class="tableLabel">Name:</div>
                 ' TD Element:  1- >  ABBEY
                 FindOne = FindInfo(cnt).IndexOf(">Name:")
                 If FindOne >= 0 Then
                     dbNamefld = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Name: [{0}]", dbNamefld)
+                    'Console.WriteLine("Name: [{0}]", dbNamefld)
                 End If
 
                 ' TD Element: 2- >  <div class="tableLabel">Given Name:</div>
@@ -234,21 +234,21 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Given Name:")
                 If FindOne >= 0 Then
                     dbFirstName = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("First Name: [{0}]", dbFirstName)
+                    'Console.WriteLine("First Name: [{0}]", dbFirstName)
                 End If
                 ' TD Element: 4- >  <div class="tableLabel">Initials:</div>
                 ' TD Element: 5- >  D R
                 FindOne = FindInfo(cnt).IndexOf(">Initials:")
                 If FindOne >= 0 Then
                     dbInitials = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Initials: [{0}]", dbInitials)
+                    'Console.WriteLine("Initials: [{0}]", dbInitials)
                 End If
                 ' TD Element:6- >  <div class="tableLabel">Service No:</div>
                 ' TD Element: 7- >  7357
                 FindOne = FindInfo(cnt).IndexOf(">Service No:")
                 If FindOne >= 0 Then
                     dbServiceNo = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Service No: [{0}]", dbServiceNo)
+                    'Console.WriteLine("Service No: [{0}]", dbServiceNo)
                 End If
                 ' TD Element: 8- >  <div class="tableLabel">Rank:</div>
                 ' TD Element: 9- >  Private<div style='float:right;'>Other Casualties of this <a href='view-paginated.php?page=1&rank=429' target='new'>Rank</a></div>
@@ -263,13 +263,13 @@ Public Class FrmMain
                     FindTwo = dbRank.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbRank = dbRank.Substring(0, FindTwo)
-                        Console.WriteLine("Rank: [{0}]", dbRank)
+                        'Console.WriteLine("Rank: [{0}]", dbRank)
                     End If
                     FindTwo = dbRankID.IndexOf("rank=")
                     If FindTwo >= 0 Then
                         FindThree = dbRankID.IndexOf("'", FindTwo)
                         dbRankID = dbRankID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
-                        Console.WriteLine("RankID: [{0}]", dbRankID)
+                        'Console.WriteLine("RankID: [{0}]", dbRankID)
                     End If
 
                 End If
@@ -283,13 +283,13 @@ Public Class FrmMain
                     FindTwo = dbRegiment.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbRegiment = dbRegiment.Substring(0, FindTwo)
-                        Console.WriteLine("Regiment: [{0}]", dbRegiment)
+                        'Console.WriteLine("Regiment: [{0}]", dbRegiment)
                     End If
                     FindTwo = dbRegimentID.IndexOf("regiment=")
                     If FindTwo >= 0 Then
                         FindThree = dbRegimentID.IndexOf("'", FindTwo)
                         dbRegimentID = dbRegimentID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        Console.WriteLine("RegimentID: [{0}]", dbRegimentID)
+                        'Console.WriteLine("RegimentID: [{0}]", dbRegimentID)
                     End If
                 End If
                 'Unit
@@ -303,13 +303,13 @@ Public Class FrmMain
                     FindTwo = dbUnit.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbUnit = dbUnit.Substring(0, FindTwo)
-                        Console.WriteLine("Unit: [{0}]", dbUnit)
+                        ' Console.WriteLine("Unit: [{0}]", dbUnit)
                     End If
                     FindTwo = dbUnitID.IndexOf("unit=")
                     If FindTwo >= 0 Then
                         FindThree = dbUnitID.IndexOf("'", FindTwo)
                         dbUnitID = dbUnitID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
-                        Console.WriteLine("UnitID: [{0}]", dbUnitID)
+                        'Console.WriteLine("UnitID: [{0}]", dbUnitID)
                     End If
 
                 End If
@@ -323,7 +323,7 @@ Public Class FrmMain
                     FindTwo = dbDateOfDeath.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbDateOfDeath = dbDateOfDeath.Substring(0, FindTwo)
-                        Console.WriteLine("dbDateOfDeath: [{0}]", dbDateOfDeath)
+                        'Console.WriteLine("dbDateOfDeath: [{0}]", dbDateOfDeath)
                     End If
 
                 End If
@@ -333,14 +333,14 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Age:")
                 If FindOne >= 0 Then
                     dbAge = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Age: [{0}]", dbAge)
+                    'Console.WriteLine("Age: [{0}]", dbAge)
                 End If
                 'TD Element:18- >  <div class="tableLabel">Cause of Death:</div>
                 'TD Element: 19- >  Died of phthisis, at No. 1 General Hospital Wynberg
                 FindOne = FindInfo(cnt).IndexOf(">Cause of Death:")
                 If FindOne >= 0 Then
                     dbCauseOfDeath = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
+                    'Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
                 End If
                 ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
                 ' TD Element: 21- >  <div>Son of Mrs. Elizabeth Ann And the late Thomas Abbey, of 146, Cathcart Rd., Queenstown, Cape Province. His brother also died in service</div>
@@ -349,7 +349,7 @@ Public Class FrmMain
                     dbAddInfo = FindInfo(cnt + 1) ' No change
                     dbAddInfo = dbAddInfo.Replace("<div>", "")
                     dbAddInfo = dbAddInfo.Replace("</div>", "")
-                    Console.WriteLine("Add Info: [{0}]", dbAddInfo)
+                    'Console.WriteLine("Add Info: [{0}]", dbAddInfo)
                 End If
                 'Country
                 ' TD Element: 22- >  <div class="tableLabel">Country:</div>
@@ -362,13 +362,13 @@ Public Class FrmMain
                     FindTwo = dbCountry.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbCountry = dbCountry.Substring(0, FindTwo)
-                        Console.WriteLine("Country: [{0}]", dbCountry)
+                        ' Console.WriteLine("Country: [{0}]", dbCountry)
                     End If
                     FindTwo = dbCountryID.IndexOf("country=")
                     If FindTwo >= 0 Then
                         FindThree = dbCountryID.IndexOf("'", FindTwo)
                         dbCountryID = dbCountryID.Substring(FindTwo + 8, FindThree - (FindTwo + 8))
-                        Console.WriteLine("CountryID: [{0}]", dbCountryID)
+                        '  Console.WriteLine("CountryID: [{0}]", dbCountryID)
                     End If
                 End If
 
@@ -383,13 +383,13 @@ Public Class FrmMain
                     FindTwo = dbLocality.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbLocality = dbLocality.Substring(0, FindTwo)
-                        Console.WriteLine("Locality: [{0}]", dbLocality)
+                        ' Console.WriteLine("Locality: [{0}]", dbLocality)
                     End If
                     FindTwo = dbLocalityID.IndexOf("locality=")
                     If FindTwo >= 0 Then
                         FindThree = dbLocalityID.IndexOf("'", FindTwo)
                         dbLocalityID = dbLocalityID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        Console.WriteLine("LocalityID: [{0}]", dbLocalityID)
+                        ' Console.WriteLine("LocalityID: [{0}]", dbLocalityID)
                     End If
                     If Val(dbLocality) < 0 Then dbLocalityID = 0
                 End If
@@ -403,13 +403,13 @@ Public Class FrmMain
                     FindTwo = dbCemetery.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbCemetery = dbCemetery.Substring(0, FindTwo)
-                        Console.WriteLine("Cemetery: [{0}]", dbCemetery)
+                        ' Console.WriteLine("Cemetery: [{0}]", dbCemetery)
                     End If
                     FindTwo = dbCemeteryID.IndexOf("cemetery=")
                     If FindTwo >= 0 Then
                         FindThree = dbCemeteryID.IndexOf("'", FindTwo)
                         dbCemeteryID = dbCemeteryID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        Console.WriteLine("CemeteryID: [{0}]", dbCemeteryID)
+                        ' Console.WriteLine("CemeteryID: [{0}]", dbCemeteryID)
                     End If
                 End If
                 ' TD Element:29- >  <div class="tableLabel">Grave Reference:</div>
@@ -417,11 +417,12 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Grave Reference:")
                 If FindOne >= 0 Then
                     dbGraveReference = FindInfo(cnt + 1) ' No change
-                    Console.WriteLine("Grave Ref: [{0}]", dbGraveReference)
+                    'Console.WriteLine("Grave Ref: [{0}]", dbGraveReference)
                 End If
 
             Next cnt
-            Console.Write("End Find Data")
+            'Console.WriteLine("End Find Data")
+
             If Val(dbLocalityID) < 0 Then dbLocalityID = "0"
             If Val(dbRankID) < 0 Then dbRankID = "0"
             If Val(dbRegimentID) < 0 Then dbRegimentID = "0"
@@ -433,8 +434,30 @@ Public Class FrmMain
 
             Dim tmpSql As String
             tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID});"
-            Console.Write(tmpSql)
+            Console.WriteLine(tmpSql)
             Write_Data_Record(tmpSql)
+            ' Load Array with IMG tags
+            ' Load array with all <td> elements
+            Dim FindIMG(50) As String
+            Console.WriteLine("Find IMG")
+            Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//img")
+            cnt = 0
+            TxtLog.Text = ""
+            For Each childnode As HtmlNode In htmlNodesIMG.Descendants.Where(Function(n) n.Name = "img")
+                FindIMG(cnt) = childnode.InnerHtml
+                FindIMG(cnt) = Replace(FindIMG(cnt), Chr(9), Space(1))
+                FindIMG(cnt) = Replace(FindIMG(cnt), vbTab, Space(1))
+                FindIMG(cnt) = Replace(FindIMG(cnt), vbLf, Space(1))
+                FindIMG(cnt) = Replace(FindIMG(cnt), vbCr, Space(1))
+                FindIMG(cnt) = Trim(FindIMG(cnt))
+                tmpText = vbCrLf & "IMG Element:" & cnt & "- >  " & FindIMG(cnt)
+                TxtLog.AppendText(tmpText)
+                Console.WriteLine(tmpText)
+                cnt += 1
+                highCnt = cnt
+            Next
+            Console.WriteLine("End Find IMG")
+            ' End Load
         Next FileCount
 
     End Sub
