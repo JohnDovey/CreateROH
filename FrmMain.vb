@@ -435,16 +435,23 @@ Public Class FrmMain
             Dim tmpSql As String
             tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID});"
             Console.WriteLine(tmpSql)
-            Write_Data_Record(tmpSql)
+            ' Write_Data_Record(tmpSql)
+
+
             ' Load Array with IMG tags
             ' Load array with all <td> elements
             Dim FindIMG(50) As String
             Console.WriteLine("Find IMG")
+            ' .SelectNodes("./img")
+            'Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//*[@id='tabs']") (//*[@id='PhotoFilename1']
             Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//img")
             cnt = 0
             TxtLog.Text = ""
-            For Each childnode As HtmlNode In htmlNodesIMG.Descendants.Where(Function(n) n.Name = "img")
-                FindIMG(cnt) = childnode.InnerHtml
+            For Each img As HtmlAgilityPack.HtmlNode In doc.DocumentNode.SelectNodes("//img")
+                'For Each childnode As HtmlNode In htmlNodesIMG.Descendants
+                ' .Attributes("src").Value()
+                'Console.WriteLine(img.Attributes("src").Value)
+                FindIMG(cnt) = img.Attributes("src").Value
                 FindIMG(cnt) = Replace(FindIMG(cnt), Chr(9), Space(1))
                 FindIMG(cnt) = Replace(FindIMG(cnt), vbTab, Space(1))
                 FindIMG(cnt) = Replace(FindIMG(cnt), vbLf, Space(1))
