@@ -212,6 +212,9 @@ Public Class FrmMain
         Dim dbCemetery As String = ""
         Dim dbCemeteryID As String = ""
         Dim dbGraveReference As String = ""
+        ' Locality
+        Dim dbLocality As String = ""
+        Dim dbLocalityID As String = ""
 
         For cnt = 0 To (highCnt - 1)
             Console.WriteLine("Cnt: " & cnt)
@@ -362,8 +365,28 @@ Public Class FrmMain
                     dbCountryID = dbCountryID.Substring(FindTwo + 8, FindThree - (FindTwo + 8))
                     Console.WriteLine("CountryID: [{0}]", dbCountryID)
                 End If
-
             End If
+
+            ' TD Element:24- >  <div class="tableLabel">Locality:</div>
+            ' TD Element: 25- >  Western Cape<div style='float:right;'>Other Casualties commemorated in <a href='view-paginated.php?page=1&locality=1' target='new'>Western Cape</a></div>
+            FindOne = FindCountry(cnt).IndexOf(">Locality:")
+            If FindOne >= 0 Then
+                dbLocality = FindCountry(cnt + 1)
+                dbLocalityID = FindCountry(cnt + 1)
+
+                FindTwo = dbLocality.IndexOf("<div")
+                If FindTwo >= 0 Then
+                    dbLocality = dbLocality.Substring(0, FindTwo)
+                    Console.WriteLine("Locality: [{0}]", dbLocality)
+                End If
+                FindTwo = dbLocalityID.IndexOf("locality=")
+                If FindTwo >= 0 Then
+                    FindThree = dbLocalityID.IndexOf("'", FindTwo)
+                    dbLocalityID = dbLocalityID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
+                    Console.WriteLine("LocalityID: [{0}]", dbLocalityID)
+                End If
+            End If
+
         Next cnt
 
 
