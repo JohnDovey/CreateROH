@@ -157,27 +157,28 @@ Public Class FrmMain
         TxtLog.Text = ""
         Dim web As New HtmlWeb()
         Dim URI As String
-        URI = Path.Combine(MySubDir, "2.html")
-        URI = Application.StartupPath & URI
-        Dim tmpText As String
-
-
-        Dim doc As HtmlDocument = web.Load(URI)
-
         Dim cnt As Integer = 0
         Dim highCnt As Integer = 0
+        Dim tmpText As String
+
+        Dim MyPersonNumber As String = "2"
+        URI = Path.Combine(MySubDir, "2.html")
+        URI = Application.StartupPath & URI
+        Dim doc As HtmlDocument = web.Load(URI)
 
         ' Load array with all <td> elements
-        Dim FindCountry(50) As String
+        Dim FindInfo(50) As String
         Console.Write("Find Country")
         Dim htmlNodes = doc.DocumentNode.SelectNodes("//tr")
         cnt = 0
         For Each childnode As HtmlNode In htmlNodes.Descendants.Where(Function(n) n.Name = "td")
-            FindCountry(cnt) = childnode.InnerHtml
-            FindCountry(cnt) = Replace(FindCountry(cnt), Chr(9), Space(1))
-            FindCountry(cnt) = Replace(FindCountry(cnt), vbTab, Space(1))
-            FindCountry(cnt) = Trim(FindCountry(cnt))
-            tmpText = vbCrLf & "TD Element:" & cnt & "- >  " & FindCountry(cnt)
+            FindInfo(cnt) = childnode.InnerHtml
+            FindInfo(cnt) = Replace(FindInfo(cnt), Chr(9), Space(1))
+            FindInfo(cnt) = Replace(FindInfo(cnt), vbTab, Space(1))
+            FindInfo(cnt) = Replace(FindInfo(cnt), vbLf, Space(1))
+            FindInfo(cnt) = Replace(FindInfo(cnt), vbCr, Space(1))
+            FindInfo(cnt) = Trim(FindInfo(cnt))
+            tmpText = vbCrLf & "TD Element:" & cnt & "- >  " & FindInfo(cnt)
             TxtLog.AppendText(tmpText)
             Console.WriteLine(tmpText)
             cnt += 1
@@ -220,42 +221,42 @@ Public Class FrmMain
             Console.WriteLine("Cnt: " & cnt)
             ' TD Element:0- >  <div class="tableLabel">Name:</div>
             ' TD Element:  1- >  ABBEY
-            FindOne = FindCountry(cnt).IndexOf(">Name:")
+            FindOne = FindInfo(cnt).IndexOf(">Name:")
             If FindOne >= 0 Then
-                dbNamefld = FindCountry(cnt + 1) ' No change
+                dbNamefld = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Name: [{0}]", dbNamefld)
             End If
 
             ' TD Element: 2- >  <div class="tableLabel">Given Name:</div>
             ' TD Element: 3- >  DAVID ROBERT
-            FindOne = FindCountry(cnt).IndexOf(">Given Name:")
+            FindOne = FindInfo(cnt).IndexOf(">Given Name:")
             If FindOne >= 0 Then
-                dbFirstName = FindCountry(cnt + 1) ' No change
+                dbFirstName = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("First Name: [{0}]", dbFirstName)
             End If
             ' TD Element: 4- >  <div class="tableLabel">Initials:</div>
             ' TD Element: 5- >  D R
-            FindOne = FindCountry(cnt).IndexOf(">Initials:")
+            FindOne = FindInfo(cnt).IndexOf(">Initials:")
             If FindOne >= 0 Then
-                dbInitials = FindCountry(cnt + 1) ' No change
+                dbInitials = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Initials: [{0}]", dbInitials)
             End If
             ' TD Element:6- >  <div class="tableLabel">Service No:</div>
             ' TD Element: 7- >  7357
-            FindOne = FindCountry(cnt).IndexOf(">Service No:")
+            FindOne = FindInfo(cnt).IndexOf(">Service No:")
             If FindOne >= 0 Then
-                dbServiceNo = FindCountry(cnt + 1) ' No change
+                dbServiceNo = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Service No: [{0}]", dbServiceNo)
             End If
             ' TD Element: 8- >  <div class="tableLabel">Rank:</div>
             ' TD Element: 9- >  Private<div style='float:right;'>Other Casualties of this <a href='view-paginated.php?page=1&rank=429' target='new'>Rank</a></div>
             'Rank=
-            ' dbRank = FindCountry(5) 'left up to <div
-            ' dbRankNo = FindCountry(5) ' rank=???' (5)
-            FindOne = FindCountry(cnt).IndexOf("Rank:")
+            ' dbRank = FindInfo(5) 'left up to <div
+            ' dbRankNo = FindInfo(5) ' rank=???' (5)
+            FindOne = FindInfo(cnt).IndexOf("Rank:")
             If FindOne >= 0 Then
-                dbRank = FindCountry(cnt + 1)
-                dbRankID = FindCountry(cnt + 1)
+                dbRank = FindInfo(cnt + 1)
+                dbRankID = FindInfo(cnt + 1)
 
                 FindTwo = dbRank.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -272,10 +273,10 @@ Public Class FrmMain
             End If
             ' TD Element: 10- >  <div class="tableLabel">Regiment:</div>
             ' TD Element: 11- >  South African Infantry<div style='float:right;'>Other Casualties from this <a href='view-paginated.php?page=1&regiment=807' target='new'>Regiment</a></div>
-            FindOne = FindCountry(cnt).IndexOf(">Regiment:")
+            FindOne = FindInfo(cnt).IndexOf(">Regiment:")
             If FindOne >= 0 Then
-                dbRegiment = FindCountry(cnt + 1)
-                dbRegimentID = FindCountry(cnt + 1)
+                dbRegiment = FindInfo(cnt + 1)
+                dbRegimentID = FindInfo(cnt + 1)
 
                 FindTwo = dbRegiment.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -292,10 +293,10 @@ Public Class FrmMain
             'Unit
             ' TD Element: 12- >  <div class="tableLabel">Unit:</div>
             ' TD Element: 13- >  2nd Regt.<div style='float:right;'>Other Casualties from this <a href='view-paginated.php?page=1&unit=925' target='new'>Unit</a></div>
-            FindOne = FindCountry(cnt).IndexOf(">Unit:")
+            FindOne = FindInfo(cnt).IndexOf(">Unit:")
             If FindOne >= 0 Then
-                dbUnit = FindCountry(cnt + 1)
-                dbUnitID = FindCountry(cnt + 1)
+                dbUnit = FindInfo(cnt + 1)
+                dbUnitID = FindInfo(cnt + 1)
 
                 FindTwo = dbUnit.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -314,9 +315,9 @@ Public Class FrmMain
 
             ' TD Element: 14- >  <div class="tableLabel">Date of Death:</div>
             ' TD Element: 15- >  1916-12-20<div style='float:right;'>Other Casualties on this            <a href ='view-paginated.php?page=1&DoD_YYYY=1916&DoD_MM=12&DoD_DD=20' target='new'>Date</a></div>
-            FindOne = FindCountry(cnt).IndexOf(">Date of Death:")
+            FindOne = FindInfo(cnt).IndexOf(">Date of Death:")
             If FindOne >= 0 Then
-                dbDateOfDeath = FindCountry(cnt + 1) ' Left  till <div
+                dbDateOfDeath = FindInfo(cnt + 1) ' Left  till <div
                 FindTwo = dbDateOfDeath.IndexOf("<div")
                 If FindTwo >= 0 Then
                     dbDateOfDeath = dbDateOfDeath.Substring(0, FindTwo)
@@ -327,32 +328,34 @@ Public Class FrmMain
 
             ' TD Element: 16- >  <div class="tableLabel">Age:</div>
             ' TD Element: 17- >  37
-            FindOne = FindCountry(cnt).IndexOf(">Age:")
+            FindOne = FindInfo(cnt).IndexOf(">Age:")
             If FindOne >= 0 Then
-                dbAge = FindCountry(cnt + 1) ' No change
+                dbAge = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Age: [{0}]", dbAge)
             End If
             'TD Element:18- >  <div class="tableLabel">Cause of Death:</div>
             'TD Element: 19- >  Died of phthisis, at No. 1 General Hospital Wynberg
-            FindOne = FindCountry(cnt).IndexOf(">Cause of Death:")
+            FindOne = FindInfo(cnt).IndexOf(">Cause of Death:")
             If FindOne >= 0 Then
-                dbCauseOfDeath = FindCountry(cnt + 1) ' No change
+                dbCauseOfDeath = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
             End If
             ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
             ' TD Element: 21- >  <div>Son of Mrs. Elizabeth Ann And the late Thomas Abbey, of 146, Cathcart Rd., Queenstown, Cape Province. His brother also died in service</div>
-            FindOne = FindCountry(cnt).IndexOf(">Additional<")
+            FindOne = FindInfo(cnt).IndexOf(">Additional<")
             If FindOne >= 0 Then
-                dbAddInfo = FindCountry(cnt + 1) ' No change
+                dbAddInfo = FindInfo(cnt + 1) ' No change
+                dbAddInfo = dbAddInfo.Replace(dbAddInfo, "<div>")
+                dbAddInfo = dbAddInfo.Replace(dbAddInfo, "</div>")
                 Console.WriteLine("Add Info: [{0}]", dbAddInfo)
             End If
             'Country
             ' TD Element: 22- >  <div class="tableLabel">Country:</div>
             ' TD Element: 23- >  South Africa<div style='float:right;'>Other Casualties commemorated in <a href='view-paginated.php?page=1&country=72' target='new'>South Africa</a></div>
-            FindOne = FindCountry(cnt).IndexOf(">Country:")
+            FindOne = FindInfo(cnt).IndexOf(">Country:")
             If FindOne >= 0 Then
-                dbCountry = FindCountry(cnt + 1)
-                dbCountryID = FindCountry(cnt + 1)
+                dbCountry = FindInfo(cnt + 1)
+                dbCountryID = FindInfo(cnt + 1)
 
                 FindTwo = dbCountry.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -369,10 +372,10 @@ Public Class FrmMain
 
             ' TD Element:24- >  <div class="tableLabel">Locality:</div>
             ' TD Element: 25- >  Western Cape<div style='float:right;'>Other Casualties commemorated in <a href='view-paginated.php?page=1&locality=1' target='new'>Western Cape</a></div>
-            FindOne = FindCountry(cnt).IndexOf(">Locality:")
+            FindOne = FindInfo(cnt).IndexOf(">Locality:")
             If FindOne >= 0 Then
-                dbLocality = FindCountry(cnt + 1)
-                dbLocalityID = FindCountry(cnt + 1)
+                dbLocality = FindInfo(cnt + 1)
+                dbLocalityID = FindInfo(cnt + 1)
 
                 FindTwo = dbLocality.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -388,10 +391,10 @@ Public Class FrmMain
             End If
             ' TD Element:26- >  <div class="tableLabel">Cemetery:</div>
             ' TD Element: 27- >  CAPE TOWN(PLUMSTEAD) CEMETERY<div style='float:right;margin-top:10px;"'>Other Casualties commemorated in this <a href='view-paginated.php?page=1&cemetery=463' target='new'>Cemetery</a></div> 
-            FindOne = FindCountry(cnt).IndexOf(">Cemetery:")
+            FindOne = FindInfo(cnt).IndexOf(">Cemetery:")
             If FindOne >= 0 Then
-                dbCemetery = FindCountry(cnt + 1)
-                dbCemeteryID = FindCountry(cnt + 1)
+                dbCemetery = FindInfo(cnt + 1)
+                dbCemeteryID = FindInfo(cnt + 1)
 
                 FindTwo = dbCemetery.IndexOf("<div")
                 If FindTwo >= 0 Then
@@ -407,21 +410,17 @@ Public Class FrmMain
             End If
             ' TD Element:29- >  <div class="tableLabel">Grave Reference:</div>
             ' TD Element: 30- >  Bl. UR. 15.
-            FindOne = FindCountry(cnt).IndexOf(">Grave Reference:")
+            FindOne = FindInfo(cnt).IndexOf(">Grave Reference:")
             If FindOne >= 0 Then
-                dbGraveReference = FindCountry(cnt + 1) ' No change
+                dbGraveReference = FindInfo(cnt + 1) ' No change
                 Console.WriteLine("Grave Ref: [{0}]", dbGraveReference)
             End If
 
         Next cnt
-
-
-
-
-
         Console.Write("End Find Country")
-
-
+        Dim tmpSql As String
+        tmpSql = "insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef',Initials,ServiceNo,Age,Locality,LocalityID) VALUES (null,'" & MyPersonNumber & "','" & dbFirstName & "','" & dbNamefld & "','" & dbRank & "'," & dbRankID & ",'" & dbRegiment & "'," & dbRegimentID & ",'" & dbUnit & "'," & dbUnitID & ",'" & dbDateOfDeath & "','" & dbCauseOfDeath & "','" & dbAddInfo & "','" & dbCountry & "'," & dbCountryID & ",'" & dbCemetery & "'," & dbCemeteryID & ",'" & dbGraveReference & "', '" & dbInitials & "','" & dbServiceNo & "','" & dbAge & "','" & dbLocality & "'," & dbLocalityID & ");"
+        Console.Write(tmpSql)
 
     End Sub
 
