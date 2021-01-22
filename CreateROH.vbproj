@@ -141,6 +141,7 @@
     </None>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="RohData.sql3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

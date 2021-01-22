@@ -202,6 +202,7 @@ Public Class FrmMain
         Dim dbUnitID As String = ""
         'Date of Death
         Dim dbDateOfDeath As String = ""
+        Dim dbAge As String = ""
         Dim dbCauseOfDeath As String = ""
         Dim dbAddInfo As String = ""
         ' Country
@@ -219,6 +220,7 @@ Public Class FrmMain
             FindOne = FindCountry(cnt).IndexOf(">Name:")
             If FindOne >= 0 Then
                 dbNamefld = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Name: [{0}]", dbNamefld)
             End If
 
             ' TD Element: 2- >  <div class="tableLabel">Given Name:</div>
@@ -226,18 +228,21 @@ Public Class FrmMain
             FindOne = FindCountry(cnt).IndexOf(">Given Name:")
             If FindOne >= 0 Then
                 dbFirstName = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("First Name: [{0}]", dbFirstName)
             End If
             ' TD Element: 4- >  <div class="tableLabel">Initials:</div>
             ' TD Element: 5- >  D R
             FindOne = FindCountry(cnt).IndexOf(">Initials:")
             If FindOne >= 0 Then
                 dbInitials = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Initials: [{0}]", dbInitials)
             End If
             ' TD Element:6- >  <div class="tableLabel">Service No:</div>
             ' TD Element: 7- >  7357
             FindOne = FindCountry(cnt).IndexOf(">Service No:")
             If FindOne >= 0 Then
                 dbServiceNo = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Service No: [{0}]", dbServiceNo)
             End If
             ' TD Element: 8- >  <div class="tableLabel">Rank:</div>
             ' TD Element: 9- >  Private<div style='float:right;'>Other Casualties of this <a href='view-paginated.php?page=1&rank=429' target='new'>Rank</a></div>
@@ -258,8 +263,9 @@ Public Class FrmMain
                 If FindTwo >= 0 Then
                     FindThree = dbRankID.IndexOf("'", FindTwo)
                     dbRankID = dbRankID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
+                    Console.WriteLine("RankID: [{0}]", dbRankID)
                 End If
-                Console.WriteLine("RankID: [{0}]", dbRankID)
+
             End If
             ' TD Element: 10- >  <div class="tableLabel">Regiment:</div>
             ' TD Element: 11- >  South African Infantry<div style='float:right;'>Other Casualties from this <a href='view-paginated.php?page=1&regiment=807' target='new'>Regiment</a></div>
@@ -277,9 +283,8 @@ Public Class FrmMain
                 If FindTwo >= 0 Then
                     FindThree = dbRegimentID.IndexOf("'", FindTwo)
                     dbRegimentID = dbRegimentID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
+                    Console.WriteLine("RegimentID: [{0}]", dbRegimentID)
                 End If
-                Console.WriteLine("RegimentID: [{0}]", dbRegimentID
-
             End If
             'Unit
             ' TD Element: 12- >  <div class="tableLabel">Unit:</div>
@@ -294,12 +299,13 @@ Public Class FrmMain
                     dbUnit = dbUnit.Substring(0, FindTwo)
                     Console.WriteLine("Unit: [{0}]", dbUnit)
                 End If
-                FindTwo = dbUnitID.IndexOf("Unit=")
+                FindTwo = dbUnitID.IndexOf("unit=")
                 If FindTwo >= 0 Then
                     FindThree = dbUnitID.IndexOf("'", FindTwo)
                     dbUnitID = dbUnitID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
+                    Console.WriteLine("UnitID: [{0}]", dbUnitID)
                 End If
-                Console.WriteLine("UnitID: [{0}]", dbUnitID)
+
             End If
             'Date of Death
 
@@ -307,14 +313,56 @@ Public Class FrmMain
             ' TD Element: 15- >  1916-12-20<div style='float:right;'>Other Casualties on this            <a href ='view-paginated.php?page=1&DoD_YYYY=1916&DoD_MM=12&DoD_DD=20' target='new'>Date</a></div>
             FindOne = FindCountry(cnt).IndexOf(">Date of Death:")
             If FindOne >= 0 Then
-                dbDateOfDeath = FindCountry(cnt + 1) ' No change
+                dbDateOfDeath = FindCountry(cnt + 1) ' Left  till <div
+                FindTwo = dbDateOfDeath.IndexOf("<div")
+                If FindTwo >= 0 Then
+                    dbDateOfDeath = dbDateOfDeath.Substring(0, FindTwo)
+                    Console.WriteLine("dbDateOfDeath: [{0}]", dbDateOfDeath)
+                End If
+
             End If
 
             ' TD Element: 16- >  <div class="tableLabel">Age:</div>
             ' TD Element: 17- >  37
             FindOne = FindCountry(cnt).IndexOf(">Age:")
             If FindOne >= 0 Then
-                dbDateOfDeath = FindCountry(cnt + 1) ' No change
+                dbAge = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Age: [{0}]", dbAge)
+            End If
+            'TD Element:18- >  <div class="tableLabel">Cause of Death:</div>
+            'TD Element: 19- >  Died of phthisis, at No. 1 General Hospital Wynberg
+            FindOne = FindCountry(cnt).IndexOf(">Cause of Death:")
+            If FindOne >= 0 Then
+                dbCauseOfDeath = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
+            End If
+            ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
+            ' TD Element: 21- >  <div>Son of Mrs. Elizabeth Ann And the late Thomas Abbey, of 146, Cathcart Rd., Queenstown, Cape Province. His brother also died in service</div>
+            FindOne = FindCountry(cnt).IndexOf(">>Additional<")
+            If FindOne >= 0 Then
+                dbAddInfo = FindCountry(cnt + 1) ' No change
+                Console.WriteLine("Add Info: [{0}]", dbAddInfo)
+            End If
+            'Country
+            ' TD Element: 22- >  <div class="tableLabel">Country:</div>
+            ' TD Element: 23- >  South Africa<div style='float:right;'>Other Casualties commemorated in <a href='view-paginated.php?page=1&country=72' target='new'>South Africa</a></div>
+            FindOne = FindCountry(cnt).IndexOf(">Country:")
+            If FindOne >= 0 Then
+                dbCountry = FindCountry(cnt + 1)
+                dbCountryID = FindCountry(cnt + 1)
+
+                FindTwo = dbCountry.IndexOf("<div")
+                If FindTwo >= 0 Then
+                    dbCountry = dbCountry.Substring(0, FindTwo)
+                    Console.WriteLine("Country: [{0}]", dbCountry)
+                End If
+                FindTwo = dbCountryID.IndexOf("country=")
+                If FindTwo >= 0 Then
+                    FindThree = dbCountryID.IndexOf("'", FindTwo)
+                    dbCountryID = dbCountryID.Substring(FindTwo + 8, FindThree - (FindTwo + 8))
+                    Console.WriteLine("CountryID: [{0}]", dbCountryID)
+                End If
+
             End If
         Next cnt
 
