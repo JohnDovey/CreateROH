@@ -43,7 +43,8 @@ Public Class FrmMain
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Cemetery' ( 'CemeteryID'	INTEGER NOT NULL UNIQUE, 'CemeteryName'	TEXT, 'Lat'	TEXT, 'Long'	TEXT, PRIMARY KEY('CemeteryID'));"
                 cmd.ExecuteNonQuery()
-
+                cmd.CommandText = "CREATE TABLE 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgLocalFile' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+                cmd.ExecuteNonQuery()
                 cmd.CommandText = "CREATE TABLE  IF NOT EXISTS 'PersonInfoRaw' ( 'id'	INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER,   PRIMARY KEY('id')) ;"
                 cmd.ExecuteNonQuery()
 
@@ -436,7 +437,6 @@ Public Class FrmMain
             tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID});"
             Console.WriteLine(tmpSql)
             ' Write_Data_Record(tmpSql)
-
 
             ' Load Array with IMG tags
             ' Load array with all <td> elements
