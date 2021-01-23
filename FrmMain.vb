@@ -349,6 +349,7 @@ Public Class FrmMain
                     dbAddInfo = FindInfo(cnt + 1) ' No change
                     dbAddInfo = dbAddInfo.Replace("<div>", "")
                     dbAddInfo = dbAddInfo.Replace("</div>", "")
+                    dbAddInfo = dbAddInfo.Replace("'", WebUtility.HtmlEncode("'"))
                     'Console.WriteLine("Add Info: [{0}]", dbAddInfo)
                 End If
                 'Country
@@ -460,6 +461,7 @@ Public Class FrmMain
                     FindIMG(cnt) = Replace(FindIMG(cnt), vbTab, Space(1))
                     FindIMG(cnt) = Replace(FindIMG(cnt), vbLf, Space(1))
                     FindIMG(cnt) = Replace(FindIMG(cnt), vbCr, Space(1))
+                    FindIMG(cnt) = Replace(FindIMG(cnt), "'", WebUtility.UrlEncode("'"))
                     FindIMG(cnt) = Trim(FindIMG(cnt))
                     'tmpUrl = WebUtility.UrlEncode(FindIMG(cnt))
                     tmpUrl = FindIMG(cnt)
