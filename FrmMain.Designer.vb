@@ -22,6 +22,7 @@ Partial Class FrmMain
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.CntEndRecord = New System.Windows.Forms.MaskedTextBox()
         Me.CntStartRecord = New System.Windows.Forms.MaskedTextBox()
@@ -29,14 +30,37 @@ Partial Class FrmMain
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.BtnFetchData = New System.Windows.Forms.Button()
-        Me.LblDateTime = New System.Windows.Forms.Label()
-        Me.LblFileName = New System.Windows.Forms.Label()
-        Me.RecordCounter = New System.Windows.Forms.NumericUpDown()
         Me.TxtUrl = New System.Windows.Forms.TextBox()
+        Me.LblFileName = New System.Windows.Forms.Label()
         Me.TxtLog = New System.Windows.Forms.TextBox()
+        Me.LblDateTime = New System.Windows.Forms.Label()
+        Me.RecordCounter = New System.Windows.Forms.Label()
+        Me.TableLayoutPanel1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
-        CType(Me.RecordCounter, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
+        '
+        'TableLayoutPanel1
+        '
+        Me.TableLayoutPanel1.ColumnCount = 3
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 502.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.RecordCounter, 0, 1)
+        Me.TableLayoutPanel1.Controls.Add(Me.LblDateTime, 0, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.TxtLog, 1, 2)
+        Me.TableLayoutPanel1.Controls.Add(Me.GroupBox1, 0, 2)
+        Me.TableLayoutPanel1.Controls.Add(Me.LblFileName, 1, 0)
+        Me.TableLayoutPanel1.Controls.Add(Me.TxtUrl, 1, 1)
+        Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Left
+        Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+        Me.TableLayoutPanel1.RowCount = 3
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.78049!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.21951!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 352.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(776, 470)
+        Me.TableLayoutPanel1.TabIndex = 10
         '
         'GroupBox1
         '
@@ -50,9 +74,9 @@ Partial Class FrmMain
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Controls.Add(Me.BtnFetchData)
         Me.GroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.GroupBox1.Location = New System.Drawing.Point(12, 12)
+        Me.GroupBox1.Location = New System.Drawing.Point(3, 120)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(162, 425)
+        Me.GroupBox1.Size = New System.Drawing.Size(162, 227)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Menu"
@@ -121,95 +145,90 @@ Partial Class FrmMain
         Me.BtnFetchData.Text = "Fetch Data from Web"
         Me.BtnFetchData.UseVisualStyleBackColor = True
         '
-        'LblDateTime
+        'TxtUrl
         '
-        Me.LblDateTime.AutoSize = True
-        Me.LblDateTime.Location = New System.Drawing.Point(184, 42)
-        Me.LblDateTime.Name = "LblDateTime"
-        Me.LblDateTime.Size = New System.Drawing.Size(22, 13)
-        Me.LblDateTime.TabIndex = 2
-        Me.LblDateTime.Text = "xxx"
-        Me.LblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.TxtUrl.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtUrl, 2)
+        Me.TxtUrl.Location = New System.Drawing.Point(171, 94)
+        Me.TxtUrl.Name = "TxtUrl"
+        Me.TxtUrl.Size = New System.Drawing.Size(496, 20)
+        Me.TxtUrl.TabIndex = 7
+        Me.TxtUrl.Text = "http://www.southafricawargraves.org/search/details.php?id="
         '
         'LblFileName
         '
-        Me.LblFileName.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.LblFileName.AutoSize = True
         Me.LblFileName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.TableLayoutPanel1.SetColumnSpan(Me.LblFileName, 2)
         Me.LblFileName.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.LblFileName.Location = New System.Drawing.Point(180, 22)
+        Me.LblFileName.Location = New System.Drawing.Point(171, 0)
         Me.LblFileName.Name = "LblFileName"
         Me.LblFileName.Size = New System.Drawing.Size(53, 15)
         Me.LblFileName.TabIndex = 3
         Me.LblFileName.Text = "FileName"
         Me.LblFileName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'RecordCounter
-        '
-        Me.RecordCounter.AutoSize = True
-        Me.RecordCounter.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.RecordCounter.CausesValidation = False
-        Me.RecordCounter.Cursor = System.Windows.Forms.Cursors.No
-        Me.RecordCounter.Enabled = False
-        Me.RecordCounter.Location = New System.Drawing.Point(604, 12)
-        Me.RecordCounter.Maximum = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me.RecordCounter.Name = "RecordCounter"
-        Me.RecordCounter.Size = New System.Drawing.Size(120, 16)
-        Me.RecordCounter.TabIndex = 4
-        Me.RecordCounter.ThousandsSeparator = True
-        '
-        'TxtUrl
-        '
-        Me.TxtUrl.Location = New System.Drawing.Point(180, 63)
-        Me.TxtUrl.Name = "TxtUrl"
-        Me.TxtUrl.Size = New System.Drawing.Size(608, 20)
-        Me.TxtUrl.TabIndex = 7
-        Me.TxtUrl.Text = "http://www.southafricawargraves.org/search/details.php?id="
-        '
         'TxtLog
         '
         Me.TxtLog.AcceptsReturn = True
-        Me.TxtLog.Location = New System.Drawing.Point(187, 111)
+        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtLog, 2)
+        Me.TxtLog.Location = New System.Drawing.Point(171, 120)
         Me.TxtLog.Multiline = True
         Me.TxtLog.Name = "TxtLog"
         Me.TxtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me.TxtLog.ShortcutsEnabled = False
-        Me.TxtLog.Size = New System.Drawing.Size(601, 326)
+        Me.TxtLog.Size = New System.Drawing.Size(602, 338)
         Me.TxtLog.TabIndex = 7
         Me.TxtLog.TabStop = False
         Me.TxtLog.Text = "Log Window"
         Me.TxtLog.WordWrap = False
         '
+        'LblDateTime
+        '
+        Me.LblDateTime.AutoSize = True
+        Me.LblDateTime.Location = New System.Drawing.Point(3, 0)
+        Me.LblDateTime.Name = "LblDateTime"
+        Me.LblDateTime.Size = New System.Drawing.Size(22, 13)
+        Me.LblDateTime.TabIndex = 12
+        Me.LblDateTime.Text = "xxx"
+        Me.LblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'RecordCounter
+        '
+        Me.RecordCounter.AutoSize = True
+        Me.RecordCounter.Location = New System.Drawing.Point(3, 57)
+        Me.RecordCounter.Name = "RecordCounter"
+        Me.RecordCounter.Size = New System.Drawing.Size(13, 13)
+        Me.RecordCounter.TabIndex = 13
+        Me.RecordCounter.Text = "0"
+        '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Controls.Add(Me.TxtLog)
-        Me.Controls.Add(Me.TxtUrl)
-        Me.Controls.Add(Me.RecordCounter)
-        Me.Controls.Add(Me.LblFileName)
-        Me.Controls.Add(Me.LblDateTime)
-        Me.Controls.Add(Me.GroupBox1)
+        Me.ClientSize = New System.Drawing.Size(780, 470)
+        Me.Controls.Add(Me.TableLayoutPanel1)
         Me.Name = "FrmMain"
         Me.Text = "Create ROH from WarGraves Project"
+        Me.TableLayoutPanel1.ResumeLayout(False)
+        Me.TableLayoutPanel1.PerformLayout()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
-        CType(Me.RecordCounter, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
+
+    Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
     Friend WithEvents GroupBox1 As GroupBox
-    Friend WithEvents LblDateTime As Label
-    Friend WithEvents LblFileName As Label
-    Friend WithEvents RecordCounter As NumericUpDown
-    Friend WithEvents BtnFetchData As Button
-    Friend WithEvents TxtUrl As TextBox
-    Friend WithEvents TxtLog As TextBox
+    Friend WithEvents CntEndRecord As MaskedTextBox
+    Friend WithEvents CntStartRecord As MaskedTextBox
+    Friend WithEvents BtnExtractData As Button
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents BtnExtractData As Button
-    Friend WithEvents CntStartRecord As MaskedTextBox
-    Friend WithEvents CntEndRecord As MaskedTextBox
+    Friend WithEvents BtnFetchData As Button
+    Friend WithEvents TxtUrl As TextBox
+    Friend WithEvents LblFileName As Label
+    Friend WithEvents TxtLog As TextBox
+    Friend WithEvents LblDateTime As Label
+    Friend WithEvents RecordCounter As Label
 End Class

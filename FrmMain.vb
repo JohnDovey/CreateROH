@@ -58,8 +58,8 @@ Public Class FrmMain
                 'cmd.ExecuteNonQuery()
 
                 cmd.CommandText = "SELECT LastNumber from LastSeq where ID = 0;"
-                RecordCounter.Value = cmd.ExecuteScalar()
-                CntStartRecord.Text = RecordCounter.Value.ToString
+                RecordCounter.Text = cmd.ExecuteScalar()
+                CntStartRecord.Text = RecordCounter.Text
 
                 'Dim rdr As SQLiteDataReader = cmd.ExecuteReader()
                 'Using rdr
@@ -98,7 +98,7 @@ Public Class FrmMain
 
     Sub DownloadPage(MyPersNum)
         Me.Cursor = Cursors.WaitCursor
-        RecordCounter.Value = MyPersNum
+        RecordCounter.Text = MyPersNum
 
         WebAddress = TxtUrl.Text & MyPersNum
         StartTime = DateTime.Now
@@ -108,7 +108,6 @@ Public Class FrmMain
         Using Client As New WebClient
             Client.Headers("User-Agent") = "Googlebot/2.38"
             Response = Client.DownloadString(WebAddress)
-            'Dim arr() As Byte = client.DownloadData("http://www.dotnetperls.com/")
             WebPage = Response
         End Using
         ' Finished downloading the page
