@@ -6,11 +6,22 @@ Imports HtmlAgilityPack
 Imports System.Text
 
 Public Class FrmMain
-
     Public StoreLog As String
     Dim MySubDir As String
     Dim MyDir As String
     Dim DBName As String
+    Public Const sqlCreatePersonImg As String = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+    Public Const sqlCreatePersonInfoRaw As String = "CREATE TABLE  IF NOT EXISTS 'PersonInfoRaw' ( 'id' INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER, 'Citation' TEXT, PRIMARY KEY('id')) ;"
+    Public Const sqlCreateRawweb As String = "CREATE TABLE IF NOT EXISTS 'rawweb' ('id' INTEGER NOT NULL, 'StartTime'	TEXT COLLATE RTRIM,  'EndTime'	TEXT COLLATE RTRIM, 'PageSize'	NUMERIC DEFAULT 0, 'PersonNumber'	NUMERIC DEFAULT 0, 'WebAddress'	TEXT, 'WebPage'	TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+    Public Const sqlCreateLastSeq As String = "CREATE TABLE IF NOT EXISTS 'LastSeq' ('id'	INTEGER NOT NULL DEFAULT 0, 'LastNumber'	NUMERIC NOT NULL DEFAULT 0, PRIMARY KEY('id'));"
+    Public Const sqlCreateRegiment As String = "CREATE TABLE IF NOT EXISTS 'Regiment'  ( 'RegimentID'	INTEGER NOT NULL UNIQUE, 'RegimentName'	TEXT, PRIMARY KEY('RegimentID'));"
+    Public Const sqlCreateRank As String = "CREATE TABLE IF NOT EXISTS 'Rank'  ( 'RankID'	INTEGER NOT NULL UNIQUE, 'RankName'	TEXT, 'RankDescription'	TEXT, PRIMARY KEY('RankID'));"
+    Public Const sqlCreateUnit As String = "CREATE TABLE IF NOT EXISTS 'Unit'  ( 'UnitID'	INTEGER NOT NULL UNIQUE, 'UnitName'	TEXT, PRIMARY KEY('UnitID'));"
+    Public Const sqlCreateCountry As String = "CREATE TABLE IF NOT EXISTS 'Country'  ( 'CountryID'	INTEGER NOT NULL UNIQUE, 'CountryName'	TEXT, PRIMARY KEY('CountryID'));"
+    Public Const sqlCreateCemetery As String = "CREATE TABLE IF NOT EXISTS 'Cemetery' ( 'CemeteryID'	INTEGER NOT NULL UNIQUE, 'CemeteryName'	TEXT, 'Lat'	TEXT, 'Long'	TEXT, PRIMARY KEY('CemeteryID'));"
+
+
+
     Private Sub FrmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Cursor = Cursors.WaitCursor
         LblDateTime.Text = DateAndTime.Now
@@ -29,23 +40,23 @@ Public Class FrmMain
         Using con As New SQLiteConnection(cs)
             con.Open()
             Using cmd As New SQLiteCommand(con)
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'rawweb' ('id' INTEGER NOT NULL, 'StartTime'	TEXT COLLATE RTRIM,  'EndTime'	TEXT COLLATE RTRIM, 'PageSize'	NUMERIC DEFAULT 0, 'PersonNumber'	NUMERIC DEFAULT 0, 'WebAddress'	TEXT, 'WebPage'	TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+                cmd.CommandText = sqlCreateRawweb
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'LastSeq' ('id'	INTEGER NOT NULL DEFAULT 0, 'LastNumber'	NUMERIC NOT NULL DEFAULT 0, PRIMARY KEY('id'));"
+                cmd.CommandText = sqlCreateLastSeq
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Regiment'  ( 'RegimentID'	INTEGER NOT NULL UNIQUE, 'RegimentName'	TEXT, PRIMARY KEY('RegimentID'));"
+                cmd.CommandText = sqlCreateRegiment
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Rank'  ( 'RankID'	INTEGER NOT NULL UNIQUE, 'RankName'	TEXT, 'RankDescription'	TEXT, PRIMARY KEY('RankID'));"
+                cmd.CommandText = sqlCreateRank
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Unit'  ( 'UnitID'	INTEGER NOT NULL UNIQUE, 'UnitName'	TEXT, PRIMARY KEY('UnitID'));"
+                cmd.CommandText = sqlCreateUnit
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Country'  ( 'CountryID'	INTEGER NOT NULL UNIQUE, 'CountryName'	TEXT, PRIMARY KEY('CountryID'));"
+                cmd.CommandText = sqlCreateCountry
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Cemetery' ( 'CemeteryID'	INTEGER NOT NULL UNIQUE, 'CemeteryName'	TEXT, 'Lat'	TEXT, 'Long'	TEXT, PRIMARY KEY('CemeteryID'));"
+                cmd.CommandText = sqlCreateCemetery
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+                cmd.CommandText = sqlCreatePersonImg
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE  IF NOT EXISTS 'PersonInfoRaw' ( 'id'	INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER,   PRIMARY KEY('id')) ;"
+                cmd.CommandText = sqlCreatePersonInfoRaw
                 cmd.ExecuteNonQuery()
 
                 'CONSTRAINT 'Regiment' FOREIGN KEY('RegimentID') REFERENCES Regiment), 
@@ -68,11 +79,8 @@ Public Class FrmMain
                 ' CntStartRecord.Text = rdr("LastNumber") + 1
                 ' End While
                 'End Using
-
             End Using
             con.Close()
-
-
         End Using
     End Sub
 
@@ -160,7 +168,7 @@ Public Class FrmMain
 
 
     Private Sub BtnExtractData_Click(sender As Object, e As EventArgs) Handles BtnExtractData.Click
-        TxtLog.Text = ""
+        TxtLog.ResetText()
         Dim web As New HtmlWeb()
         Dim myURI As String
         Dim cnt As Integer = 0
@@ -172,7 +180,7 @@ Public Class FrmMain
         ProgressBar.Minimum = Val(CntStartRecord.Text)
         ProgressBar.Maximum = Val(CntEndRecord.Text)
         For FileCount = Val(CntStartRecord.Text) To Val(CntEndRecord.Text)
-            TxtLog.AppendText("Start Person : " & FileCount.ToString)
+            TxtLog.AppendText("Start Person : " & FileCount.ToString & vbCrLf)
             MyPersonNumber = FileCount
             myURI = Path.Combine(MySubDir, FileCount & ".html")
             myURI = Application.StartupPath & myURI
@@ -180,7 +188,7 @@ Public Class FrmMain
 
             ' Load array with all <td> elements
             Dim FindInfo(50) As String
-            'Console.Write("Find Data")
+
             Dim htmlNodes = doc.DocumentNode.SelectNodes("//tr")
             cnt = 0
             For Each childnode As HtmlNode In htmlNodes.Descendants.Where(Function(n) n.Name = "td")
@@ -191,8 +199,7 @@ Public Class FrmMain
                 FindInfo(cnt) = Replace(FindInfo(cnt), vbCr, Space(1))
                 FindInfo(cnt) = Trim(FindInfo(cnt))
                 tmpText = vbCrLf & "TD Element:" & cnt & "- >  " & FindInfo(cnt)
-                'TxtLog.AppendText(tmpText)
-                'Console.WriteLine(tmpText)
+
                 cnt += 1
                 highCnt = cnt
             Next
@@ -228,15 +235,16 @@ Public Class FrmMain
             ' Locality
             Dim dbLocality As String = ""
             Dim dbLocalityID As String = "0"
+            ' Other
+            Dim dbCitation As String = ""
 
             For cnt = 0 To (highCnt - 1)
-                'Console.WriteLine("Cnt: " & cnt)
                 ' TD Element:0- >  <div class="tableLabel">Name:</div>
                 ' TD Element:  1- >  ABBEY
                 FindOne = FindInfo(cnt).IndexOf(">Name:")
                 If FindOne >= 0 Then
                     dbNamefld = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("Name: [{0}]", dbNamefld)
+                    dbNamefld = dbNamefld.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
 
                 ' TD Element: 2- >  <div class="tableLabel">Given Name:</div>
@@ -244,21 +252,22 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Given Name:")
                 If FindOne >= 0 Then
                     dbFirstName = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("First Name: [{0}]", dbFirstName)
+                    dbFirstName = dbFirstName.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
+
                 ' TD Element: 4- >  <div class="tableLabel">Initials:</div>
                 ' TD Element: 5- >  D R
                 FindOne = FindInfo(cnt).IndexOf(">Initials:")
                 If FindOne >= 0 Then
                     dbInitials = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("Initials: [{0}]", dbInitials)
+                    dbInitials = dbInitials.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
                 ' TD Element:6- >  <div class="tableLabel">Service No:</div>
                 ' TD Element: 7- >  7357
                 FindOne = FindInfo(cnt).IndexOf(">Service No:")
                 If FindOne >= 0 Then
                     dbServiceNo = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("Service No: [{0}]", dbServiceNo)
+                    dbServiceNo = dbServiceNo.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
                 ' TD Element: 8- >  <div class="tableLabel">Rank:</div>
                 ' TD Element: 9- >  Private<div style='float:right;'>Other Casualties of this <a href='view-paginated.php?page=1&rank=429' target='new'>Rank</a></div>
@@ -273,13 +282,11 @@ Public Class FrmMain
                     FindTwo = dbRank.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbRank = dbRank.Substring(0, FindTwo)
-                        'Console.WriteLine("Rank: [{0}]", dbRank)
                     End If
                     FindTwo = dbRankID.IndexOf("rank=")
                     If FindTwo >= 0 Then
                         FindThree = dbRankID.IndexOf("'", FindTwo)
                         dbRankID = dbRankID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
-                        'Console.WriteLine("RankID: [{0}]", dbRankID)
                     End If
 
                 End If
@@ -293,14 +300,14 @@ Public Class FrmMain
                     FindTwo = dbRegiment.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbRegiment = dbRegiment.Substring(0, FindTwo)
-                        'Console.WriteLine("Regiment: [{0}]", dbRegiment)
                     End If
                     FindTwo = dbRegimentID.IndexOf("regiment=")
                     If FindTwo >= 0 Then
                         FindThree = dbRegimentID.IndexOf("'", FindTwo)
                         dbRegimentID = dbRegimentID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        'Console.WriteLine("RegimentID: [{0}]", dbRegimentID)
                     End If
+                    dbRegiment = dbRegiment.Replace("'", WebUtility.HtmlEncode("'"))
+
                 End If
                 'Unit
                 ' TD Element: 12- >  <div class="tableLabel">Unit:</div>
@@ -313,15 +320,13 @@ Public Class FrmMain
                     FindTwo = dbUnit.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbUnit = dbUnit.Substring(0, FindTwo)
-                        ' Console.WriteLine("Unit: [{0}]", dbUnit)
                     End If
                     FindTwo = dbUnitID.IndexOf("unit=")
                     If FindTwo >= 0 Then
                         FindThree = dbUnitID.IndexOf("'", FindTwo)
                         dbUnitID = dbUnitID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
-                        'Console.WriteLine("UnitID: [{0}]", dbUnitID)
                     End If
-
+                    dbUnit = dbUnit.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
                 'Date of Death
 
@@ -333,9 +338,15 @@ Public Class FrmMain
                     FindTwo = dbDateOfDeath.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbDateOfDeath = dbDateOfDeath.Substring(0, FindTwo)
-                        'Console.WriteLine("dbDateOfDeath: [{0}]", dbDateOfDeath)
                     End If
-
+                    dbDateOfDeath = dbDateOfDeath.Replace("'", WebUtility.HtmlEncode("'"))
+                End If
+                '<td style="width:20%;" valign='top'><div class="tableLabel">Citations:</div></td>
+                ' <td valign ='top'>***Not yet accepted for War Grave Status by CWGC, need service file</td>
+                FindOne = FindInfo(cnt).IndexOf(">Citations:")
+                If FindOne >= 0 Then
+                    dbCitation = FindInfo(cnt + 1) ' No change
+                    dbCitation = dbCitation.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
 
                 ' TD Element: 16- >  <div class="tableLabel">Age:</div>
@@ -343,7 +354,7 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Age:")
                 If FindOne >= 0 Then
                     dbAge = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("Age: [{0}]", dbAge)
+
                 End If
                 'TD Element:18- >  <div class="tableLabel">Cause of Death:</div>
                 'TD Element: 19- >  Died of phthisis, at No. 1 General Hospital Wynberg
@@ -351,7 +362,7 @@ Public Class FrmMain
                 If FindOne >= 0 Then
                     dbCauseOfDeath = FindInfo(cnt + 1) ' No change
                     dbCauseOfDeath = dbCauseOfDeath.Replace("'", WebUtility.HtmlEncode("'"))
-                    'Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
+
                 End If
                 ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
                 ' TD Element: 21- >  <div>Son of Mrs. Elizabeth Ann And the late Thomas Abbey, of 146, Cathcart Rd., Queenstown, Cape Province. His brother also died in service</div>
@@ -361,7 +372,6 @@ Public Class FrmMain
                     dbAddInfo = dbAddInfo.Replace("<div>", "")
                     dbAddInfo = dbAddInfo.Replace("</div>", "")
                     dbAddInfo = dbAddInfo.Replace("'", WebUtility.HtmlEncode("'"))
-                    'Console.WriteLine("Add Info: [{0}]", dbAddInfo)
                 End If
                 'Country
                 ' TD Element: 22- >  <div class="tableLabel">Country:</div>
@@ -374,13 +384,11 @@ Public Class FrmMain
                     FindTwo = dbCountry.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbCountry = dbCountry.Substring(0, FindTwo)
-                        ' Console.WriteLine("Country: [{0}]", dbCountry)
                     End If
                     FindTwo = dbCountryID.IndexOf("country=")
                     If FindTwo >= 0 Then
                         FindThree = dbCountryID.IndexOf("'", FindTwo)
                         dbCountryID = dbCountryID.Substring(FindTwo + 8, FindThree - (FindTwo + 8))
-                        '  Console.WriteLine("CountryID: [{0}]", dbCountryID)
                     End If
                 End If
 
@@ -395,14 +403,13 @@ Public Class FrmMain
                     FindTwo = dbLocality.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbLocality = dbLocality.Substring(0, FindTwo)
-                        ' Console.WriteLine("Locality: [{0}]", dbLocality)
                     End If
                     FindTwo = dbLocalityID.IndexOf("locality=")
                     If FindTwo >= 0 Then
                         FindThree = dbLocalityID.IndexOf("'", FindTwo)
                         dbLocalityID = dbLocalityID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        ' Console.WriteLine("LocalityID: [{0}]", dbLocalityID)
                     End If
+                    dbLocality = dbLocality.Replace("'", WebUtility.HtmlEncode("'"))
                     If Val(dbLocality) < 0 Then dbLocalityID = 0
                 End If
                 ' TD Element:26- >  <div class="tableLabel">Cemetery:</div>
@@ -415,21 +422,19 @@ Public Class FrmMain
                     FindTwo = dbCemetery.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbCemetery = dbCemetery.Substring(0, FindTwo)
-                        ' Console.WriteLine("Cemetery: [{0}]", dbCemetery)
                     End If
                     FindTwo = dbCemeteryID.IndexOf("cemetery=")
                     If FindTwo >= 0 Then
                         FindThree = dbCemeteryID.IndexOf("'", FindTwo)
                         dbCemeteryID = dbCemeteryID.Substring(FindTwo + 9, FindThree - (FindTwo + 9))
-                        ' Console.WriteLine("CemeteryID: [{0}]", dbCemeteryID)
                     End If
+                    dbCemetery = dbCemetery.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
                 ' TD Element:29- >  <div class="tableLabel">Grave Reference:</div>
                 ' TD Element: 30- >  Bl. UR. 15.
                 FindOne = FindInfo(cnt).IndexOf(">Grave Reference:")
                 If FindOne >= 0 Then
                     dbGraveReference = FindInfo(cnt + 1) ' No change
-                    'Console.WriteLine("Grave Ref: [{0}]", dbGraveReference)
                 End If
 
             Next cnt
@@ -445,7 +450,7 @@ Public Class FrmMain
             If Val(dbCemeteryID) < 0 Then dbCemeteryID = "0"
 
             Dim tmpSql As String
-            tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID});"
+            tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID', 'Citation') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID}, '{dbCitation}');"
             Console.WriteLine(tmpSql)
             Write_Data_Record(tmpSql)
 
@@ -460,7 +465,7 @@ Public Class FrmMain
             'Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//*[@id='tabs']") (//*[@id='PhotoFilename1']
             Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//img")
             cnt = 0
-            TxtLog.Text = ""
+
             For Each img As HtmlAgilityPack.HtmlNode In doc.DocumentNode.SelectNodes("//img")
                 'For Each childnode As HtmlNode In htmlNodesIMG.Descendants
                 ' .Attributes("src").Value()
@@ -479,7 +484,7 @@ Public Class FrmMain
                     'tmpUrlComplete = WebUtility.UrlEncode(ImgURL & FindIMG(cnt))
                     tmpUrlComplete = ImgURL & tmpUrl
                     tmpSql = $"INSERT INTO 'PersonImages' ('id', 'PersonNumber', 'ImgUrl', 'ImgUrlComplete') VALUES (null, '{MyPersonNumber}', '{tmpUrl}', '{WebUtility.HtmlEncode(tmpUrlComplete)}') ;"
-                    'TxtLog.AppendText(tmpSql)
+
                     Console.WriteLine(tmpSql)
                     Write_Data_Record(tmpSql)
                 End If
@@ -489,7 +494,7 @@ Public Class FrmMain
             Console.WriteLine("End Find IMG")
             ' End Load
             RecordCounter.Text = FileCount.ToString
-            TxtLog.AppendText(vbCrLf & "End Person : " & FileCount.ToString)
+            TxtLog.AppendText("End Person : " & FileCount.ToString & vbCrLf)
             Application.DoEvents()
             ProgressBar.Value = FileCount
             If TxtLog.TextLength > 10000 Then TxtLog.ResetText()
