@@ -43,7 +43,7 @@ Public Class FrmMain
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'Cemetery' ( 'CemeteryID'	INTEGER NOT NULL UNIQUE, 'CemeteryName'	TEXT, 'Lat'	TEXT, 'Long'	TEXT, PRIMARY KEY('CemeteryID'));"
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "CREATE TABLE 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgLocalFile' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "CREATE TABLE  IF NOT EXISTS 'PersonInfoRaw' ( 'id'	INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER,   PRIMARY KEY('id')) ;"
                 cmd.ExecuteNonQuery()
@@ -139,7 +139,7 @@ Public Class FrmMain
         Using con As New SQLiteConnection(cs)
             con.Open()
             Using cmd As New SQLiteCommand(con)
-                cmd.CommandText = "INSERT INTO rawweb VALUES (null, '" & myStartTime & "', '" & MyEndTime & "', " & myPageSize & ", " & myPersonNumber & ", '" & NewMyWebAddress & "', '" & NewMyWebPage & "');"
+                cmd.CommandText = $"INSERT INTO rawweb VALUES (null, '{myStartTime}', '{MyEndTime}', {myPageSize},{myPersonNumber}, '{NewMyWebAddress}', '{NewMyWebPage}');"
                 Debug.Print("NewMyWebPage: " & NewMyWebPage)
                 Debug.Print("SQL: " & cmd.CommandText)
 
@@ -436,11 +436,14 @@ Public Class FrmMain
             Dim tmpSql As String
             tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID});"
             Console.WriteLine(tmpSql)
-            ' Write_Data_Record(tmpSql)
+            Write_Data_Record(tmpSql)
 
             ' Load Array with IMG tags
             ' Load array with all <td> elements
             Dim FindIMG(50) As String
+            Dim ImgURL As String = "http://www.southafricawargraves.org"
+            Dim tmpUrl As String = ""
+            Dim tmpUrlComplete As String = ""
             Console.WriteLine("Find IMG")
             ' .SelectNodes("./img")
             'Dim htmlNodesIMG = doc.DocumentNode.SelectNodes("//*[@id='tabs']") (//*[@id='PhotoFilename1']
@@ -451,15 +454,23 @@ Public Class FrmMain
                 'For Each childnode As HtmlNode In htmlNodesIMG.Descendants
                 ' .Attributes("src").Value()
                 'Console.WriteLine(img.Attributes("src").Value)
-                FindIMG(cnt) = img.Attributes("src").Value
-                FindIMG(cnt) = Replace(FindIMG(cnt), Chr(9), Space(1))
-                FindIMG(cnt) = Replace(FindIMG(cnt), vbTab, Space(1))
-                FindIMG(cnt) = Replace(FindIMG(cnt), vbLf, Space(1))
-                FindIMG(cnt) = Replace(FindIMG(cnt), vbCr, Space(1))
-                FindIMG(cnt) = Trim(FindIMG(cnt))
-                tmpText = vbCrLf & "IMG Element:" & cnt & "- >  " & FindIMG(cnt)
-                TxtLog.AppendText(tmpText)
-                Console.WriteLine(tmpText)
+                FindOne = img.Attributes("src").Value.IndexOf("CAPTCHA")
+                If FindOne <= 0 Then
+                    FindIMG(cnt) = img.Attributes("src").Value
+                    FindIMG(cnt) = Replace(FindIMG(cnt), Chr(9), Space(1))
+                    FindIMG(cnt) = Replace(FindIMG(cnt), vbTab, Space(1))
+                    FindIMG(cnt) = Replace(FindIMG(cnt), vbLf, Space(1))
+                    FindIMG(cnt) = Replace(FindIMG(cnt), vbCr, Space(1))
+                    FindIMG(cnt) = Trim(FindIMG(cnt))
+                    'tmpUrl = WebUtility.UrlEncode(FindIMG(cnt))
+                    tmpUrl = FindIMG(cnt)
+                    'tmpUrlComplete = WebUtility.UrlEncode(ImgURL & FindIMG(cnt))
+                    tmpUrlComplete = ImgURL & tmpUrl
+                    tmpSql = $"INSERT INTO 'PersonImages' ('id', 'PersonNumber', 'ImgUrl', 'ImgUrlComplete') VALUES (null, '{MyPersonNumber}', '{tmpUrl}', '{WebUtility.HtmlEncode(tmpUrlComplete)}') ;"
+                    TxtLog.AppendText(tmpSql)
+                    Console.WriteLine(tmpSql)
+                    Write_Data_Record(tmpSql)
+                End If
                 cnt += 1
                 highCnt = cnt
             Next
