@@ -35,6 +35,7 @@ Partial Class FrmMain
         Me.TxtLog = New System.Windows.Forms.TextBox()
         Me.LblDateTime = New System.Windows.Forms.Label()
         Me.RecordCounter = New System.Windows.Forms.Label()
+        Me.ProgressBar = New System.Windows.Forms.ProgressBar()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
@@ -51,13 +52,15 @@ Partial Class FrmMain
         Me.TableLayoutPanel1.Controls.Add(Me.GroupBox1, 0, 2)
         Me.TableLayoutPanel1.Controls.Add(Me.LblFileName, 1, 0)
         Me.TableLayoutPanel1.Controls.Add(Me.TxtUrl, 1, 1)
+        Me.TableLayoutPanel1.Controls.Add(Me.ProgressBar, 1, 3)
         Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Left
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 0)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-        Me.TableLayoutPanel1.RowCount = 3
+        Me.TableLayoutPanel1.RowCount = 4
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.78049!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.21951!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 352.0!))
+        Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(776, 470)
         Me.TableLayoutPanel1.TabIndex = 10
@@ -74,7 +77,7 @@ Partial Class FrmMain
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Controls.Add(Me.BtnFetchData)
         Me.GroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.GroupBox1.Location = New System.Drawing.Point(3, 120)
+        Me.GroupBox1.Location = New System.Drawing.Point(3, 100)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(162, 227)
         Me.GroupBox1.TabIndex = 1
@@ -149,7 +152,7 @@ Partial Class FrmMain
         '
         Me.TxtUrl.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.TableLayoutPanel1.SetColumnSpan(Me.TxtUrl, 2)
-        Me.TxtUrl.Location = New System.Drawing.Point(171, 94)
+        Me.TxtUrl.Location = New System.Drawing.Point(171, 74)
         Me.TxtUrl.Name = "TxtUrl"
         Me.TxtUrl.Size = New System.Drawing.Size(496, 20)
         Me.TxtUrl.TabIndex = 7
@@ -172,7 +175,7 @@ Partial Class FrmMain
         '
         Me.TxtLog.AcceptsReturn = True
         Me.TableLayoutPanel1.SetColumnSpan(Me.TxtLog, 2)
-        Me.TxtLog.Location = New System.Drawing.Point(171, 120)
+        Me.TxtLog.Location = New System.Drawing.Point(171, 100)
         Me.TxtLog.Multiline = True
         Me.TxtLog.Name = "TxtLog"
         Me.TxtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
@@ -196,11 +199,20 @@ Partial Class FrmMain
         'RecordCounter
         '
         Me.RecordCounter.AutoSize = True
-        Me.RecordCounter.Location = New System.Drawing.Point(3, 57)
+        Me.RecordCounter.Location = New System.Drawing.Point(3, 47)
         Me.RecordCounter.Name = "RecordCounter"
         Me.RecordCounter.Size = New System.Drawing.Size(13, 13)
         Me.RecordCounter.TabIndex = 13
         Me.RecordCounter.Text = "0"
+        '
+        'ProgressBar
+        '
+        Me.TableLayoutPanel1.SetColumnSpan(Me.ProgressBar, 2)
+        Me.ProgressBar.Location = New System.Drawing.Point(171, 452)
+        Me.ProgressBar.Maximum = 100000
+        Me.ProgressBar.Name = "ProgressBar"
+        Me.ProgressBar.Size = New System.Drawing.Size(602, 15)
+        Me.ProgressBar.TabIndex = 14
         '
         'FrmMain
         '
@@ -231,4 +243,5 @@ Partial Class FrmMain
     Friend WithEvents TxtLog As TextBox
     Friend WithEvents LblDateTime As Label
     Friend WithEvents RecordCounter As Label
+    Friend WithEvents ProgressBar As ProgressBar
 End Class

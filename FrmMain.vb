@@ -80,9 +80,15 @@ Public Class FrmMain
     Private Sub BtnFetchData_Click(sender As Object, e As EventArgs) Handles BtnFetchData.Click
         ' Print a message as the page downloads.
         TxtLog.Text = ""
+        ProgressBar.Value = 0
+        ProgressBar.Minimum = Val(CntStartRecord.Text)
+        ProgressBar.Maximum = Val(CntEndRecord.Text)
+
         For MyCount = Val(CntStartRecord.Text) To Val(CntEndRecord.Text)
             TxtLog.AppendText("Downloading page: " & TxtUrl.Text & MyCount & vbCrLf)
             DownloadPage(MyCount)
+            ProgressBar.Value = MyCount
+            If TxtLog.TextLength > 10000 Then TxtLog.ResetText()
             Application.DoEvents()
         Next
 
@@ -162,7 +168,11 @@ Public Class FrmMain
         Dim tmpText As String
         Dim FileCount As Integer = 0
         Dim MyPersonNumber As String
+        ProgressBar.Value = 0
+        ProgressBar.Minimum = Val(CntStartRecord.Text)
+        ProgressBar.Maximum = Val(CntEndRecord.Text)
         For FileCount = Val(CntStartRecord.Text) To Val(CntEndRecord.Text)
+            TxtLog.AppendText("Start Person : " & FileCount.ToString)
             MyPersonNumber = FileCount
             URI = Path.Combine(MySubDir, FileCount & ".html")
             URI = Application.StartupPath & URI
@@ -181,7 +191,7 @@ Public Class FrmMain
                 FindInfo(cnt) = Replace(FindInfo(cnt), vbCr, Space(1))
                 FindInfo(cnt) = Trim(FindInfo(cnt))
                 tmpText = vbCrLf & "TD Element:" & cnt & "- >  " & FindInfo(cnt)
-                TxtLog.AppendText(tmpText)
+                'TxtLog.AppendText(tmpText)
                 'Console.WriteLine(tmpText)
                 cnt += 1
                 highCnt = cnt
@@ -468,7 +478,7 @@ Public Class FrmMain
                     'tmpUrlComplete = WebUtility.UrlEncode(ImgURL & FindIMG(cnt))
                     tmpUrlComplete = ImgURL & tmpUrl
                     tmpSql = $"INSERT INTO 'PersonImages' ('id', 'PersonNumber', 'ImgUrl', 'ImgUrlComplete') VALUES (null, '{MyPersonNumber}', '{tmpUrl}', '{WebUtility.HtmlEncode(tmpUrlComplete)}') ;"
-                    TxtLog.AppendText(tmpSql)
+                    'TxtLog.AppendText(tmpSql)
                     Console.WriteLine(tmpSql)
                     Write_Data_Record(tmpSql)
                 End If
@@ -477,6 +487,11 @@ Public Class FrmMain
             Next
             Console.WriteLine("End Find IMG")
             ' End Load
+            RecordCounter.Text = FileCount.ToString
+            TxtLog.AppendText("Start Person : " & FileCount.ToString)
+            Application.DoEvents()
+            ProgressBar.Value = FileCount
+            If TxtLog.TextLength > 10000 Then TxtLog.ResetText()
         Next FileCount
 
     End Sub
@@ -496,5 +511,6 @@ Public Class FrmMain
     Private Sub CntStartRecord_TextChanged(sender As Object, e As EventArgs) Handles CntStartRecord.TextChanged
         CntEndRecord.Text = Val(CntStartRecord.Text) + 10
     End Sub
+
 
 End Class
