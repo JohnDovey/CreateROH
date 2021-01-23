@@ -104,7 +104,7 @@ Public Class FrmMain
 
     Sub DownloadPage(MyPersNum)
         Me.Cursor = Cursors.WaitCursor
-        RecordCounter.Text = MyPersNum
+        RecordCounter.Text = MyPersNum.ToString
 
         WebAddress = TxtUrl.Text & MyPersNum
         StartTime = DateTime.Now
@@ -162,7 +162,7 @@ Public Class FrmMain
     Private Sub BtnExtractData_Click(sender As Object, e As EventArgs) Handles BtnExtractData.Click
         TxtLog.Text = ""
         Dim web As New HtmlWeb()
-        Dim URI As String
+        Dim myURI As String
         Dim cnt As Integer = 0
         Dim highCnt As Integer = 0
         Dim tmpText As String
@@ -174,9 +174,9 @@ Public Class FrmMain
         For FileCount = Val(CntStartRecord.Text) To Val(CntEndRecord.Text)
             TxtLog.AppendText("Start Person : " & FileCount.ToString)
             MyPersonNumber = FileCount
-            URI = Path.Combine(MySubDir, FileCount & ".html")
-            URI = Application.StartupPath & URI
-            Dim doc As HtmlDocument = web.Load(URI)
+            myURI = Path.Combine(MySubDir, FileCount & ".html")
+            myURI = Application.StartupPath & myURI
+            Dim doc As HtmlDocument = web.Load(myURI)
 
             ' Load array with all <td> elements
             Dim FindInfo(50) As String
@@ -350,6 +350,7 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Cause of Death:")
                 If FindOne >= 0 Then
                     dbCauseOfDeath = FindInfo(cnt + 1) ' No change
+                    dbCauseOfDeath = dbCauseOfDeath.Replace("'", WebUtility.HtmlEncode("'"))
                     'Console.WriteLine("Cause of Death: [{0}]", dbCauseOfDeath)
                 End If
                 ' TD Element:20- >  <div class="tableLabel">Additional<br>Information:</div>
@@ -488,7 +489,7 @@ Public Class FrmMain
             Console.WriteLine("End Find IMG")
             ' End Load
             RecordCounter.Text = FileCount.ToString
-            TxtLog.AppendText("Start Person : " & FileCount.ToString)
+            TxtLog.AppendText(vbCrLf & "End Person : " & FileCount.ToString)
             Application.DoEvents()
             ProgressBar.Value = FileCount
             If TxtLog.TextLength > 10000 Then TxtLog.ResetText()
