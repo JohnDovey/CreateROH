@@ -492,7 +492,35 @@ Public Class FrmMain
                 highCnt = cnt
             Next
             Console.WriteLine("End Find IMG")
+
+            'The Search for Latitude and Longitude
+            'var lat = '30.83823';
+            'var Long = '28.94696';
+            Dim dbLat As String = ""
+            Dim dbLong As String = ""
+            Dim tmpFile As String = ""
+            tmpFile = File.ReadAllText(myURI)
+            FindOne = tmpFile.IndexOf("var lat = '")
+            If FindOne >= 0 Then
+                FindTwo = tmpFile.IndexOf("'", FindOne + 11)
+                ' dbLat = tmpFile.Substring(FindOne + 11, FindTwo)
+                dbLat = tmpFile.Substring(FindOne + 11, FindTwo - (FindOne + 11))
+                Console.WriteLine("Latitude: " & dbLat & vbCrLf)
+            End If
+
+            FindOne = tmpFile.IndexOf("var Long = '")
+            If FindOne >= 0 Then
+                FindTwo = tmpFile.IndexOf("'", FindOne + 12)
+                'dbLong = tmpFile.Substring(FindOne + 12, FindTwo)
+                dbLong = tmpFile.Substring(FindOne + 12, FindTwo - (FindOne + 11))
+                Console.WriteLine("Longitude: " & dbLong & vbCrLf)
+            End If
+            If (dbLat.Length > 0) And (dbLong.Length) > 0 Then
+                tmpSql = 
+            End If
+            ' End Lat/Long
             ' End Load
+
             RecordCounter.Text = FileCount.ToString
             TxtLog.AppendText("End Person : " & FileCount.ToString & vbCrLf)
             Application.DoEvents()
