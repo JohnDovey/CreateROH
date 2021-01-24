@@ -283,13 +283,13 @@ Public Class FrmMain
                     FindTwo = dbRank.IndexOf("<div")
                     If FindTwo >= 0 Then
                         dbRank = dbRank.Substring(0, FindTwo)
+                        dbRank = dbRank.Replace("'", WebUtility.HtmlEncode("'"))
                     End If
                     FindTwo = dbRankID.IndexOf("rank=")
                     If FindTwo >= 0 Then
                         FindThree = dbRankID.IndexOf("'", FindTwo)
                         dbRankID = dbRankID.Substring(FindTwo + 5, FindThree - (FindTwo + 5))
                     End If
-
                 End If
                 ' TD Element: 10- >  <div class="tableLabel">Regiment:</div>
                 ' TD Element: 11- >  South African Infantry<div style='float:right;'>Other Casualties from this <a href='view-paginated.php?page=1&regiment=807' target='new'>Regiment</a></div>
