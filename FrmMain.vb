@@ -11,7 +11,7 @@ Public Class FrmMain
     Dim MyDir As String
     Dim DBName As String
     Public Const sqlCreatePersonImg As String = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
-    Public Const sqlCreatePersonInfoRaw As String = "CREATE TABLE  IF NOT EXISTS 'PersonInfoRaw' ( 'id' INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER, 'Citation' TEXT, PRIMARY KEY('id')) ;"
+    Public Const sqlCreatePersonInfoRaw As String = "CREATE TABLE IF NOT EXISTS 'PersonInfoRaw' ( 'id' INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER, 'Citation' TEXT, 'UnitID2' INTEGER, 'Unit2' TEXT,  PRIMARY KEY('id')) ;"
     Public Const sqlCreateRawweb As String = "CREATE TABLE IF NOT EXISTS 'rawweb' ('id' INTEGER NOT NULL, 'StartTime'	TEXT COLLATE RTRIM,  'EndTime'	TEXT COLLATE RTRIM, 'PageSize'	NUMERIC DEFAULT 0, 'PersonNumber'	NUMERIC DEFAULT 0, 'WebAddress'	TEXT, 'WebPage'	TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
     Public Const sqlCreateLastSeq As String = "CREATE TABLE IF NOT EXISTS 'LastSeq' ('id'	INTEGER NOT NULL DEFAULT 0, 'LastNumber'	NUMERIC NOT NULL DEFAULT 0, PRIMARY KEY('id'));"
     Public Const sqlCreateRegiment As String = "CREATE TABLE IF NOT EXISTS 'Regiment'  ( 'RegimentID'	INTEGER NOT NULL UNIQUE, 'RegimentName'	TEXT, PRIMARY KEY('RegimentID'));"
@@ -221,6 +221,9 @@ Public Class FrmMain
             'Unit
             Dim dbUnit As String = ""
             Dim dbUnitID As String = ""
+            Dim dbUnit2 As String = ""
+            Dim dbUnitID2 As String = ""
+
             'Date of Death
             Dim dbDateOfDeath As String = ""
             Dim dbAge As String = ""
@@ -329,6 +332,24 @@ Public Class FrmMain
                     End If
                     dbUnit = dbUnit.Replace("'", WebUtility.HtmlEncode("'"))
                 End If
+                ' Unit2
+                FindOne = FindInfo(cnt).IndexOf(">Unit 2:")
+                If FindOne >= 0 Then
+                    dbUnit2 = FindInfo(cnt + 1)
+                    dbUnitID2 = FindInfo(cnt + 1)
+
+                    FindTwo = dbUnit2.IndexOf("<div")
+                    If FindTwo >= 0 Then
+                        dbUnit2 = dbUnit2.Substring(0, FindTwo)
+                    End If
+                    FindTwo = dbUnitID2.IndexOf("unit2=")
+                    If FindTwo >= 0 Then
+                        FindThree = dbUnitID2.IndexOf("'", FindTwo)
+                        dbUnitID2 = dbUnitID2.Substring(FindTwo + 6, FindThree - (FindTwo + 6))
+                    End If
+                    dbUnit2 = dbUnit2.Replace("'", WebUtility.HtmlEncode("'"))
+                End If
+
                 'Date of Death
 
                 ' TD Element: 14- >  <div class="tableLabel">Date of Death:</div>
@@ -447,11 +468,13 @@ Public Class FrmMain
             If dbUnitID.Length < 1 Then dbUnitID = "0"
             If dbUnit.Length < 1 Then dbUnit = "Unknown"
             If Val(dbUnitID) < 0 Then dbUnitID = "0"
+            If dbUnitID2.Length < 1 Then dbUnitID2 = "0"
+            If Val(dbUnitID2) < 0 Then dbUnitID2 = "0"
             If Val(dbCountryID) < 0 Then dbCountryID = "0"
             If Val(dbCemeteryID) < 0 Then dbCemeteryID = "0"
 
             Dim tmpSql As String
-            tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID', 'Citation') VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID}, '{dbCitation}');"
+            tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID', 'Citation', UnitID2, Unit2) VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID}, '{dbCitation}', {dbUnitID2},'{dbUnit2}');"
             Console.WriteLine(tmpSql)
             Write_Data_Record(tmpSql)
 
