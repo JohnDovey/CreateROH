@@ -176,9 +176,10 @@ Public Class FrmMain
         Dim tmpText As String
         Dim FileCount As Integer = 0
         Dim MyPersonNumber As String
-        ProgressBar.Value = 0
+
         ProgressBar.Minimum = Val(CntStartRecord.Text)
         ProgressBar.Maximum = Val(CntEndRecord.Text)
+        ProgressBar.Value = Val(CntStartRecord.Text)
         For FileCount = Val(CntStartRecord.Text) To Val(CntEndRecord.Text)
             TxtLog.AppendText("Start Person : " & FileCount.ToString & vbCrLf)
             MyPersonNumber = FileCount
@@ -500,6 +501,7 @@ Public Class FrmMain
             Dim dbLong As String = ""
             Dim tmpFile As String = ""
             tmpFile = File.ReadAllText(myURI)
+
             FindOne = tmpFile.IndexOf("var lat = '")
             If FindOne >= 0 Then
                 FindTwo = tmpFile.IndexOf("'", FindOne + 11)
@@ -508,16 +510,19 @@ Public Class FrmMain
                 Console.WriteLine("Latitude: " & dbLat & vbCrLf)
             End If
 
-            FindOne = tmpFile.IndexOf("var Long = '")
+            FindOne = tmpFile.IndexOf("var long = '")
             If FindOne >= 0 Then
                 FindTwo = tmpFile.IndexOf("'", FindOne + 12)
                 'dbLong = tmpFile.Substring(FindOne + 12, FindTwo)
                 dbLong = tmpFile.Substring(FindOne + 12, FindTwo - (FindOne + 11))
+                dbLong = dbLong.Replace("'", Space(1))
                 Console.WriteLine("Longitude: " & dbLong & vbCrLf)
             End If
             If (dbLat.Length > 0) And (dbLong.Length) > 0 Then
-                tmpSql = $"update 'PersonInfoRaw'  set CemeteryLat = '{dbLat}', CemeteryLong = '{dbLong}' where PersonNumber = '{MyPersonNumber}';"
-                Console.WriteLine("tmpSql")
+                tmpSql = $"update 'PersonInfoRaw'  set CemeteryLat = '{dbLat}', CemeteryLong = '{dbLong}' where PersonNumber = {MyPersonNumber};"
+                dbLat = dbLat.Replace("'", Space(1))
+                Console.WriteLine(tmpSql)
+                Write_Data_Record(tmpSql)
             End If
             ' End Lat/Long
             ' End Load
