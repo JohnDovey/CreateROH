@@ -516,7 +516,8 @@ Public Class FrmMain
                 Console.WriteLine("Longitude: " & dbLong & vbCrLf)
             End If
             If (dbLat.Length > 0) And (dbLong.Length) > 0 Then
-                tmpSql = 
+                tmpSql = $"update 'PersonInfoRaw'  set CemeteryLat = '{dbLat}', CemeteryLong = '{dbLong}' where PersonNumber = '{MyPersonNumber}';"
+                Console.WriteLine("tmpSql")
             End If
             ' End Lat/Long
             ' End Load
