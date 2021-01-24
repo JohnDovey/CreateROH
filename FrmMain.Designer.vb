@@ -23,6 +23,9 @@ Partial Class FrmMain
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.RecordCounter = New System.Windows.Forms.Label()
+        Me.LblDateTime = New System.Windows.Forms.Label()
+        Me.TxtLog = New System.Windows.Forms.TextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.CntEndRecord = New System.Windows.Forms.MaskedTextBox()
         Me.CntStartRecord = New System.Windows.Forms.MaskedTextBox()
@@ -30,11 +33,8 @@ Partial Class FrmMain
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.BtnFetchData = New System.Windows.Forms.Button()
-        Me.TxtUrl = New System.Windows.Forms.TextBox()
         Me.LblFileName = New System.Windows.Forms.Label()
-        Me.TxtLog = New System.Windows.Forms.TextBox()
-        Me.LblDateTime = New System.Windows.Forms.Label()
-        Me.RecordCounter = New System.Windows.Forms.Label()
+        Me.TxtUrl = New System.Windows.Forms.TextBox()
         Me.ProgressBar = New System.Windows.Forms.ProgressBar()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -64,6 +64,40 @@ Partial Class FrmMain
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(776, 470)
         Me.TableLayoutPanel1.TabIndex = 10
+        '
+        'RecordCounter
+        '
+        Me.RecordCounter.AutoSize = True
+        Me.RecordCounter.Location = New System.Drawing.Point(3, 47)
+        Me.RecordCounter.Name = "RecordCounter"
+        Me.RecordCounter.Size = New System.Drawing.Size(13, 13)
+        Me.RecordCounter.TabIndex = 13
+        Me.RecordCounter.Text = "0"
+        '
+        'LblDateTime
+        '
+        Me.LblDateTime.AutoSize = True
+        Me.LblDateTime.Location = New System.Drawing.Point(3, 0)
+        Me.LblDateTime.Name = "LblDateTime"
+        Me.LblDateTime.Size = New System.Drawing.Size(22, 13)
+        Me.LblDateTime.TabIndex = 12
+        Me.LblDateTime.Text = "xxx"
+        Me.LblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'TxtLog
+        '
+        Me.TxtLog.AcceptsReturn = True
+        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtLog, 2)
+        Me.TxtLog.Location = New System.Drawing.Point(171, 100)
+        Me.TxtLog.Multiline = True
+        Me.TxtLog.Name = "TxtLog"
+        Me.TxtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
+        Me.TxtLog.ShortcutsEnabled = False
+        Me.TxtLog.Size = New System.Drawing.Size(602, 338)
+        Me.TxtLog.TabIndex = 7
+        Me.TxtLog.TabStop = False
+        Me.TxtLog.Text = "Log Window"
+        Me.TxtLog.WordWrap = False
         '
         'GroupBox1
         '
@@ -148,16 +182,6 @@ Partial Class FrmMain
         Me.BtnFetchData.Text = "Fetch Data from Web"
         Me.BtnFetchData.UseVisualStyleBackColor = True
         '
-        'TxtUrl
-        '
-        Me.TxtUrl.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtUrl, 2)
-        Me.TxtUrl.Location = New System.Drawing.Point(171, 74)
-        Me.TxtUrl.Name = "TxtUrl"
-        Me.TxtUrl.Size = New System.Drawing.Size(496, 20)
-        Me.TxtUrl.TabIndex = 7
-        Me.TxtUrl.Text = "http://www.southafricawargraves.org/search/details.php?id="
-        '
         'LblFileName
         '
         Me.LblFileName.AutoSize = True
@@ -171,39 +195,15 @@ Partial Class FrmMain
         Me.LblFileName.Text = "FileName"
         Me.LblFileName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'TxtLog
+        'TxtUrl
         '
-        Me.TxtLog.AcceptsReturn = True
-        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtLog, 2)
-        Me.TxtLog.Location = New System.Drawing.Point(171, 100)
-        Me.TxtLog.Multiline = True
-        Me.TxtLog.Name = "TxtLog"
-        Me.TxtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.TxtLog.ShortcutsEnabled = False
-        Me.TxtLog.Size = New System.Drawing.Size(602, 338)
-        Me.TxtLog.TabIndex = 7
-        Me.TxtLog.TabStop = False
-        Me.TxtLog.Text = "Log Window"
-        Me.TxtLog.WordWrap = False
-        '
-        'LblDateTime
-        '
-        Me.LblDateTime.AutoSize = True
-        Me.LblDateTime.Location = New System.Drawing.Point(3, 0)
-        Me.LblDateTime.Name = "LblDateTime"
-        Me.LblDateTime.Size = New System.Drawing.Size(22, 13)
-        Me.LblDateTime.TabIndex = 12
-        Me.LblDateTime.Text = "xxx"
-        Me.LblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'RecordCounter
-        '
-        Me.RecordCounter.AutoSize = True
-        Me.RecordCounter.Location = New System.Drawing.Point(3, 47)
-        Me.RecordCounter.Name = "RecordCounter"
-        Me.RecordCounter.Size = New System.Drawing.Size(13, 13)
-        Me.RecordCounter.TabIndex = 13
-        Me.RecordCounter.Text = "0"
+        Me.TxtUrl.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.TableLayoutPanel1.SetColumnSpan(Me.TxtUrl, 2)
+        Me.TxtUrl.Location = New System.Drawing.Point(171, 74)
+        Me.TxtUrl.Name = "TxtUrl"
+        Me.TxtUrl.Size = New System.Drawing.Size(496, 20)
+        Me.TxtUrl.TabIndex = 7
+        Me.TxtUrl.Text = "http://www.southafricawargraves.org/search/details.php?id="
         '
         'ProgressBar
         '
