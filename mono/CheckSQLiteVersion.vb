@@ -1,5 +1,6 @@
 Option Strict On
 Imports System.Data.Sqlite
+
 Module CheckSqlVersion
     Sub Main()
         Dim con As SqliteConnection
