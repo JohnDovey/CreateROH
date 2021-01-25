@@ -53,3 +53,5 @@ Install C# extension:
 code --install-extension ms-dotnettools.csharp
 ```
 
+> # Warning
+> Do NOT install `code` if you're using the WSL on windows. It warns you to continue using the windows version of VS Code
