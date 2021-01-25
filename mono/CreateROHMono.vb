@@ -1,4 +1,4 @@
-﻿Imports Mono.Data.SQLite
+﻿Imports System.Data.SQLite
 Imports Mono.Net.Http
 Imports Mono.Net
 Imports Mono.IO
