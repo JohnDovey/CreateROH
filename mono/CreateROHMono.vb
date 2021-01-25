@@ -1,9 +1,9 @@
-﻿Imports System.Data.SQLite
-Imports System.Net.Http
-Imports System.Net
-Imports System.IO
+﻿Imports Mono.Data.SQLite
+Imports Mono.Net.Http
+Imports Mono.Net
+Imports Mono.IO
 Imports HtmlAgilityPack
-Imports System.Text
+Imports Mono.Text
 
 Public Class FrmMain
     Public StoreLog As String
