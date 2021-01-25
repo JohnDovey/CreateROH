@@ -1,9 +1,9 @@
 Imports System.Data.SQLite
-Imports Mono.Net.Http
-Imports Mono.Net
-Imports Mono.IO
+Imports System.Net.Http
+Imports System.Net
+Imports System.IO
 Imports HtmlAgilityPack
-Imports Mono.Text
+Imports System.Text
 
 Public Class ProcessData
     Dim StoreLog As String
@@ -29,6 +29,9 @@ Public Class ProcessData
 
      Dim NewMyWebAddress As String
     Dim NewMyWebPage As String
+
+    Dim RecordCounter as Integer = 0
+    Dim CntStartRecord as Integer = 0
 
     Public Sub Write_Data_Record(mySQL)
         Dim cs As String = "URI=file:" & DBName
@@ -76,8 +79,8 @@ Public Class ProcessData
                 'cmd.ExecuteNonQuery()
 
                 cmd.CommandText = "SELECT LastNumber from LastSeq where ID = 0;"
-                RecordCounter.Text = cmd.ExecuteScalar()
-                CntStartRecord.Text = RecordCounter.Text
+                RecordCounter = cmd.ExecuteScalar()
+                CntStartRecord = RecordCounter
 
                 'Dim rdr As SQLiteDataReader = cmd.ExecuteReader()
                 'Using rdr
