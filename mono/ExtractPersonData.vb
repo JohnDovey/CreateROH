@@ -342,6 +342,7 @@ Sub ExtractData()
                     dbLocality = dbLocality.Replace("'", WebUtility.HtmlEncode("'"))
                     If Val(dbLocality) < 0 Then dbLocalityID = 0
                 End If
+
                 ' TD Element:26- >  <div class="tableLabel">Cemetery:</div>
                 ' TD Element: 27- >  CAPE TOWN(PLUMSTEAD) CEMETERY<div style='float:right;margin-top:10px;"'>Other Casualties commemorated in this <a href='view-paginated.php?page=1&cemetery=463' target='new'>Cemetery</a></div> 
                 FindOne = FindInfo(cnt).IndexOf(">Cemetery:")
@@ -363,6 +364,7 @@ Sub ExtractData()
                         console.WriteLine("dbCemeteryID: " & dbCemeteryID)
                     End If
                     dbCemetery = dbCemetery.Replace("'", WebUtility.HtmlEncode("'"))
+                    
                 End If
                 ' TD Element:29- >  <div class="tableLabel">Grave Reference:</div>
                 ' TD Element: 30- >  Bl. UR. 15.
