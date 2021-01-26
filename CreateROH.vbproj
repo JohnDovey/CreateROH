@@ -113,6 +113,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mono2\CheckSQLiteVersion.vb" />
+    <Compile Include="Mono2\CreateROHMono.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mono2\ExtractLatLong.vb" />
+    <Compile Include="Mono2\ExtractPersonData.vb" />
     <Compile Include="FrmMain.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +148,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Mono2\ProcessData.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FrmMain.resx">
@@ -155,6 +162,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Mono2\README.md" />
+    <None Include="Mono2\Setup_on_Ubuntu.md" />
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
