@@ -121,8 +121,7 @@ Public Class FrmMain
         ' Download the page
         Using Client As New WebClient
             Client.Headers("User-Agent") = "Googlebot/2.38"
-            Response = Client.DownloadString(WebAddress)
-            WebPage = Response
+            WebPage = Client.DownloadString(WebAddress)
         End Using
         ' Finished downloading the page
         EndTime = DateTime.Now
