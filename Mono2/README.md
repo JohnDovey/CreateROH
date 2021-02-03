@@ -9,7 +9,7 @@ Depending on which one you choose, just add the relevant DLL to you compile comm
 - use `IMPORTS System.Data.Sqlite` in your program
 - compile with `vbnc CheckSQLiteVersion.vb -r:System.Data.SQLite.dll`
 - Resulting file is `CheckSQLiteVersion.exe`
-- Add execution permission `chmod 777 CheckSQLiteVersion.eve`
+- Add execution permission `chmod +x CheckSQLiteVersion.eve`
 - run the program `./CheckSQLiteVersion.exe`
 
 ## 2. NuGet Packages
