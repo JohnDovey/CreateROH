@@ -15,6 +15,9 @@ Module CheckDatabase
 Dim MyDir as String
 dim MySubDir as String
 Dim CS as String 
+Dim DBName As String
+Dim RecordCounter as Integer
+dim CntStartRecord as Integer
 
 Sub Main()
          MyDir = "."
