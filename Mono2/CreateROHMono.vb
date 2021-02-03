@@ -151,7 +151,7 @@ Public Class FrmMain
         Using con As New SQLiteConnection(cs)
             con.Open()
             Using cmd As New SQLiteCommand(con)
-                cmd.CommandText = $"INSERT INTO rawweb VALUES (null, '{myStartTime}', '{MyEndTime}', {myPageSize},{myPersonNumber}, '{NewMyWebAddress}', '{NewMyWebPage}');"
+                cmd.CommandText = "INSERT INTO rawweb VALUES (null, '" & myStartTime & "', '" & {MyEndTime & "'," & myPageSize& "," & myPersonNumber & ", '" & NewMyWebAddress & "', '" & NewMyWebPage & "');"
                 Debug.Print("NewMyWebPage: " & NewMyWebPage)
                 Debug.Print("SQL: " & cmd.CommandText)
 
