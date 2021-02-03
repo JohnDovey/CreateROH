@@ -71,3 +71,5 @@ Sub CheckDatabase()
             con.Close()
         End Using
     End Sub
+
+End Module
