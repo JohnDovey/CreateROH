@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.min.css">
+<link rel="stylesheet" href="/include/styles.min.css">
 <!-- bootstrap -->
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CRBDFN0CZZ"></script>
