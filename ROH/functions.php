@@ -114,6 +114,13 @@ function CountNoRegiment($dbase){
 }
 ?>
 <?php
+function CountNoCemetery($dbase){
+	$sql="select  count(*) from PersonInfoRaw where CemeteryID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+<?php
 function CountNoRank($dbase){
 	$sql="select  count(*) from PersonInfoRaw where RankID < 1;";
 	$ret = $dbase->querySingle($sql);

@@ -11,6 +11,9 @@
       <li class="nav-item">
         <a class="nav-link" href="person.php">Person</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="mainListPeople.php">List People</a>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Utilities
@@ -35,6 +38,7 @@
           <a class="dropdown-item" href="chartUnit.php">Unit Deaths</a>
           <a class="dropdown-item" href="chartRank.php">Rank Deaths</a>
           <a class="dropdown-item" href="chartRegiment.php">Regiment Deaths</a>
+          <a class="dropdown-item" href="chartCemetery.php">Cemetery Deaths</a>
         </div>
       </li>
     </ul>
