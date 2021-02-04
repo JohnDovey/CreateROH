@@ -193,9 +193,9 @@ If ($PrevNo < 1){
 ?>
                 <ul class="nav">
                     <li>
-                    <li class="nav-item"><button type="button" class="btn btn-link"><a class="nav-link"
+                    <li class="nav-item"><button type="button" class="btn btn-link bg-secondary"><a class="nav-link"
                                 href="person.php?PersonNumber=<?=$PrevNo ?>">Prev</a></button></li>
-                    <li class="nav-item"><button type="button" class="btn btn-link"><a class="nav-link"
+                    <li class="nav-item"><button type="button" class="btn btn-link bg-secondary"><a class="nav-link"
                                 href="person.php?PersonNumber=<?=$NextNo ?>">Next</a></button></li>
                 </ul>
 
