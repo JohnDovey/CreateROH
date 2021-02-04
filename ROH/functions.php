@@ -53,6 +53,14 @@ function CountRecords($table, $dbase)
 ?>
 
 <?php
+function CountDistinctPersonInfoRaw($field, $dbase) {
+	$sql="select  count(DISTINCT " . $field . ") from PersonInfoRaw;";
+	$ret = $dbase->querySingle($sql);
+	$num = $ret;
+	return $num;
+}
+?>
+<?php
 function GetNumRef($PlantCode, $dbase)
 {
 	$sql="Select COUNT(*) from Reference where PlantCode =" . $PlantCode . ";";

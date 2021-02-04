@@ -27,10 +27,11 @@ require_once("include/menu.php");
             <div class="col-md-auto bg-primary">
                 <h2 class="border rounded-circle text-center">Database Info</h2>
                 <table class="table table-dark">
+                    <caption>Table List Count</caption>
                     <thead>
                         <tr>
-                            <th>Nmae</th>
-                            
+                            <th>Name</th>
+
                             <th>Count</th>
                         </tr>
                     <tbody>
@@ -41,14 +42,70 @@ require_once("include/menu.php");
                 while ($row = $ret->fetchArray(SQLITE3_ASSOC)){ ?>
                         <tr>
                             <td><?=$row['name']?></td>
-                            
+
                             <td><button type="button" class="btn btn-primary">
-                            <?=$row['name']?><span class="badge badge-light"> <?=CountRecords($row['name'], $db)?></span>
-</button></td>
+                                    <?=$row['name']?><span class="badge badge-light">
+                                        <?=CountRecords($row['name'], $db)?></span>
+                                </button></td>
                         </tr>
                         <?php } ?>
                     </tbody>
                 </table>
+                <hr>
+                <table class="table table-dark">
+                    <caption>Table List Count</caption>
+                    <thead>
+                        <tr>
+                            <th>Count</th>
+                        </tr>
+                    <tbody>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Regiment <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('RegimentID', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Rank <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('RankID', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Unit <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('UnitID', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Unit 2 <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('UnitID2', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Country <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('CountryID', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Cemetery <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('CemeteryID', $db)?></span>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary">
+                                    Locality <span class="badge badge-light">
+                                        <?=CountDistinctPersonInfoRaw('LocalityID', $db)?></span>
+                                </button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
             </div> <!-- end Center Col -->
             <div class="col col-lg-2">
 
