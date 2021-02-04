@@ -33,6 +33,7 @@
           <a class="dropdown-item" href="chartCountry.php">Country Deaths</a>
           <a class="dropdown-item" href="chartLocality.php">Locality Deaths</a>
           <a class="dropdown-item" href="chartUnit.php">Unit Deaths</a>
+          <a class="dropdown-item" href="chartRank.php">Rank Deaths</a>
         </div>
       </li>
     </ul>

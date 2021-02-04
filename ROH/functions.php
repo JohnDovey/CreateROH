@@ -106,7 +106,13 @@ function CountNoUnit($dbase){
 	return $ret;
 }
 ?>
-
+<?php
+function CountNoRank($dbase){
+	$sql="select  count(*) from PersonInfoRaw where RankID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
 <?php
 function CountNoYear($dbase){
 	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
