@@ -49,8 +49,6 @@ require_once("include/menu.php");
                         </div>
                     </div>
                 </div>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
-                    integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
                 
                 <?php require_once("js/chartYear.php"); ?>
             </div> <!-- end Center Col -->

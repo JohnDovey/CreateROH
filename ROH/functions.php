@@ -79,6 +79,14 @@ function CountNoAge($dbase){
 }
 ?>
 <?php
+function CountNoCause($dbase){
+	$sql="select  count(*) from PersonInfoRaw where CauseDeath < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+
+<?php
 function CountNoYear($dbase){
 	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
 	$ret = $dbase->querySingle($sql);

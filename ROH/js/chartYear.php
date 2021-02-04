@@ -1,3 +1,7 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+                    integrity="sha256-t9UJPrESBeG2ojKTIcFLPGF7nHi2vEc7f5A2KpH/UBU=" crossorigin="anonymous"></script>
+                
+
 <script>
 // Included as PHP because I need to add the data (Label names and DataPoints)
 var ctx = document.getElementById('YearPie').getContext('2d');
