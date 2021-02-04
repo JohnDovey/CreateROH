@@ -44,13 +44,21 @@ require_once("include/menu.php");
                         <div class="col">
                             <div class="card">
                                 <div class="card-body">
-                                    <canvas id="AgePie" width="900"></canvas>
+                                    <canvas id="StatsGraph" width="900"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <?php include_once('js/chartAge.php'); ?>
+                <?php 
+                $MyChartTitle = "Death by Age Stats";
+                $MyChartType = "line";
+                if (isset($_GET['chart'])){
+                    $MyChartType = $_GET['chart'];
+                }
+                
+                include_once('js/chartGeneric.php'); ?>
+<p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
 
             </div> <!-- end Center Col -->
             <div class="col col-lg-2">
