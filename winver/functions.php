@@ -1,5 +1,4 @@
 <?php
-//$db="file:RohData.sql3";
 /*
  ' Include this file with the command
  ' php require_once("Functions.php")
@@ -26,6 +25,51 @@ if(!$db){
  } else {
     // echo "<h1>Opened database successfully</h1>\n";
  }
+?>
+<?php
+function CountRecordsCode($table, $code, $codevalue, $dbase)
+{
+	// Params: 	$table = The table to count records
+	//			$code = The Select Field to limit the count
+	//			$codevalue = The value on which to select
+	//			$dbase = The Database connection variable (normally $db)
+	$sql = "SELECT COUNT(*) from " . $table . " where " . $code . " = " . $codevalue . ";";
+	$ret = $dbase->querySingle($sql);
+	$num = $ret;
+	return $num;	
+}
+?>
+<?php
+function CountRecords($table, $dbase)
+{
+	// Count total number of records in a table
+	// Params: 	$table = The table to count records
+	//			$dbase = The Database connection variable (normally $db)
+	$sql = "SELECT COUNT(*) from " . $table .  ";";
+	$ret = $dbase->querySingle($sql);
+	$num = $ret;
+	return $num;	
+}
+?>
+
+<?php
+function GetNumRef($PlantCode, $dbase)
+{
+	$sql="Select COUNT(*) from Reference where PlantCode =" . $PlantCode . ";";
+	$ret = $dbase->querySingle($sql);
+	$num = $ret;
+	return $num;
+}
+?>
+
+<?php
+function GetNumImage($PlantCode, $dbase)
+{
+	$sql="Select COUNT(*) from PlantImages where PlantCode =" . $PlantCode . ";";
+	$ret = $dbase->querySingle($sql);
+	$num = $ret;
+	return $num;
+}
 ?>
 <?php
 function GetRegimentName($myRegimentID) 
