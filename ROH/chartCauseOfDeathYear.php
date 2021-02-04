@@ -25,18 +25,21 @@ require_once("include/menu.php");
                 <h2 class="border rounded-circle text-center">Cause of Death Stats</h2>
                 <?php
                // Get Chart Data
-                $sql = "SELECT CauseDeath, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC limit 60;";
+                $sql = "SELECT CauseDeath, strftime('%Y',DateDeath) as Year, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC, Year limit 60;";
                 $ret = $db->query($sql);
                 $LabelNames="[";
                 $DataPoints="[";
+                $Year="[";
 
                 while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     // ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    $LabelNames= $LabelNames . "'" . $row['CauseDeath'] . "',";
+                    $LabelNames= $LabelNames . "'" . $row['Year'] . "-" . $row['CauseDeath'] . "',";
                     $DataPoints= $DataPoints . "'" . $row['CountCauseDeath'] . "',";
+                    $Year= $Year . "'" . $row['Year'] . "',";
                  }
                  $LabelNames= $LabelNames . "]";
                  $DataPoints= $DataPoints . "]";
+                 $Year= $Year . "]";
 
                  
                ?>
@@ -61,7 +64,7 @@ require_once("include/menu.php");
                         labels: <?=$LabelNames?>,
                         datasets: [{
                             label: '# of People by Cause (Top 60)',
-                            data: <?=$DataPoints?>,
+                            data: <?=$DataPoints?>, 
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -232,8 +235,7 @@ require_once("include/menu.php");
             <div class="col col-lg-2">
 
                 <?php
-                $TotalDeaths = CountTotalDeaths($db);
- $sql = "SELECT CauseDeath, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC limit 60;";
+ $sql = "SELECT CauseDeath, strftime('%Y',DateDeath) as Year, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC, Year limit 60;";
  $ret = $db->query($sql);
  ?>
                 <div class="card">
@@ -242,9 +244,9 @@ require_once("include/menu.php");
                             <thead>
                                 <caption>Cause of Death (top 60)</caption>
                                 <tr>
+                                <th>Year</th>
                                     <th>Cause of Death</th>
                                     <th>Count</th>
-                                    <th>%</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -252,9 +254,12 @@ require_once("include/menu.php");
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
                                 <tr>
+                                <td><?=$row['Year']?></td>
                                     <td><?=$row['CauseDeath']?></td>
-                                    <td><?=$row['CountCauseDeath']?></td>
-                                <td><?=percent($row['CountCauseDeath'] / $TotalDeaths)?></td>
+                                    <td><button type="button" class="btn btn-primary">
+                                     <span class="badge badge-light">
+                                    <?=$row['CountCauseDeath']?></span>
+                                </button></td>
                                    
                                 </tr>
                                 <?php }  ?>

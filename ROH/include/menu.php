@@ -29,6 +29,7 @@
           <a class="dropdown-item" href="chartAge.php">Age</a>
           <a class="dropdown-item" href="chartYear.php">Year</a>
           <a class="dropdown-item" href="chartCauseOfDeath.php">Cause of Death</a>
+          <a class="dropdown-item" href="chartCauseOfDeathYear.php">Cause of Death (Year)</a>
         </div>
       </li>
     </ul>

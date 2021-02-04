@@ -60,23 +60,15 @@ function CountDistinctPersonInfoRaw($field, $dbase) {
 	return $num;
 }
 ?>
-<?php
-function GetNumRef($PlantCode, $dbase)
-{
-	$sql="Select COUNT(*) from Reference where PlantCode =" . $PlantCode . ";";
-	$ret = $dbase->querySingle($sql);
-	$num = $ret;
-	return $num;
-}
-?>
 
 <?php
-function GetNumImage($PlantCode, $dbase)
-{
-	$sql="Select COUNT(*) from PlantImages where PlantCode =" . $PlantCode . ";";
+function CountTotalDeaths($dbase){
+	$sql="select  count(*) from PersonInfoRaw;";
 	$ret = $dbase->querySingle($sql);
-	$num = $ret;
-	return $num;
+	return $ret;
+}
+function percent($number){
+    return round($number * 100, 2) . ' %';
 }
 ?>
 <?php

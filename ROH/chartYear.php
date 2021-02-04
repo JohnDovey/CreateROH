@@ -18,9 +18,6 @@ require_once("functions.php");
         <?php
 require_once("include/menu.php");
 ?>
-
-        <h1 class="display-3 text-center">Roll of Honour</h1>
-
         <div class="row justify-content-md-center">
             <div class="col col-lg-2">
             </div> <!-- End left col -->
