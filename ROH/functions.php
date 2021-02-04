@@ -107,6 +107,13 @@ function CountNoUnit($dbase){
 }
 ?>
 <?php
+function CountNoRegiment($dbase){
+	$sql="select  count(*) from PersonInfoRaw where RegimentID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+<?php
 function CountNoRank($dbase){
 	$sql="select  count(*) from PersonInfoRaw where RankID < 1;";
 	$ret = $dbase->querySingle($sql);
