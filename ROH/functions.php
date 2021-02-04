@@ -100,6 +100,14 @@ function CountNoLocality($dbase){
 }
 ?>
 <?php
+function CountNoUnit($dbase){
+	$sql="select  count(*) from PersonInfoRaw where UnitID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+
+<?php
 function CountNoYear($dbase){
 	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
 	$ret = $dbase->querySingle($sql);

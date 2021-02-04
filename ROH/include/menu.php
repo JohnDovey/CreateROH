@@ -32,6 +32,7 @@
           <a class="dropdown-item" href="chartCauseOfDeathYear.php">Cause of Death (Year)</a>
           <a class="dropdown-item" href="chartCountry.php">Country Deaths</a>
           <a class="dropdown-item" href="chartLocality.php">Locality Deaths</a>
+          <a class="dropdown-item" href="chartUnit.php">Unit Deaths</a>
         </div>
       </li>
     </ul>
