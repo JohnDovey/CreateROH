@@ -72,6 +72,20 @@ function percent($number){
 }
 ?>
 <?php
+function CountNoAge($dbase){
+	$sql="select  count(*) from PersonInfoRaw where Age < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+<?php
+function CountNoYear($dbase){
+	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+<?php
 function GetRegimentName($myRegimentID) 
 {
     $sql="select * from personrawinfo where RegimentID = " . $myRegimentID . ";";
