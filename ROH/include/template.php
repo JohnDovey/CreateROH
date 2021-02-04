@@ -9,14 +9,14 @@ require_once("functions.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll of Honour</title>
     <?php
-        require_once("bootstrap-head.php");
+        require_once("include/bootstrap-head.php");
     ?>
 </head>
 
 <body>
     <div class="container-fluid clearfix">
         <?php
-require_once("menu.php");
+require_once("include/menu.php");
 ?>
 
         <h1 class="display-3 text-center">Roll of Honour</h1>
@@ -35,11 +35,11 @@ require_once("menu.php");
     </div> <!-- End Container -->
     <hr>
     <?php
-require_once("footer.php");
+require_once("include/footer.php");
 ?>
 
 <?php
-        require_once("bootstrap-footer.php");
+        require_once("include/bootstrap-footer.php");
     ?>
 </body>
 
