@@ -85,7 +85,13 @@ function CountNoCause($dbase){
 	return $ret;
 }
 ?>
-
+<?php
+function CountNoCountry($dbase){
+	$sql="select  count(*) from PersonInfoRaw where CountryID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
 <?php
 function CountNoYear($dbase){
 	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
