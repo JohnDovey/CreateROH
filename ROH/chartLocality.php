@@ -7,7 +7,7 @@ require_once("functions.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour: Cause of Death Per Year Stats</title>
+    <title>Roll of Honour: Locality Death Stats</title>
     <?php
         require_once("include/bootstrap-head.php");
     ?>
@@ -22,24 +22,21 @@ require_once("include/menu.php");
             <div class="col col-lg-2">
             </div> <!-- End left col -->
             <div class="col-md-auto bg-primary">
-                <h2 class="border rounded-circle text-center">Cause of Death per Year Stats</h2>
+                <h2 class="border rounded-circle text-center">Locality Death Stats</h2>
                 <?php
                // Get Chart Data
-                $sql = "SELECT CauseDeath, strftime('%Y',DateDeath) as Year, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC, Year limit 60;";
+                $sql = "Select LocalityID,Locality, COUNT(Locality) as CountLocality from PersonInfoRaw where LocalityID > 0 GROUP BY Locality order by Locality ASC;";
                 $ret = $db->query($sql);
                 $LabelNames="[";
                 $DataPoints="[";
-                $Year="[";
 
                 while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     // ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    $LabelNames= $LabelNames . "'" . $row['Year'] . "-" . $row['CauseDeath'] . "',";
-                    $DataPoints= $DataPoints . "'" . $row['CountCauseDeath'] . "',";
-                    $Year= $Year . "'" . $row['Year'] . "',";
+                    $LabelNames= $LabelNames . "'" . $row['Locality'] . "',";
+                    $DataPoints= $DataPoints . "'" . $row['CountLocality'] . "',";
                  }
                  $LabelNames= $LabelNames . "]";
                  $DataPoints= $DataPoints . "]";
-                 $Year= $Year . "]";
 
                  
                ?>
@@ -55,33 +52,34 @@ require_once("include/menu.php");
                     </div>
                 </div>
                 <?php 
-                $MyChartTitle = "Death by Cause per Year Stats";
+                $MyChartTitle = "Death by Locality Stats";
                 $MyChartType = "line";
                 if (isset($_GET['chart'])){
                     $MyChartType = $_GET['chart'];
                 }
+                
                 include_once('js/chartGeneric.php'); ?>
-                <p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
+<p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
             </div> <!-- end Center Col -->
             <div class="col col-lg-2">
 
                 <?php
                 $TotalDeaths = CountTotalDeaths($db);
-                $NoCause = CountNoCause($db);
-                $TotalWithCause=$TotalDeaths - $NoCause;
- $sql = "SELECT CauseDeath, strftime('%Y',DateDeath) as Year, count(CauseDeath) as CountCauseDeath from PersonInfoRaw group by CauseDeath order by CountCauseDeath DESC, Year limit 60;";
+                $NoLocality = CountNoLocality($db);
+                $TotalWithLocality=$TotalDeaths - $NoLocality;
+                
+ $sql = "Select LocalityID,Locality, COUNT(Locality) as CountLocality from PersonInfoRaw where LocalityID > 0 GROUP BY Locality order by CountLocality Desc, Locality;";
  $ret = $db->query($sql);
  ?>
                 <div class="card">
                     <div class="card-body">
                         <table class="table table-dark table-fluid">
                             <thead>
-                            <caption>Cause of Death (by year)(top 60)<br>Total Deaths: <?=$TotalDeaths?><br>Deaths with Cause: <?=$TotalWithCause?><br>No Cause: <?=$NoCause?></caption>
+                                <caption>Locality<br>Total Deaths: <?=$TotalDeaths?><br>Deaths with Locality: <?=$TotalWithLocality?><br>No Locality: <?=$NoLocality?></caption>
                                 <tr>
-                                <th>Year</th>
-                                    <th>Cause of Death</th>
+                                    <th>Locality</th>
                                     <th>Count</th>
-                                    <th>% of <?=$TotalWithCause?></th>
+                                    <th>% of <?=$TotalWithLocality?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,13 +87,9 @@ require_once("include/menu.php");
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
                                 <tr>
-                                <td><?=$row['Year']?></td>
-                                    <td><?=$row['CauseDeath']?></td>
-                                    <td><button type="button" class="btn btn-primary">
-                                     <span class="badge badge-light">
-                                    <?=$row['CountCauseDeath']?></span>
-                                </button></td>
-                                <td><?=percent($row['CountCauseDeath'] / $TotalWithCause)?></td>
+                                    <td><?=$row['Locality']?></td>
+                                    <td><?=$row['CountLocality']?></td>
+                                <td><?=percent($row['CountLocality'] / $TotalWithLocality)?></td>
                                    
                                 </tr>
                                 <?php }  ?>

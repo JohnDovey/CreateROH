@@ -93,6 +93,13 @@ function CountNoCountry($dbase){
 }
 ?>
 <?php
+function CountNoLocality($dbase){
+	$sql="select  count(*) from PersonInfoRaw where LocalityID < 1;";
+	$ret = $dbase->querySingle($sql);
+	return $ret;
+}
+?>
+<?php
 function CountNoYear($dbase){
 	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
 	$ret = $dbase->querySingle($sql);
