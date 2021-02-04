@@ -30,7 +30,16 @@ require_once("functions.php");
             </li>
         </ul>
     </nav>
-
+<?php
+    if (isset($_GET['PersonNumber'])){
+        $PersonNumber= $_GET['PersonNumber'];
+        if ($PersonNumber < 1){
+            $PersonNumber=1;
+          }
+    } else {
+        $PersonNumber=1;
+    }
+?>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg col-sm col-md">
@@ -38,10 +47,6 @@ require_once("functions.php");
                 <!-- Begin Card -->
                 <div class="card-deck">
                     <?php
-					$PersonNumber= $_GET['PersonNumber'];
-					if ($PersonNumber < 1){
-					  $PersonNumber=1;
-					}
 $sql="select * from PersonInfoRaw where PersonNumber=  " . $PersonNumber . ";";
 $ret = $db->query($sql);
 while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
