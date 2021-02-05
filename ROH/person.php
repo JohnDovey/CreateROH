@@ -205,6 +205,7 @@ If ($PrevNo < 1){
 				$sql="select * from PersonImages where PersonNumber=  " . $PersonNumber . ";";
 				$ret = $db->query($sql);
 				while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+                    SaveRemoteImage($row['ImgUrlComplete']);
 	?>
                
                     <div class="card">

@@ -26,17 +26,14 @@ require_once("include/menu.php");
             $page = isset($_GET['page']) ? $_GET['page'] : 1;
             $SortField = isset($_GET['sort']) ? $_GET['sort'] : "LastName";
             // set records or rows of data per page
-            $recordsPerPage = 25;
+            $recordsPerPage = 50;
 
             // calculate for the query LIMIT clause
             ?>
-            <ul>
-                <li> Sort: <?=$SortField?></li>
-                <li> Page: <?=$page?></li>
-                </ul>
+            
             <?php
              $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
-            $sql = "Select * from PersonInfoRaw order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
+            $sql = "Select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
             $ret = $db->query($sql);
  ?>
         <div class="row justify-content-md-center">
@@ -52,7 +49,9 @@ require_once("include/menu.php");
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Name">Name</a></th>
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName">Last Name</a></th>
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=FirstName">First Name</a></th>
+                                    <th>Initials</th>
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=RankID">Rank</a></th>
+                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Year">Year</a></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,10 +62,12 @@ require_once("include/menu.php");
                                     <td class="text-center"><a
                                             href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
                                     </td>
-                                    <td><?=$row['Name']?></td>
-                                    <td><?=$row['LastName']?></td>
-                                    <td><?=$row['FirstName']?></td>
+                                    <td><?=ucwords(strtolower($row['Name']))?></td>
+                                    <td><?=ucwords(strtolower($row['LastName']))?></td>
+                                    <td><?=ucwords(strtolower($row['FirstName']))?></td>
+                                    <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
+                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=$row['Year']?></td>
 
 
                                 </tr>
