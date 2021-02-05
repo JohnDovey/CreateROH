@@ -27,10 +27,13 @@ if(!$db){
  }
 ?>
 <?php
-function SaveRemoteImage($url){
-	$ch = curl_init('$url');
+function SaveRemoteImage($url, $id, $db){
 	$FileName=basename($url);
-	if (!file_exists('DownLoadImage/' . $FileName)){
+	$NewDir="DownLoadImage";
+	
+	if (file_exists('DownLoadImage/' . $FileName)){
+	}else{
+		$ch = curl_init('$url');
 		$fp = fopen('DownLoadImage/' . $FileName, 'wb');
 		curl_setopt($ch, CURLOPT_FILE, $fp);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -38,6 +41,9 @@ function SaveRemoteImage($url){
 		curl_exec($ch);
 		curl_close($ch);
 		fclose($fp);
+		
+		$sql="UPDATE PersonImages set 'ImgName' = '{$FileName}', 'ImgPath'='{$NewDir}/' where id =  " . $id . ";";
+		$ret = $db->exec($sql);
 	}
 }
 ?>
