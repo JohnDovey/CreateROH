@@ -27,6 +27,20 @@ if(!$db){
  }
 ?>
 <?php
+function GetImgSrc($id, $db){
+	$sql = "SELECT * from PersonImages where id = " . $id . ";";
+	$ret = $db->query($sql);
+	$row2 = $ret->fetchArray(SQLITE3_ASSOC);
+	if (is_null($row2['ImgName']) ||strlen($row2['ImgName'])<2 ){
+		$imgUrl = $row2['ImgUrlComplete'];
+	} else {
+		$imgUrl = $row2['ImgPath'] . "/" . $row2['ImgName'];
+	}
+	return $imgUrl;
+}
+
+?>
+<?php
 function SaveRemoteImage($url, $id, $db){
 	$FileName=basename($url);
 	$NewDir="DownLoadImage";
@@ -56,8 +70,7 @@ function CountRecordsCode($table, $code, $codevalue, $dbase)
 	//			$dbase = The Database connection variable (normally $db)
 	$sql = "SELECT COUNT(*) from " . $table . " where " . $code . " = " . $codevalue . ";";
 	$ret = $dbase->querySingle($sql);
-	$num = $ret;
-	return $num;	
+	return $ret;	
 }
 ?>
 <?php
@@ -68,8 +81,7 @@ function CountRecords($table, $dbase)
 	//			$dbase = The Database connection variable (normally $db)
 	$sql = "SELECT COUNT(*) from " . $table .  ";";
 	$ret = $dbase->querySingle($sql);
-	$num = $ret;
-	return $num;	
+	return $ret;	
 }
 ?>
 
@@ -156,15 +168,13 @@ function CountNoYear($dbase){
 }
 ?>
 <?php
-function GetRegimentName($myRegimentID) 
+function GetRegimentName($myRegimentID, $db) 
 {
-    $sql="select * from personrawinfo where RegimentID = " . $myRegimentID . ";";
-    $ret = $db->query($sql);
-while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-    return $row['RegimentName'];
-    echo "<h1>Regiment = ". $row['RegimentName'] . "</h1>\n";
+    $sql="select Regiment from PersonInfoRaw where RegimentID = " . $myRegimentID . ";";
+    $ret = $db->querySingle($sql);
+    return $ret;
  }
-}
+
 ?>
 
 <?php

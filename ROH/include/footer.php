@@ -3,7 +3,7 @@
 <container>
 <div class="footer-basic">
 <div class="float-right">
-        <a href="mailto:dovey.john@gmail.com?Subject=EcoAzuero"><img src="images/my-octocat-1612031153193.png" class="img-responsive" width="150" /></a>
+        <a href="mailto:dovey.john@gmail.com?Subject=ROH"><img src="images/my-octocat-1612031153193.png" class="img-responsive" width="150" /></a>
         </div>
     <!--Start actual footer-->
     <footer class="bg-primary text-white">

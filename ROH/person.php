@@ -104,7 +104,7 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     </div>
                     <div class="card-footer">
                         <p>Regiment/Unit: <a
-                                href="list.php?mod=regiment&regimentID=<?=$row['RegimentID']?>"><?=$row['Regiment']?></a>
+                                href="listPeopleRegiment.php?Regiment=<?=$row['RegimentID']?>"><?=$row['Regiment']?></a>
                             / <a href="list.php?mod=unit&unitID=<?=$row['UnitID']?>"><?=$row['Unit']?></a> </p>
                     </div>
                 </div>
@@ -206,7 +206,8 @@ If ($PrevNo < 1){
 				$ret = $db->query($sql);
 				while($row = $ret->fetchArray(SQLITE3_ASSOC) ){ ?>
                     <div class="card">
-                            <img src="<?=$row['ImgUrlComplete']?>" class="card-img-top" alt=" <?=$row['PersonNumber']?>">
+                            <img src="<?=GetImgSrc($row['id'], $db)?>" class="card-img-top" alt=" <?=$row['PersonNumber']?>">
+                            
                         <div class="card-body">                            
                         </div>
                         <div class="card-footer">

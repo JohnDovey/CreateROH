@@ -15,13 +15,23 @@
         <a class="nav-link" href="mainListPeople.php">List People</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLists" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Lists
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLists">
+          <a class="dropdown-item" href="listPeopleRegiment.php">List People by Regiment</a>
+          <a class="dropdown-item" href="#">XXX</a>
+          <a class="dropdown-item" href="#">XXX</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuUtilities" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Utilities
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuUtilities">
           <a class="dropdown-item" href="DataInfo.php">Table Info</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
+          <a class="dropdown-item" href="#">XXX</a>
+          <a class="dropdown-item" href="#">XXX</a>
         </div>
       </li>
       <li class="nav-item dropdown">
