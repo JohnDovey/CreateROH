@@ -7,7 +7,7 @@ require_once("functions.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour</title>
+    <title>Roll of Honour: Person Info</title>
     <?php
         require_once("include/bootstrap-head.php");
     ?>
