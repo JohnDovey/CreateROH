@@ -21,9 +21,17 @@ require_once("include/menu.php");
 
         <h1 class="display-3 text-center">Roll of Honour: List People</h1>
         <?php
-                $TotalDeaths = CountTotalDeaths($db);
+            $TotalDeaths = CountTotalDeaths($db);
+            // page is the current page, if there's nothing set, default is page 1
+            $page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+            // set records or rows of data per page
+            $recordsPerPage = 25;
+
+            // calculate for the query LIMIT clause
+             $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
                 
- $sql = "Select * from PersonInfoRaw order by LastName, Firstname LIMIT 60;";
+ $sql = "Select * from PersonInfoRaw order by LastName, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
  $ret = $db->query($sql);
  ?>
         <div class="row justify-content-md-center">
@@ -62,24 +70,95 @@ require_once("include/menu.php");
                         </table>
                     </div>
                     <nav aria-label="People Record navigation">
-                        <ul class="pagination  justify-content-center"">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
+                        <ul class="pagination  justify-content-center">
+                            
+                    <?php
+                    // *************** <PAGING_SECTION> ***************
+        // ***** for 'first' and 'previous' pages
+        if($page>1){
+            // ********** show the first page
+            ?>
+            <li class="page-item">
+            <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>" aria-lable="First Page">
+            <span aria-hidden="true"><<</span>
+            <span class="sr-only">First</span></a>
+            
+            <?php
+             
+            // ********** show the previous page
+            $prev_page = $page - 1;
+            ?>
+            <li class="page-item">
+            <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$prev_page?>" title="Previous page is <?=$prev_page?>" aria-label="Previous Page is <?=$prev_page?>">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous Page <?=$prev_page?></span>
                                 </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
+                                </li>
+            <?php 
+        }
+         
+         
+        // ********** show the number paging
+
+        // find out total pages
+    
+        $total_rows= CountTotalDeaths($db);
+        $total_pages = ceil($total_rows / $recordsPerPage);
+
+        // range of num links to show
+        $range = 2;
+
+        // display links to 'range of pages' around 'current page'
+        $initial_num = $page - $range;
+        $condition_limit_num = ($page + $range)  + 1;
+
+        for ($x=$initial_num; $x<$condition_limit_num; $x++) {
+             
+            // be sure '$x is greater than 0' AND 'less than or equal to the $total_pages'
+            if (($x > 0) && ($x <= $total_pages)) {
+             
+                // current page
+                if ($x == $page) {
+                    ?>
+                    <li class="page-item active"><a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>"><?=$x?></a></li>
+                    <?php
+                }
+                // not current page
+                else { ?>
+                    <li class="page-item"><a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>"><?=$x?></a></li>
+                <?php
+                }
+            }
+        }
+         
+         
+        // ***** for 'next' and 'last' pages
+        if($page<$total_pages){
+            // ********** show the next page
+            $next_page = $page + 1;
+            ?>
+                    <li class="page-item">
+                                <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$next_page?>" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Next</span>
                                 </a>
                             </li>
-                        </ul>
+            <?php
+             
+            // ********** show the last page
+            ?>
+            <li class="page-item">
+                                <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$total_pages?>" aria-label="Next">
+                                    <span aria-hidden="true">>></span>
+                                    <span class="sr-only">Last page</span>
+                                </a>
+                            </li>
+            </ul>
+      <?php  }
+    // *************** </PAGING_SECTION> ***************
+    ?>        
                     </nav>
+                    <p class="text-center">(<?=$page?>/<?=$total_pages?>)</p>
                 </div>
             </div> <!-- end Center Col -->
         </div>
