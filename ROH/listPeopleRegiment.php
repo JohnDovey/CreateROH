@@ -204,7 +204,7 @@ require_once("include/menu.php");
                             <?php
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
-                            <option value="<?=$row['RegimentID']?>"><?=$row['Regiment']?></option>
+                            <option value="<?=abs($row['RegimentID'])?>" <?php if ($row['RegimentID'] == $Regiment) { echo 'selected';} ?>><?=$row['Regiment']?></option>
                             <?php } ?>
                         </select>
                         <button type="submit" class="btn btn-primary">Submit</button>
