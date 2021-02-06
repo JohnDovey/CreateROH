@@ -457,6 +457,8 @@ Public Class FrmMain
                 FindOne = FindInfo(cnt).IndexOf(">Grave Reference:")
                 If FindOne >= 0 Then
                     dbGraveReference = FindInfo(cnt + 1) ' No change
+                    dbGraveReference = dbGraveReference.Replace("'", WebUtility.HtmlEncode("'"))
+
                 End If
 
             Next cnt
