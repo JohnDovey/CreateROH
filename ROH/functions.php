@@ -19,7 +19,8 @@ class DB extends SQLite3
         }
 }
 
-$db = new DB('./RohData.sql3');
+$db = new DB('./ROHData.sql3');
+//$db = new DB('../bin/debug/ROHData.sql3');
 if(!$db){
     echo "<h1>" . $db->lastErrorMsg() . "</h1>";
  } else {

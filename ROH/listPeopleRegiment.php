@@ -101,9 +101,8 @@ require_once("include/menu.php");
                                 <a class="page-link"
                                     href="<?=$_SERVER['PHP_SELF']?>?page=1&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"
                                     aria-lable="First Page">
-                                    <span aria-hidden="true">
-                                        <<< /span>
-                                            <span class="sr-only">First</span></a>
+                                    <span aria-hidden="true"><<</span>
+                                    <span class="sr-only">First</span></a>
 
                                 <?php
              
