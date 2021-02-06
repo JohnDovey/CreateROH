@@ -36,7 +36,7 @@ require_once("include/menu.php");
             <div class="col-md-auto bg-primary">
                 <h2 class="border rounded-circle text-center">Person Info</h2>
                 <?php
-$sql="select * from PersonInfoRaw where PersonNumber=  " . $PersonNumber . ";";
+$sql="select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw where PersonNumber=  " . $PersonNumber . ";";
 $ret = $db->query($sql);
 while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
 	?>
@@ -75,8 +75,8 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                         </p>
                     </div>
                     <div class="card-footer">
-                        <p>Person Number: <a
-                                href="person.php?mod=person&PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
+                        <p>Person Number: <a href="person.php?PersonNumber=<?=$row['PersonNumber']?>"
+                                class="btn btn-primary" role="button"><?=$row['PersonNumber']?></a>
                         </p>
                     </div>
                 </div>
@@ -88,7 +88,10 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                         <table class="table table-dark table-striped table-responsive">
                             <tr>
                                 <td scope="row">Date of Death:</td>
-                                <td><a href='list.php?mod=DoD&DateDeath=<?=$row['DateDeath']?>'><?=$row['DateDeath']?>
+                                <td><a href="listPeopleOnThisDay.php?DateDeath=<?=$row['DateDeath']?>"
+                                        class="btn btn-primary" role="button"><?=$row['DateDeath']?>
+                                        <a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                            role="button"><i class="fa fa-microscope"></i></a>
                                 </td>
                             </tr>
                             <tr>
@@ -103,8 +106,8 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                         </p>
                     </div>
                     <div class="card-footer">
-                        <p>Regiment/Unit: <a
-                                href="listPeopleRegiment.php?Regiment=<?=$row['RegimentID']?>"><?=$row['Regiment']?></a>
+                        <p>Regiment/Unit: <a href="listPeopleRegiment.php?Regiment=<?=$row['RegimentID']?>"
+                                class="btn btn-primary" role="button"><?=$row['Regiment']?></a>
                             / <a href="list.php?mod=unit&unitID=<?=$row['UnitID']?>"><?=$row['Unit']?></a> </p>
                     </div>
                 </div>
@@ -134,8 +137,9 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                         </p>
                     </div>
                     <div class="card-footer">
-                        <p><i class="fa fa-map-marker fa-1x" aria-hidden="true"></i><a
-                                href="https://www.google.com/maps/place/<?=$row['CemeteryLat']?>+<?=$row['CemeteryLong']?>">Map</a>
+                        <p><a href="https://www.google.com/maps/place/<?=$row['CemeteryLat']?>+<?=$row['CemeteryLong']?>"
+                                class="btn btn-primary" role="button" target="blank"><i class="fa fa-map-marker fa-1x"
+                                    aria-hidden="true"></i> Map</a>
                         </p>
                     </div>
                 </div>
@@ -191,30 +195,43 @@ If ($PrevNo < 1){
 	$PrevNo =1;
 }
 ?>
-                <ul class="nav">
-                    <li>
-                    <li class="nav-item"><button type="button" class="btn btn-link bg-secondary"><a class="nav-link"
-                                href="person.php?PersonNumber=<?=$PrevNo ?>">Prev</a></button></li>
-                    <li class="nav-item"><button type="button" class="btn btn-link bg-secondary"><a class="nav-link"
-                                href="person.php?PersonNumber=<?=$NextNo ?>">Next</a></button></li>
-                </ul>
+
+                    <button type="button" class="btn btn-link bg-secondary"><a class="nav-link"
+                                href="person.php?PersonNumber=<?=$PrevNo ?>">Prev</a></button>
+                    <button type="button" class="btn btn-link bg-secondary float-right"><a
+                                class="nav-link" href="person.php?PersonNumber=<?=$NextNo ?>">Next</a></button>
 
                 <!-- End Card -->
                 <div>
-                <?php
+                    <?php
 				$sql="select * from PersonImages where PersonNumber=  " . $PersonNumber . ";";
 				$ret = $db->query($sql);
 				while($row = $ret->fetchArray(SQLITE3_ASSOC) ){ ?>
+                
+                <div class="card">
+                    <img class="card-img-top" src="holder.js/100x180/" alt="">
+                    <div class="card-body">
+                        <h4 class="card-title">Title</h4>
+                        <p class="card-text">Text</p>
+                    </div>
+
+                    <div class="container">
+                    </div>
                     <div class="card">
-                            <img src="<?=GetImgSrc($row['id'], $db)?>" class="card-img-top" alt=" <?=$row['PersonNumber']?>">
-                            
-                        <div class="card-body">                            
+                        <img src="<?=GetImgSrc($row['id'], $db)?>" class="card-img-top"
+                            alt=" <?=$row['PersonNumber']?>">
+
+                        <div class="card-body">
                         </div>
                         <div class="card-footer">
-                            <small class="text-muted"><h5 class="card-title"><?=$row['ImgUrl']?></h5></small>
+                            <small class="text-muted">
+                                <h5 class="card-title"><?=$row['ImgUrl']?></h5>
+                            </small>
                         </div>
                     </div>
-					<?php
+                    <div>&nbsp;</div>
+                    </div>
+                    <?php
 				}
 				?>
                 </div>

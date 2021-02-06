@@ -20,7 +20,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLists">
           <a class="dropdown-item" href="listPeopleRegiment.php">List People by Regiment</a>
-          <a class="dropdown-item" href="#">XXX</a>
+          <a class="dropdown-item" href="listPeopleYear.php">List by Year</a>
           <a class="dropdown-item" href="#">XXX</a>
         </div>
       </li>

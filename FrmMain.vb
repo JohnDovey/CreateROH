@@ -10,8 +10,8 @@ Public Class FrmMain
     Dim MySubDir As String
     Dim MyDir As String
     Dim DBName As String
-    Public Const sqlCreatePersonImg As String = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
-    Public Const sqlCreatePersonInfoRaw As String = "CREATE TABLE IF NOT EXISTS 'PersonInfoRaw' ( 'id' INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'	TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER, 'Citation' TEXT, 'UnitID2' INTEGER, 'Unit2' TEXT,  PRIMARY KEY('id')) ;"
+    Public Const sqlCreatePersonImg As String = "CREATE TABLE IF NOT EXISTS 'PersonImages' ('id' INTEGER Not NULL UNIQUE, 'PersonNumber' INTEGER Not NULL DEFAULT 0, 'ImgUrl' TEXT, 'ImgUrlComplete' TEXT, 'ImgPath' TEXT, 'ImgThumbPath' TEXT,'ImgName' TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
+    Public Const sqlCreatePersonInfoRaw As String = "CREATE TABLE IF NOT EXISTS 'PersonInfoRaw' ( 'id' INTEGER NOT NULL UNIQUE, 'PersonNumber'	INTEGER NOT NULL UNIQUE, 'Name'	TEXT NOT NULL DEFAULT 'Unknown', 'FirstName'	TEXT, 'LastName'	TEXT, 'Rank'TEXT, 'RankID'	INTEGER, 'Regiment'	TEXT, 'RegimentID'	INTEGER, 'Unit'	TEXT, 'UnitID'	INTEGER, 'DateDeath'	TEXT DEFAULT 'Unknown', 'CauseDeath'	TEXT DEFAULT 'Unknown', 'AddInfo'	TEXT, 'Country'	TEXT, 'CountryID'	INTEGER, 'Cemetery'	INTEGER, 'CemeteryID'	INTEGER, 'CemeteryLat'	TEXT, 'CemeteryLong'	TEXT, 'GraveRef' TEXT, 'DateChecked'	TEXT, 'Initials' TEXT, 'ServiceNo' TEXT, 'Age' TEXT, 'Locality' TEXT, 'LocalityID' INTEGER, 'Citation' TEXT, 'UnitID2' INTEGER, 'Unit2' TEXT,  PRIMARY KEY('id')) ;"
     Public Const sqlCreateRawweb As String = "CREATE TABLE IF NOT EXISTS 'rawweb' ('id' INTEGER NOT NULL, 'StartTime'	TEXT COLLATE RTRIM,  'EndTime'	TEXT COLLATE RTRIM, 'PageSize'	NUMERIC DEFAULT 0, 'PersonNumber'	NUMERIC DEFAULT 0, 'WebAddress'	TEXT, 'WebPage'	TEXT, PRIMARY KEY('id' AUTOINCREMENT));"
     Public Const sqlCreateLastSeq As String = "CREATE TABLE IF NOT EXISTS 'LastSeq' ('id'	INTEGER NOT NULL DEFAULT 0, 'LastNumber'	NUMERIC NOT NULL DEFAULT 0, PRIMARY KEY('id'));"
     Public Const sqlCreateRegiment As String = "CREATE TABLE IF NOT EXISTS 'Regiment'  ( 'RegimentID'	INTEGER NOT NULL UNIQUE, 'RegimentName'	TEXT, PRIMARY KEY('RegimentID'));"
@@ -166,8 +166,39 @@ Public Class FrmMain
         End Using
     End Sub
 
+    Dim dbNamefld As String = ""
+    Dim dbFirstName As String = "Unknown"
+    Dim dbInitials As String = "Unknown"
+    Dim dbServiceNo As String = "Unknown"
+    Dim dbRank As String = "Unknown"
+    Dim dbRankID As String = "0"
+    ' Regiment
+    Dim dbRegiment As String = "Unknown"
+    Dim dbRegimentID As String = "0"
+    'Unit
+    Dim dbUnit As String = "Unknown"
+    Dim dbUnitID As String = "0"
+    Dim dbUnit2 As String = "Unknown"
+    Dim dbUnitID2 As String = "0"
 
-    Private Sub BtnExtractData_Click(sender As Object, e As EventArgs) Handles BtnExtractData.Click
+    'Date of Death
+    Dim dbDateOfDeath As String = "Unknown"
+    Dim dbAge As String = "0"
+    Dim dbCauseOfDeath As String = "Unknown"
+    Dim dbAddInfo As String = ""
+    ' Country
+    Dim dbCountry As String = "Unknown"
+    Dim dbCountryID As String = "0"
+    ' Cemetery
+    Dim dbCemetery As String = "Unknown"
+    Dim dbCemeteryID As String = "0"
+    Dim dbGraveReference As String = "Unknown"
+    ' Locality
+    Dim dbLocality As String = "Unknown"
+    Dim dbLocalityID As String = "0"
+    ' Other
+    Dim dbCitation As String = "Unknown"
+    Public Sub BtnExtractData_Click(sender As Object, e As EventArgs) Handles BtnExtractData.Click
         TxtLog.ResetText()
         Dim web As New HtmlWeb()
         Dim myURI As String
@@ -209,38 +240,7 @@ Public Class FrmMain
             Dim FindTwo As Integer = -1
             Dim FindThree As Integer = -1
 
-            Dim dbNamefld As String = ""
-            Dim dbFirstName As String = ""
-            Dim dbInitials As String = ""
-            Dim dbServiceNo As String = ""
-            Dim dbRank As String = ""
-            Dim dbRankID As String = ""
-            ' Regiment
-            Dim dbRegiment As String = ""
-            Dim dbRegimentID As String = ""
-            'Unit
-            Dim dbUnit As String = ""
-            Dim dbUnitID As String = ""
-            Dim dbUnit2 As String = ""
-            Dim dbUnitID2 As String = ""
 
-            'Date of Death
-            Dim dbDateOfDeath As String = ""
-            Dim dbAge As String = ""
-            Dim dbCauseOfDeath As String = ""
-            Dim dbAddInfo As String = ""
-            ' Country
-            Dim dbCountry As String = ""
-            Dim dbCountryID As String = ""
-            ' Cemetery
-            Dim dbCemetery As String = ""
-            Dim dbCemeteryID As String = ""
-            Dim dbGraveReference As String = ""
-            ' Locality
-            Dim dbLocality As String = ""
-            Dim dbLocalityID As String = "0"
-            ' Other
-            Dim dbCitation As String = ""
 
             For cnt = 0 To (highCnt - 1)
                 ' TD Element:0- >  <div class="tableLabel">Name:</div>
@@ -464,16 +464,52 @@ Public Class FrmMain
             Next cnt
             'Console.WriteLine("End Find Data")
 
-            If Val(dbLocalityID) < 0 Then dbLocalityID = "0"
-            If Val(dbRankID) < 0 Then dbRankID = "0"
-            If Val(dbRegimentID) < 0 Then dbRegimentID = "0"
-            If dbUnitID.Length < 1 Then dbUnitID = "0"
-            If dbUnit.Length < 1 Then dbUnit = "Unknown"
-            If Val(dbUnitID) < 0 Then dbUnitID = "0"
-            If dbUnitID2.Length < 1 Then dbUnitID2 = "0"
-            If Val(dbUnitID2) < 0 Then dbUnitID2 = "0"
-            If Val(dbCountryID) < 0 Then dbCountryID = "0"
-            If Val(dbCemeteryID) < 0 Then dbCemeteryID = "0"
+            If Val(dbLocalityID) < 0 Or IsDBNull(dbLocalityID) Then
+                dbLocalityID = "0"
+                dbLocality = "Unknown"
+            End If
+            If dbLocality.Length < 2 Then dbLocality = "Unknown"
+
+            If Val(dbRankID) < 0 Or IsDBNull(dbRankID) Then
+                dbRankID = "0"
+                dbRank = "Unknown"
+            End If
+            If dbRank.Length < 2 Then dbRank = "Unknown"
+
+            If Val(dbRegimentID) < 0 Or IsDBNull(dbRegimentID) Then
+                dbRegimentID = "0"
+                dbRegiment = "Unknown"
+            End If
+            If dbRegimentID.Length < 1 Then dbRegimentID = "0"
+            If dbRegiment.Length < 2 Then dbRegiment = "Unknown"
+
+            If dbUnitID.Length < 1 Or IsDBNull(dbUnitID) Then
+                dbUnitID = "0"
+                dbUnit = "Unknown"
+            End If
+            If Val(dbUnitID) < 0 Or IsDBNull(dbUnitID) Then
+                dbUnitID = "0"
+                dbUnit = "Unknown"
+            End If
+            If dbUnit.Length < 2 Then dbUnit = "Unknown"
+
+            If dbUnitID2.Length < 1 Then
+                dbUnitID2 = "0"
+                dbUnit2 = "Unknown"
+            End If
+            If dbUnit2.Length < 2 Then dbUnit2 = "Unknown"
+
+            If Val(dbCountryID) < 0 Then
+                dbCountryID = "0"
+                dbCountry = "Unknown"
+            End If
+            If dbCountry.Length < 2 Then dbCountry = "Unknown"
+
+            If Val(dbCemeteryID) < 0 Then
+                dbCemeteryID = "0"
+                dbCemetery = "Unknown"
+            End If
+            If dbCemetery.Length < 2 Then dbCemetery = "Unknown"
 
             Dim tmpSql As String
             tmpSql = $"insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID', 'Citation', UnitID2, Unit2) VALUES (null,'{MyPersonNumber}','{dbFirstName}','{dbNamefld}','{dbRank}',{dbRankID},'{dbRegiment}',{dbRegimentID},'{dbUnit}',{dbUnitID},'{dbDateOfDeath}','{dbCauseOfDeath}','{dbAddInfo}','{dbCountry}',{dbCountryID},'{dbCemetery}',{dbCemeteryID},'{dbGraveReference}', '{dbInitials}','{dbServiceNo}','{dbAge}','{dbLocality}',{dbLocalityID}, '{dbCitation}', {dbUnitID2},'{dbUnit2}');"

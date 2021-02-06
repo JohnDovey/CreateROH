@@ -29,14 +29,29 @@ if(!$db){
 ?>
 <?php
 function GetImgSrc($id, $db){
+	$imgurl="DownLoadImage/no_image.jpg";
 	$sql = "SELECT * from PersonImages where id = " . $id . ";";
 	$ret = $db->query($sql);
 	$row2 = $ret->fetchArray(SQLITE3_ASSOC);
+
+	if ($row2['ImgUrl']=='/search/photos/no_image.jpg'){
+		$row2['ImgPath'] = 'DownLoadImage';
+		$row2['ImgName'] = 'no_image.jpg';
+		$sql2 = "UPDATE PersonImages set ImgName = '" . $row2['ImgName'] . "' where id = " . $id . ";";
+		$ret2 = $db->exec($sql2);
+		$sql2 = "UPDATE PersonImages set ImgPath = '" . $row2['ImgPath'] . "' where id = " . $id . ";";
+		$ret2 = $db->exec($sql2);
+		
+		
+		//echo "<h1>" . $sql2 . "</h1>";
+	}
+
 	if (is_null($row2['ImgName']) ||strlen($row2['ImgName'])<2 ){
 		$imgUrl = $row2['ImgUrlComplete'];
 	} else {
 		$imgUrl = $row2['ImgPath'] . "/" . $row2['ImgName'];
 	}
+	
 	return $imgUrl;
 }
 
@@ -70,6 +85,18 @@ function CountRecordsCode($table, $code, $codevalue, $dbase)
 	//			$codevalue = The value on which to select
 	//			$dbase = The Database connection variable (normally $db)
 	$sql = "SELECT COUNT(*) from " . $table . " where " . $code . " = " . $codevalue . ";";
+	$ret = $dbase->querySingle($sql);
+	return $ret;	
+}
+?>
+<?php
+function CountRecordsYear($codevalue, $dbase)
+{
+	// Params: 	$table = The table to count records
+	//			$code = The Select Field to limit the count
+	//			$codevalue = The value on which to select
+	//			$dbase = The Database connection variable (normally $db)
+	$sql = "SELECT COUNT(*),  strftime('%Y',DateDeath) as Year from PersonInfoRaw where Year = '" . $codevalue . "';";
 	$ret = $dbase->querySingle($sql);
 	return $ret;	
 }
