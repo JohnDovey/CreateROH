@@ -50,9 +50,7 @@ require_once("include/menu.php");
                                     <th class="text-right"><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber&Year=<?=$Year?>">Person
                                             Number</a></th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Name&Year=<?=$Year?>">Name</a>
-                                    </th>
+                                    
                                     <th><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName&Year=<?=$Year?>">Last
                                             Name</a></th>
@@ -74,14 +72,15 @@ require_once("include/menu.php");
                     ?>
                                 <tr>
                                     <td class="text-center"><a
-                                            href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
+                                            href="person.php?PersonNumber=<?=$row['PersonNumber']?>" class="btn btn-primary" role="button"><?=$row['PersonNumber']?></a>
                                     </td>
                                     <td><?=ucwords(strtolower($row['Name']))?></td>
                                     <td><?=ucwords(strtolower($row['LastName']))?></td>
-                                    <td><?=ucwords(strtolower($row['FirstName']))?></td>
+                                    <td  data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=$row['Regiment']?></td>
+                                    <td><a href="listPeopleRegiment.php?Regiment=<?=$row['RegimentID']?>"
+                                class="btn btn-primary" role="button"><?=$row['Regiment']?></a></td>
                                 </tr>
                                 <?php }  ?>
                             </tbody>

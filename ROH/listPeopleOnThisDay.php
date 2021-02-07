@@ -23,9 +23,9 @@ require_once("include/menu.php");
             // page is the current page, if there's nothing set, default is page 1
             $page = isset($_GET['page']) ? $_GET['page'] : 1;
             $SortField = isset($_GET['sort']) ? $_GET['sort'] : "LastName";
-            $Regiment = isset($_GET['Regiment']) ? $_GET['Regiment'] : 1;
-            $TotalDeaths = CountRecordsCode('PersonInfoRaw', 'RegimentID', $Regiment, $db);
-            $RegimentName = GetRegimentName($Regiment, $db);
+            $DateDeath = isset($_GET['DateDeath']) ? $_GET['DateDeath'] : 1;
+            $TotalDeaths = CountRecordsCode('PersonInfoRaw', 'DateDeath', $DateDeath, $db);
+            //$RegimentName = GetRegimentName($Regiment, $db);
             // set records or rows of data per page
             $recordsPerPage = 50;
 
@@ -34,11 +34,11 @@ require_once("include/menu.php");
 
         <?php
              $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
-            $sql = "Select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw where RegimentID = {$Regiment} order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
+            $sql = "Select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw where DateDeath = '{$DateDeath}' order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
             $ret = $db->query($sql);
  ?>
         <h1 class="display-3 text-center">Roll of Honour: List People <small
-                class="text-muted"><?=$RegimentName?></small></h1>
+                class="text-muted"><?=$DateDeath?></small></h1>
         <div class="row justify-content-md-center">
             <div class="col-md-auto bg-primary">
                 <h2 class="border rounded-circle text-center">Info</h2>
@@ -46,14 +46,12 @@ require_once("include/menu.php");
                     <div class="card-body">
                         <table class="table table-dark table-fluid">
                             <thead>
-                                <caption>List of <?=$TotalDeaths?> People for <?=$RegimentName?></caption>
+                                <caption>List of <?=$TotalDeaths?> People for <?=$DateDeath?></caption>
                                 <tr>
                                     <th class="text-right"><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber&Regiment=<?=$Regiment?>">Person
                                             Number</a></th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Name&Regiment=<?=$Regiment?>">Name</a>
-                                    </th>
+                                   
                                     <th><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName&Regiment=<?=$Regiment?>">Last
                                             Name</a></th>
@@ -77,12 +75,13 @@ require_once("include/menu.php");
                                     <td class="text-center"><a
                                             href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
                                     </td>
-                                    <td><?=ucwords(strtolower($row['Name']))?></td>
+                                   
                                     <td><?=ucwords(strtolower($row['LastName']))?></td>
-                                    <td><?=ucwords(strtolower($row['FirstName']))?></td>
+                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=$row['Year']?></td>
+                                    <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                            role="button"><?=$row['Year']?></td>
                                 </tr>
                                 <?php }  ?>
                             </tbody>
@@ -195,15 +194,15 @@ require_once("include/menu.php");
                 </div>
                 <div>
                     <?php
-            $sql = "Select DISTINCT Regiment, RegimentID from PersonInfoRaw ORDER BY Regiment";
+            $sql = "Select DISTINCT DateDeath from PersonInfoRaw ORDER BY DateDeath";
             $ret = $db->query($sql);
             ?>
                     <form action="<?=$_SERVER['PHP_SELF']?>" method="get">
-                        <select name="Regiment" id="Regiment">
+                        <select name="DateDeath" id="DateDeath">
                             <?php
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
-                            <option value="<?=abs($row['RegimentID'])?>" <?php if ($row['RegimentID'] == $Regiment) { echo 'selected';} ?>><?=$row['Regiment']?></option>
+                            <option value="<?=$row['DateDeath']?>" <?php if ($row['DateDeath'] == $DateDeath) { echo 'selected';} ?>><?=$row['DateDeath']?></option>
                             <?php } ?>
                         </select>
                         <button type="submit" class="btn btn-primary">Submit</button>

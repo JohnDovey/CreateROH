@@ -53,10 +53,10 @@ while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                                 <td scope="row">Rank:</td>
                                 <td><a href="list.php?mod=rank&rankid=<?=$row['Rank']?>"><?=$row['Rank']?></a></td>
                             </tr>
-                            <tr>
+                           <!-- <tr>
                                 <td class="t">Name:</td>
                                 <td> <?=$row['Name']?></td>
-                            <tr>
+                            <tr> -->
                             <tr>
                                 <td scope="row">Last Name:</td>
                                 <td class=""><a
@@ -214,7 +214,7 @@ If ($PrevNo < 1){
                     </div>
                     <div class="card">
                     <div>&nbsp;</div>
-                        <img src="<?=GetImgSrc($row['id'], $db)?>" class="card-img-top"
+                        <img src="<?=$row['ImgUrlComplete']?>" class="card-img-top"
                             alt=" <?=$row['PersonNumber']?>">
 
                         <div class="card-body">

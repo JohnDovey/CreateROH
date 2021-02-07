@@ -46,7 +46,7 @@ require_once("include/menu.php");
                                 <caption>List of People</caption>
                                 <tr>
                                     <th class="text-right"><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber">Person Number</a></th>
-                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Name">Name</a></th>
+                                    
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName">Last Name</a></th>
                                     <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=FirstName">First Name</a></th>
                                     <th>Initials</th>
@@ -62,7 +62,7 @@ require_once("include/menu.php");
                                     <td class="text-center"><a
                                             href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
                                     </td>
-                                    <td><?=ucwords(strtolower($row['Name']))?></td>
+                                    
                                     <td><?=ucwords(strtolower($row['LastName']))?></td>
                                     <td><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>

@@ -51,9 +51,7 @@ require_once("include/menu.php");
                                     <th class="text-right"><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber&Regiment=<?=$Regiment?>">Person
                                             Number</a></th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Name&Regiment=<?=$Regiment?>">Name</a>
-                                    </th>
+                                    
                                     <th><a
                                             href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName&Regiment=<?=$Regiment?>">Last
                                             Name</a></th>
@@ -77,12 +75,12 @@ require_once("include/menu.php");
                                     <td class="text-center"><a
                                             href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
                                     </td>
-                                    <td><?=ucwords(strtolower($row['Name']))?></td>
-                                    <td><?=ucwords(strtolower($row['LastName']))?></td>
+                                 
+                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>><?=ucwords(strtolower($row['LastName']))?></td>
                                     <td><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                    <td"><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
                                             role="button"><?=$row['Year']?></a></td>
                                 </tr>
                                 <?php }  ?>

@@ -61,7 +61,10 @@ require_once("include/menu.php");
                     $MyChartType = $_GET['chart'];
                 }
                 include_once('js/chartGeneric.php'); ?>
-                <p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
+                <p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a
+                        href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line
+                        Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary"
+                        role="button">Radar Graph</a></p>
             </div> <!-- end Center Col -->
             <div class="col col-lg-2">
 
@@ -76,9 +79,10 @@ require_once("include/menu.php");
                     <div class="card-body">
                         <table class="table table-dark table-fluid">
                             <thead>
-                            <caption>Cause of Death (by year)(top 60)<br>Total Deaths: <?=$TotalDeaths?><br>Deaths with Cause: <?=$TotalWithCause?><br>No Cause: <?=$NoCause?></caption>
+                                <caption>Cause of Death (by year)(top 60)<br>Total Deaths: <?=$TotalDeaths?><br>Deaths
+                                    with Cause: <?=$TotalWithCause?><br>No Cause: <?=$NoCause?></caption>
                                 <tr>
-                                <th>Year</th>
+                                    <th>Year</th>
                                     <th>Cause of Death</th>
                                     <th>Count</th>
                                     <th>% of <?=$TotalWithCause?></th>
@@ -89,14 +93,14 @@ require_once("include/menu.php");
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
                                 <tr>
-                                <td><?=$row['Year']?></td>
+                                    <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                            role="button"><?=$row['Year']?></a></td>
                                     <td><?=$row['CauseDeath']?></td>
-                                    <td><button type="button" class="btn btn-primary">
-                                     <span class="badge badge-light">
-                                    <?=$row['CountCauseDeath']?></span>
-                                </button></td>
-                                <td><?=percent($row['CountCauseDeath'] / $TotalWithCause)?></td>
-                                   
+                                    <td class="badge badge-pill badge-info text-center">
+                                            <?=$row['CountCauseDeath']?>
+                                    </td>
+                                    <td><?=percent($row['CountCauseDeath'] / $TotalWithCause)?></td>
+
                                 </tr>
                                 <?php }  ?>
                             </tbody>
