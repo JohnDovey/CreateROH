@@ -75,6 +75,7 @@ require_once("include/menu.php");
                             <thead>
                             <caption>Year Deaths.<br>Total Deaths: <?=$TotalWithYear?><br>Deaths with Year: <?=$TotalWithYear?><br>No Year: <?=$NoYear?></caption>
                                 <tr>
+                                <th></th>
                                     <th class="text-center">Year</th>
                                     <th class="text-right">Count</th>
                                     <th class="text-right">% of <?=$TotalWithYear?></th>
@@ -85,6 +86,8 @@ require_once("include/menu.php");
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
                                 <tr>
+                                <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                            role="button"><i class="fa fa-microscope"></i></a></td>
                                     <td class="text-center"><?=$row['Year']?></td>
                                     <td class="text-right"><?=$row['CountYearDeath']?></td>
                                     <td class="text-right"><?=percent($row['CountYearDeath'] / $TotalDeaths)?></td>

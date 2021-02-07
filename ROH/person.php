@@ -208,16 +208,12 @@ If ($PrevNo < 1){
 				$ret = $db->query($sql);
 				while($row = $ret->fetchArray(SQLITE3_ASSOC) ){ ?>
                 
-                <div class="card">
-                    <img class="card-img-top" src="holder.js/100x180/" alt="">
-                    <div class="card-body">
-                        <h4 class="card-title">Title</h4>
-                        <p class="card-text">Text</p>
-                    </div>
+                
 
                     <div class="container">
                     </div>
                     <div class="card">
+                    <div>&nbsp;</div>
                         <img src="<?=GetImgSrc($row['id'], $db)?>" class="card-img-top"
                             alt=" <?=$row['PersonNumber']?>">
 

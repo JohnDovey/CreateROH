@@ -39,7 +39,9 @@ function GetImgSrc($id, $db){
 		$row2['ImgName'] = 'no_image.jpg';
 		$sql2 = "UPDATE PersonImages set ImgName = '" . $row2['ImgName'] . "' where id = " . $id . ";";
 		$ret2 = $db->exec($sql2);
+		//echo "<h1>Sql 1: " . $sql2 . "</h2>";
 		$sql2 = "UPDATE PersonImages set ImgPath = '" . $row2['ImgPath'] . "' where id = " . $id . ";";
+		//echo "<h1>Sql 2: " . $sql2 . "</h2>";
 		$ret2 = $db->exec($sql2);
 		
 		
