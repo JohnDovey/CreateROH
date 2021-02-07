@@ -76,11 +76,11 @@ require_once("include/menu.php");
                                             href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
                                     </td>
                                  
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>><?=ucwords(strtolower($row['LastName']))?></td>
+                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=ucwords(strtolower($row['LastName']))?></td>
                                     <td><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
-                                    <td"><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                    <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
                                             role="button"><?=$row['Year']?></a></td>
                                 </tr>
                                 <?php }  ?>
