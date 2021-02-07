@@ -1,4 +1,4 @@
-# Create Country with Data from PersonInfoRaw
+
 BEGIN TRANSACTION; 
 Drop table Country;
 CREATE TABLE IF NOT EXISTS 'Country' (

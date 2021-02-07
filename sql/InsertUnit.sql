@@ -1,4 +1,4 @@
-# Create Unit with Data from PersonInfoRaw
+
 BEGIN TRANSACTION; 
 Drop table Unit;
 CREATE TABLE IF NOT EXISTS 'Unit' (

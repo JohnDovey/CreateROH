@@ -1,4 +1,3 @@
-# Create Regiment with Data from PersonInfoRaw
 BEGIN TRANSACTION; 
 Drop table Regiment;
 CREATE TABLE IF NOT EXISTS 'Regiment' (

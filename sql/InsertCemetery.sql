@@ -1,4 +1,4 @@
-# Create Cemetery with Data from PersonInfoRaw
+
 BEGIN TRANSACTION; 
 Drop table cemetery;
 CREATE TABLE IF NOT EXISTS 'Cemetery' ( 

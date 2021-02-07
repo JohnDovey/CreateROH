@@ -1,4 +1,4 @@
-# Create Rank with Data from PersonInfoRaw
+
 BEGIN TRANSACTION; 
 Drop table RANK;
 CREATE TABLE IF NOT EXISTS 'Rank' (
