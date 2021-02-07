@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "CreateROH", "CreateROH.vbproj", "{C36F8DD8-63F3-46EB-A2A3-987DB4071DDF}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GrabImages", "..\GrabImages\GrabImages.vbproj", "{5DE47E29-54DE-4FCB-A8C8-6CB01F29CDA1}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GrabImages", "GrabImages\GrabImages.vbproj", "{610D4C49-CAB2-4CDD-ACCE-C7B3E3BABA3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{C36F8DD8-63F3-46EB-A2A3-987DB4071DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C36F8DD8-63F3-46EB-A2A3-987DB4071DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C36F8DD8-63F3-46EB-A2A3-987DB4071DDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DE47E29-54DE-4FCB-A8C8-6CB01F29CDA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DE47E29-54DE-4FCB-A8C8-6CB01F29CDA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DE47E29-54DE-4FCB-A8C8-6CB01F29CDA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DE47E29-54DE-4FCB-A8C8-6CB01F29CDA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{610D4C49-CAB2-4CDD-ACCE-C7B3E3BABA3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{610D4C49-CAB2-4CDD-ACCE-C7B3E3BABA3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{610D4C49-CAB2-4CDD-ACCE-C7B3E3BABA3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{610D4C49-CAB2-4CDD-ACCE-C7B3E3BABA3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
