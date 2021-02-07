@@ -82,7 +82,8 @@ require_once("include/menu.php");
                                     <td><?=ucwords(strtolower($row['FirstName']))?></td>
                                     <td><?=$row['Initials']?></td>
                                     <td><?=$row['Rank']?></td>
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=$row['Year']?></td>
+                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
+                                            role="button"><?=$row['Year']?></a></td>
                                 </tr>
                                 <?php }  ?>
                             </tbody>

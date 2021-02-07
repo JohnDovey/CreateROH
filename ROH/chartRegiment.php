@@ -76,7 +76,7 @@ require_once("include/menu.php");
                         <table class="table table-dark table-fluid">
                             <thead>
                                 <caption>Regiment<br>Total Deaths by Regiment (Top 60): <?=$TotalDeaths?><br>Deaths with Regiment: <?=$TotalWithRegiment?><br>No Regiment: <?=$NoRegiment?></caption>
-                                <tr>
+                                <tr><th></th>
                                     <th>Regiment</th>
                                     <th>Count</th>
                                     <th>% of <?=$TotalWithRegiment?></th>
@@ -87,7 +87,9 @@ require_once("include/menu.php");
                     while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
                     ?>
                                 <tr>
-                                    <td><?=$row['Regiment']?> <small class="text-muted"><?=$row['Unit']?>: <?=$row['Unit2']?></small></td>
+                                <td><a href="listPeopleRegiment.php?Regiment=<?=$row['RegimentID']?>"
+                                class="btn btn-primary" role="button"><i class="fa fa-microscope"></i>  <?=$row['Regiment']?></a> <small class="text-muted"><?=$row['Unit']?>: <?=$row['Unit2']?></small></td>
+                                    
                                     <td><?=$row['CountRegiment']?></td>
                                 <td><?=percent($row['CountRegiment'] / $TotalWithRegiment)?></td>
                                    
