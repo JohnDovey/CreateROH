@@ -5,3 +5,6 @@ http://192.168.0.25:3000/<span style='color: #ff0000'><br /><b>Warning</b>:  SQL
 "insert into 'PersonInfoRaw' ('id','PersonNumber','FirstName','LastName','Rank','RankID','Regiment','RegimentID','Unit','UnitID','DateDeath','CauseDeath','AddInfo','Country','CountryID','Cemetery','CemeteryID','GraveRef','Initials','ServiceNo','Age','Locality','LocalityID', 'Citation', UnitID2, Unit2) VALUES (null,'29436','','BEZUIDENHOUT','Unknown',,'SA Army',704,'Unknown',0,'1901-01-01','','','South Africa',72,'SADF WALL OF REMEMBRANCE, VOORTREKKER MONUMENT, PRETORIA',2234,'Alternative Commemoration until grave found', 'T D','','','Gauteng',179, '', 179,'Army');"
 
 http://192.168.0.25:3000/<h1>Sql 1: UPDATE PersonImages set ImgName = 'no_image.jpg' where id = 38674;</h2><h1>Sql 2: UPDATE PersonImages set ImgPath = 'DownLoadImage' where id = 38674;</h2>DownLoadImage/no_image.jpg
+
+
+40011
