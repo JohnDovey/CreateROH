@@ -1,111 +1,112 @@
 <?php
+/**
+ * chartRank.php
+ * Secure and modern deaths by rank chart
+ */
+require_once("include/db.php");
 require_once("functions.php");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour: Rank Death Stats (Top 60)</title>
-    <?php
-        require_once("include/bootstrap-head.php");
-    ?>
+    <title>Roll of Honour: Deaths by Rank</title>
+    <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 
 <body>
     <div class="container-fluid clearfix">
-        <?php
-require_once("include/menu.php");
-?>
+        <?php require_once("include/menu.php"); ?>
+
+        <h1 class="display-4 text-center my-5">Deaths by Rank (Top Ranks)</h1>
+
         <div class="row justify-content-md-center">
-            <div class="col-md-auto bg-primary">
-                <h2 class="border rounded-circle text-center">Rank Death Stats (Top 60)</h2>
-                <?php
-               // Get Chart Data
-                $sql = "Select RankID,Rank, COUNT(Rank) as CountRank from PersonInfoRaw where RankID > 0 GROUP BY Rank order by CountRank DESC, Rank LIMIT 60;";
-                $ret = $db->query($sql);
-                $LabelNames="[";
-                $DataPoints="[";
+            <!-- Main Chart -->
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-primary">
+                    <div class="card-header">
+                        <h5 class="mb-0">Rank Death Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        // Get chart data securely
+                        $sql = "SELECT Rank, COUNT(*) as CountRank 
+                                FROM PersonInfoRaw 
+                                WHERE RankID > 0 
+                                GROUP BY Rank 
+                                ORDER BY CountRank DESC 
+                                LIMIT 40";
+                        
+                        $data = db()->fetchAll($sql);
 
-                while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    // ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    $LabelNames= $LabelNames . "'" . $row['Rank'] . "',";
-                    $DataPoints= $DataPoints . "'" . $row['CountRank'] . "',";
-                 }
-                 $LabelNames= $LabelNames . "]";
-                 $DataPoints= $DataPoints . "]";
+                        $LabelNames = json_encode(array_column($data, 'Rank'));
+                        $DataPoints = json_encode(array_column($data, 'CountRank'));
+                        ?>
 
-                 
-               ?>
-                <div class="container">
-                    <div class="row py-2">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <canvas id="StatsGraph" width="900"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                        <canvas id="StatsGraph" style="height: 520px; width: 100%;"></canvas>
+
+                        <?php 
+                        $MyChartTitle = "Deaths by Rank";
+                        $MyChartType = $_GET['chart'] ?? 'bar';
+                        if (!in_array($MyChartType, ['bar', 'line', 'radar'])) {
+                            $MyChartType = 'bar';
+                        }
+                        include_once('js/chartGeneric.php'); 
+                        ?>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="?chart=bar" class="btn btn-sm btn-light <?= $MyChartType === 'bar' ? 'active' : '' ?>">Bar</a>
+                        <a href="?chart=line" class="btn btn-sm btn-light <?= $MyChartType === 'line' ? 'active' : '' ?>">Line</a>
+                        <a href="?chart=radar" class="btn btn-sm btn-light <?= $MyChartType === 'radar' ? 'active' : '' ?>">Radar</a>
                     </div>
                 </div>
-                <?php 
-                $MyChartTitle = "Death by Rank Stats";
-                $MyChartType = "line";
-                if (isset($_GET['chart'])){
-                    $MyChartType = $_GET['chart'];
-                }
-                
-                include_once('js/chartGeneric.php'); ?>
-<p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
-            </div> <!-- end Center Col -->
-            <div class="col col-lg-2">
+            </div>
 
-                <?php
-                $TotalDeaths = CountTotalDeaths($db);
-                $NoRank = CountNoRank($db);
-                $TotalWithRank=$TotalDeaths - $NoRank;
-                
- $sql = "Select RankID,Rank, COUNT(Rank) as CountRank from PersonInfoRaw where RankID > 0 GROUP BY Rank order by CountRank DESC, Rank LIMIT 60;";
- $ret = $db->query($sql);
- ?>
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-dark table-fluid">
+            <!-- Side Table -->
+            <div class="col-lg-4">
+                <div class="card bg-primary h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">Detailed Breakdown</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 560px; overflow-y: auto;">
+                        <?php
+                        $totalDeaths = CountTotalDeaths();
+                        $noRank      = CountNoRank();
+                        $withRank    = $totalDeaths - $noRank;
+                        ?>
+                        <table class="table table-dark table-striped table-hover">
                             <thead>
-                                <caption>Rank<br>Total Deaths: <?=$TotalDeaths?><br>Deaths with Rank: <?=$TotalWithRank?><br>No Rank: <?=$NoRank?></caption>
                                 <tr>
                                     <th>Rank</th>
-                                    <th>Count</th>
-                                    <th>% of <?=$TotalWithRank?></th>
+                                    <th class="text-end">Deaths</th>
+                                    <th class="text-end">% of Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    ?>
+                            <?php foreach ($data as $row): 
+                                $percent = $withRank > 0 ? ($row['CountRank'] / $withRank) * 100 : 0;
+                            ?>
                                 <tr>
-                                    <td><?=$row['Rank']?></td>
-                                    <td><?=$row['CountRank']?></td>
-                                <td><?=percent($row['CountRank'] / $TotalWithRank)?></td>
-                                   
+                                    <td><?= htmlspecialchars($row['Rank']) ?></td>
+                                    <td class="text-end"><?= number_format($row['CountRank']) ?></td>
+                                    <td class="text-end"><?= round($percent, 1) ?>%</td>
                                 </tr>
-                                <?php }  ?>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
+                    <div class="card-footer small text-muted">
+                        Total with Rank: <?= number_format($withRank) ?> | No Rank: <?= number_format($noRank) ?>
+                    </div>
                 </div>
-            </div> <!-- End Right Col -->
+            </div>
         </div>
-    </div> <!-- End Container -->
+    </div>
+
     <hr>
-    <?php
-require_once("include/footer.php");
-?>
-
-    <?php
-        require_once("include/bootstrap-footer.php");
-    ?>
+    <?php require_once("include/footer.php"); ?>
+    <?php require_once("include/bootstrap-footer.php"); ?>
 </body>
-
 </html>
