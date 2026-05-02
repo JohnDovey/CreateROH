@@ -1,226 +1,147 @@
 <?php
+/**
+ * listPeopleRegiment.php
+ * Secure list of people by regiment
+ */
+require_once("include/db.php");
 require_once("functions.php");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour: List People (Regiment)</title>
-    <?php
-        require_once("include/bootstrap-head.php");
-    ?>
+    <title>Roll of Honour: List People by Regiment</title>
+    <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 
 <body>
     <div class="container-fluid clearfix">
-        <?php
-require_once("include/menu.php");
-?>
-        <?php
-            
-            // page is the current page, if there's nothing set, default is page 1
-            $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $SortField = isset($_GET['sort']) ? $_GET['sort'] : "LastName";
-            $Regiment = isset($_GET['Regiment']) ? $_GET['Regiment'] : 1;
-            $TotalDeaths = CountRecordsCode('PersonInfoRaw', 'RegimentID', $Regiment, $db);
-            $RegimentName = GetRegimentName($Regiment, $db);
-            // set records or rows of data per page
-            $recordsPerPage = 50;
-
-            // calculate for the query LIMIT clause
-            ?>
+        <?php require_once("include/menu.php"); ?>
 
         <?php
-             $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
-            $sql = "Select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw where RegimentID = {$Regiment} order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
-            $ret = $db->query($sql);
- ?>
-        <h1 class="display-3 text-center">Roll of Honour: List People <small
-                class="text-muted"><?=$RegimentName?></small></h1>
+        $RegimentID = isset($_GET['Regiment']) ? (int)$_GET['Regiment'] : 1;
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $sortField = in_array($_GET['sort'] ?? 'LastName', ['PersonNumber','LastName','FirstName','Rank','DateDeath']) 
+                     ? $_GET['sort'] 
+                     : 'LastName';
+
+        $recordsPerPage = 50;
+        $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+
+        // Get regiment name
+        $regimentName = GetRegimentName($RegimentID);
+
+        // Count people in this regiment
+        $sqlCount = "SELECT COUNT(*) as total FROM PersonInfoRaw WHERE RegimentID = :id";
+        $totalInRegiment = db()->fetchOne($sqlCount, [':id' => $RegimentID])['total'] ?? 0;
+        ?>
+
+        <h1 class="display-4 text-center my-5">
+            Roll of Honour — <?= htmlspecialchars($regimentName) ?> 
+            <small class="text-muted">(<?= number_format($totalInRegiment) ?> records)</small>
+        </h1>
+
         <div class="row justify-content-md-center">
-            <div class="col-md-auto bg-primary">
-                <h2 class="border rounded-circle text-center">Info</h2>
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-dark table-fluid">
-                            <thead>
-                                <caption>List of <?=$TotalDeaths?> People for <?=$RegimentName?></caption>
-                                <tr>
-                                    <th class="text-right"><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber&Regiment=<?=$Regiment?>">Person
-                                            Number</a></th>
-                                    
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName&Regiment=<?=$Regiment?>">Last
-                                            Name</a></th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=FirstName&Regiment=<?=$Regiment?>">First
-                                            Name</a></th>
-                                    <th>Initials</th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=RankID&Regiment=<?=$Regiment?>">Rank</a>
-                                    </th>
-                                    <th><a
-                                            href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Year&Regiment=<?=$Regiment?>">Year</a>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    ?>
-                                <tr>
-                                    <td class="text-center"><a
-                                            href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
-                                    </td>
-                                 
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=ucwords(strtolower($row['LastName']))?></td>
-                                    <td><?=ucwords(strtolower($row['FirstName']))?></td>
-                                    <td><?=$row['Initials']?></td>
-                                    <td><?=$row['Rank']?></td>
-                                    <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
-                                            role="button"><?=$row['Year']?></a></td>
-                                </tr>
-                                <?php }  ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <nav aria-label="People Record navigation">
-                        <ul class="pagination  justify-content-center">
+            <div class="col-md-auto bg-primary p-4 rounded shadow-sm" style="min-width: 1100px;">
 
+                <!-- Regiment Selector -->
+                <div class="mb-4">
+                    <form method="get" class="d-inline">
+                        <label for="Regiment" class="me-2">Select Regiment:</label>
+                        <select name="Regiment" id="Regiment" class="form-select d-inline w-auto" onchange="this.form.submit()">
                             <?php
-                    // *************** <PAGING_SECTION> ***************
-        // ***** for 'first' and 'previous' pages
-        if($page>1){
-            // ********** show the first page
-            ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=1&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"
-                                    aria-lable="First Page">
-                                    <span aria-hidden="true"><<</span>
-                                    <span class="sr-only">First</span></a>
-
-                                <?php
-             
-            // ********** show the previous page
-            $prev_page = $page - 1;
-            ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=<?=$prev_page?>&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"
-                                    title="Previous page is <?=$prev_page?>"
-                                    aria-label="Previous Page is <?=$prev_page?>">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous Page <?=$prev_page?></span>
-                                </a>
-                            </li>
-                            <?php 
-        }
-         
-         
-        // ********** show the number paging
-
-        // find out total pages
-    
-        //$total_rows= CountTotalDeaths($db);
-        $total_rows = $TotalDeaths;
-        $total_pages = ceil($total_rows / $recordsPerPage);
-
-        // range of num links to show
-        $range = 2;
-
-        // display links to 'range of pages' around 'current page'
-        $initial_num = $page - $range;
-        $condition_limit_num = ($page + $range)  + 1;
-
-        for ($x=$initial_num; $x<$condition_limit_num; $x++) {
-             
-            // be sure '$x is greater than 0' AND 'less than or equal to the $total_pages'
-            if (($x > 0) && ($x <= $total_pages)) {
-             
-                // current page
-                if ($x == $page) {
-                    ?>
-                            <li class="page-item active"><a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"><?=$x?></a>
-                            </li>
-                            <?php
-                }
-                // not current page
-                else { ?>
-                            <li class="page-item"><a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"><?=$x?></a>
-                            </li>
-                            <?php
-                }
-            }
-        }
-         
-         
-        // ***** for 'next' and 'last' pages
-        if($page<$total_pages){
-            // ********** show the next page
-            $next_page = $page + 1;
-            ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=<?=$next_page?>&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"
-                                    aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-                            <?php
-             
-            // ********** show the last page
-            ?>
-                            <li class="page-item">
-                                <a class="page-link"
-                                    href="<?=$_SERVER['PHP_SELF']?>?page=<?=$total_pages?>&sort=<?=$SortField?>&Regiment=<?=$Regiment?>"
-                                    aria-label="Next">
-                                    <span aria-hidden="true">>></span>
-                                    <span class="sr-only">Last page</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <?php  }
-    // *************** </PAGING_SECTION> ***************
-    ?>
-                    </nav>
-                    <p class="text-center">(Page <?=$page?>/<?=$total_pages?>) (Sorted by: <?=$SortField?>)</p>
-                </div>
-                <div>
-                    <?php
-            $sql = "Select DISTINCT Regiment, RegimentID from PersonInfoRaw ORDER BY Regiment";
-            $ret = $db->query($sql);
-            ?>
-                    <form action="<?=$_SERVER['PHP_SELF']?>" method="get">
-                        <select name="Regiment" id="Regiment">
-                            <?php
-                    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    ?>
-                            <option value="<?=abs($row['RegimentID'])?>" <?php if ($row['RegimentID'] == $Regiment) { echo 'selected';} ?>><?=$row['Regiment']?></option>
-                            <?php } ?>
+                            $regSql = "SELECT DISTINCT RegimentID, Regiment 
+                                       FROM PersonInfoRaw 
+                                       WHERE RegimentID IS NOT NULL 
+                                       ORDER BY Regiment";
+                            $regiments = db()->fetchAll($regSql);
+                            foreach ($regiments as $r): ?>
+                                <option value="<?= $r['RegimentID'] ?>" <?= $r['RegimentID'] == $RegimentID ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($r['Regiment']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
-            </div> <!-- end Center Col -->
 
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=PersonNumber" class="text-white">Person #</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=LastName" class="text-white">Last Name</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=FirstName" class="text-white">First Name</a></th>
+                            <th>Initials</th>
+                            <th>Rank</th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=DateDeath" class="text-white">Year</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sql = "SELECT *, strftime('%Y', DateDeath) as Year 
+                            FROM PersonInfoRaw 
+                            WHERE RegimentID = :regiment 
+                            ORDER BY {$sortField}, FirstName 
+                            LIMIT :offset, :limit";
 
+                    $params = [
+                        ':regiment' => $RegimentID,
+                        ':offset'   => $fromRecordNum,
+                        ':limit'    => $recordsPerPage
+                    ];
+
+                    $rows = db()->fetchAll($sql, $params);
+
+                    foreach ($rows as $row):
+                    ?>
+                        <tr>
+                            <td>
+                                <a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" 
+                                   class="btn btn-sm btn-primary">
+                                    <?= $row['PersonNumber'] ?>
+                                </a>
+                            </td>
+                            <td><?= htmlspecialchars(ucwords(strtolower($row['LastName'] ?? ''))) ?></td>
+                            <td><?= htmlspecialchars(ucwords(strtolower($row['FirstName'] ?? ''))) ?></td>
+                            <td><?= htmlspecialchars($row['Initials'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['Rank'] ?? '') ?></td>
+                            <td><?= $row['Year'] ?? '—' ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <?php
+                $total_pages = ceil($totalInRegiment / $recordsPerPage);
+                ?>
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item"><a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=1&sort=<?= $sortField ?>">« First</a></li>
+                            <li class="page-item"><a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=<?= $page-1 ?>&sort=<?= $sortField ?>">‹ Prev</a></li>
+                        <?php endif; ?>
+
+                        <?php for ($i = max(1, $page-2); $i <= min($total_pages, $page+2); $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=<?= $i ?>&sort=<?= $sortField ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item"><a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=<?= $page+1 ?>&sort=<?= $sortField ?>">Next ›</a></li>
+                            <li class="page-item"><a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=<?= $total_pages ?>&sort=<?= $sortField ?>">Last »</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+
+            </div>
         </div>
-    </div> <!-- End Container -->
+    </div>
+
     <hr>
-    <?php
-require_once("include/footer.php");
-?>
-
-    <?php
-        require_once("include/bootstrap-footer.php");
-    ?>
+    <?php require_once("include/footer.php"); ?>
+    <?php require_once("include/bootstrap-footer.php"); ?>
 </body>
-
 </html>
