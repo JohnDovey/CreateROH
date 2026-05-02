@@ -1,56 +1,94 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-  <a class="navbar-brand" href="/">Roll of Honour</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="person.php">Person</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="mainListPeople.php">List People</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLists" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Lists
+<?php
+/**
+ * include/menu.php
+ * Modern Bootstrap 5 Responsive Navigation
+ */
+?>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="index.php">
+            <i class="fa fa-cross"></i> Roll of Honour
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLists">
-          <a class="dropdown-item" href="listPeopleRegiment.php">List People by Regiment</a>
-          <a class="dropdown-item" href="listPeopleYear.php">List by Year</a>
-          <a class="dropdown-item" href="#">XXX</a>
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" 
+                aria-expanded="false" 
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu Items -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+
+                <!-- Home -->
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php">
+                        <i class="fa fa-home"></i> Home
+                    </a>
+                </li>
+
+                <!-- Browse -->
+                <li class="nav-item">
+                    <a class="nav-link" href="mainListPeople.php">
+                        <i class="fa fa-list"></i> Browse All
+                    </a>
+                </li>
+
+                <!-- Lists Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" 
+                       id="listsDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-table"></i> Lists
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="listsDropdown">
+                        <li><a class="dropdown-item" href="listPeopleRegiment.php">By Regiment</a></li>
+                        <li><a class="dropdown-item" href="listPeopleYear.php">By Year of Death</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="person.php">Single Person Lookup</a></li>
+                    </ul>
+                </li>
+
+                <!-- Statistics Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" 
+                       id="statsDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-chart-bar"></i> Statistics
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="statsDropdown">
+                        <li><a class="dropdown-item" href="chartYear.php">By Year</a></li>
+                        <li><a class="dropdown-item" href="chartAge.php">By Age</a></li>
+                        <li><a class="dropdown-item" href="chartCauseOfDeath.php">Cause of Death</a></li>
+                        <li><a class="dropdown-item" href="chartCauseOfDeathYear.php">Cause by Year</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="chartRegiment.php">By Regiment</a></li>
+                        <li><a class="dropdown-item" href="chartRank.php">By Rank</a></li>
+                        <li><a class="dropdown-item" href="chartCountry.php">By Country</a></li>
+                        <li><a class="dropdown-item" href="chartCemetery.php">By Cemetery</a></li>
+                        <li><a class="dropdown-item" href="chartUnit.php">By Unit</a></li>
+                        <li><a class="dropdown-item" href="chartLocality.php">By Locality</a></li>
+                    </ul>
+                </li>
+
+                <!-- Utilities -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" 
+                       id="utilsDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-tools"></i> Utilities
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="utilsDropdown">
+                        <li><a class="dropdown-item" href="DataInfo.php">Database Info</a></li>
+                    </ul>
+                </li>
+
+            </ul>
         </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuUtilities" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Utilities
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuUtilities">
-          <a class="dropdown-item" href="DataInfo.php">Table Info</a>
-          <a class="dropdown-item" href="#">XXX</a>
-          <a class="dropdown-item" href="#">XXX</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="StatsMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Stats
-        </a>
-        <div class="dropdown-menu" aria-labelledby="StatsMenu">
-          <a class="dropdown-item" href="chartAge.php">Age</a>
-          <a class="dropdown-item" href="chartYear.php">Year</a>
-          <a class="dropdown-item" href="chartCauseOfDeath.php">Cause of Death</a>
-          <a class="dropdown-item" href="chartCauseOfDeathYear.php">Cause of Death (Year)</a>
-          <a class="dropdown-item" href="chartCountry.php">Country Deaths</a>
-          <a class="dropdown-item" href="chartLocality.php">Locality Deaths</a>
-          <a class="dropdown-item" href="chartUnit.php">Unit Deaths</a>
-          <a class="dropdown-item" href="chartRank.php">Rank Deaths</a>
-          <a class="dropdown-item" href="chartRegiment.php">Regiment Deaths</a>
-          <a class="dropdown-item" href="chartCemetery.php">Cemetery Deaths</a>
-        </div>
-      </li>
-    </ul>
-  </div>
+    </div>
 </nav>
