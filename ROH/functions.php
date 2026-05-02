@@ -1,298 +1,233 @@
 <?php
-/*
- ' Include this file with the command
- ' php require_once("Functions.php")
- ' John Dovey (john@justdone.co.za)
- ' November 2005 - 2010
-*/
-// require_once("Functions.php");
-?>
+/**
+ * ROH - functions.php
+ * Secure, cleaned, and modernised version
+ * John Dovey - Updated for security (prepared statements)
+ */
 
-<?php
-// Establish Database Connection
+require_once("include/db.php");
 
-class DB extends SQLite3
-{
-        function __construct( $file )
-        {
-            $this->open( $file );
-        }
-}
+/* ================================================================
+   Image Functions
+   ================================================================ */
 
-$db = new DB('./ROHData.sql3');
-//$db = new DB('../bin/debug/ROHData.sql3');
-if(!$db){
-    echo "<h1>" . $db->lastErrorMsg() . "</h1>";
- } else {
-    // echo "<h1>Opened database successfully</h1>\n";
- }
-?>
-<?php
-function GetImgSrc($id, $db){
-	$imgurl="DownLoadImage/no_image.jpg";
-	$sql = "SELECT * from PersonImages where id = " . $id . ";";
-	$ret = $db->query($sql);
-	$row2 = $ret->fetchArray(SQLITE3_ASSOC);
+function GetImgSrc($id) {
+    $sql = "SELECT * FROM PersonImages WHERE id = :id";
+    $row = db()->fetchOne($sql, [':id' => (int)$id]);
 
-	if ($row2['ImgUrl']=='/search/photos/no_image.jpg'){
-		$row2['ImgPath'] = 'DownLoadImage';
-		$row2['ImgName'] = 'no_image.jpg';
-		$sql2 = "UPDATE PersonImages set ImgName = '" . $row2['ImgName'] . "' where id = " . $id . ";";
-		$ret2 = $db->exec($sql2);
-		//echo "<h1>Sql 1: " . $sql2 . "</h2>";
-		$sql2 = "UPDATE PersonImages set ImgPath = '" . $row2['ImgPath'] . "' where id = " . $id . ";";
-		//echo "<h1>Sql 2: " . $sql2 . "</h2>";
-		$ret2 = $db->exec($sql2);
-		
-		
-		//echo "<h1>" . $sql2 . "</h1>";
-	}
+    if (!$row) {
+        return 'DownLoadImage/no_image.jpg';
+    }
 
-	if (is_null($row2['ImgName']) ||strlen($row2['ImgName'])<2 ){
-		$imgUrl = $row2['ImgUrlComplete'];
-	} else {
-		$imgUrl = $row2['ImgPath'] . "/" . $row2['ImgName'];
-	}
-	
-	return $imgUrl;
+    // Handle missing / placeholder images
+    if ($row['ImgUrl'] === '/search/photos/no_image.jpg') {
+        return 'DownLoadImage/no_image.jpg';
+    }
+
+    if (empty($row['ImgName']) || strlen(trim($row['ImgName'])) < 2) {
+        return $row['ImgUrlComplete'] ?? 'DownLoadImage/no_image.jpg';
+    }
+
+    return $row['ImgPath'] . '/' . $row['ImgName'];
 }
 
-?>
-<?php
-function SaveRemoteImage($url, $id, $db){
-	$FileName=basename($url);
-	$NewDir="DownLoadImage";
-	
-	if (file_exists('DownLoadImage/' . $FileName)){
-	}else{
-		$ch = curl_init('$url');
-		$fp = fopen('DownLoadImage/' . $FileName, 'wb');
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_exec($ch);
-		curl_close($ch);
-		fclose($fp);
-		
-		$sql="UPDATE PersonImages set 'ImgName' = '{$FileName}', 'ImgPath'='{$NewDir}/' where id =  " . $id . ";";
-		$ret = $db->exec($sql);
-	}
-}
-?>
-<?php
-function CountRecordsCode($table, $code, $codevalue, $dbase)
-{
-	// Params: 	$table = The table to count records
-	//			$code = The Select Field to limit the count
-	//			$codevalue = The value on which to select
-	//			$dbase = The Database connection variable (normally $db)
-	$sql = "SELECT COUNT(*) from " . $table . " where " . $code . " = " . $codevalue . ";";
-	$ret = $dbase->querySingle($sql);
-	return $ret;	
-}
-?>
-<?php
-function CountRecordsYear($codevalue, $dbase)
-{
-	// Params: 	$table = The table to count records
-	//			$code = The Select Field to limit the count
-	//			$codevalue = The value on which to select
-	//			$dbase = The Database connection variable (normally $db)
-	$sql = "SELECT COUNT(*),  strftime('%Y',DateDeath) as Year from PersonInfoRaw where Year = '" . $codevalue . "';";
-	$ret = $dbase->querySingle($sql);
-	return $ret;	
-}
-?>
-<?php
-function CountRecords($table, $dbase)
-{
-	// Count total number of records in a table
-	// Params: 	$table = The table to count records
-	//			$dbase = The Database connection variable (normally $db)
-	$sql = "SELECT COUNT(*) from " . $table .  ";";
-	$ret = $dbase->querySingle($sql);
-	return $ret;	
-}
-?>
+/**
+ * Legacy wrapper - downloads image if missing (use with caution)
+ */
+function SaveRemoteImage($url, $id) {
+    $filename = basename($url);
+    $targetDir = "DownLoadImage";
+    $targetPath = $targetDir . '/' . $filename;
 
-<?php
-function CountDistinctPersonInfoRaw($field, $dbase) {
-	$sql="select  count(DISTINCT " . $field . ") from PersonInfoRaw;";
-	$ret = $dbase->querySingle($sql);
-	$num = $ret;
-	return $num;
-}
-?>
+    if (file_exists($targetPath)) {
+        return true;
+    }
 
-<?php
-function CountTotalDeaths($dbase){
-	$sql="select  count(*) from PersonInfoRaw;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-function percent($number){
-    return round($number * 100, 2) . ' %';
-}
-?>
-<?php
-function CountNoAge($dbase){
-	$sql="select  count(*) from PersonInfoRaw where Age < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoCause($dbase){
-	$sql="select  count(*) from PersonInfoRaw where CauseDeath < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoCountry($dbase){
-	$sql="select  count(*) from PersonInfoRaw where CountryID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoLocality($dbase){
-	$sql="select  count(*) from PersonInfoRaw where LocalityID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoUnit($dbase){
-	$sql="select  count(*) from PersonInfoRaw where UnitID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoRegiment($dbase){
-	$sql="select  count(*) from PersonInfoRaw where RegimentID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoCemetery($dbase){
-	$sql="select  count(*) from PersonInfoRaw where CemeteryID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoRank($dbase){
-	$sql="select  count(*) from PersonInfoRaw where RankID < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function CountNoYear($dbase){
-	$sql="select  count(*) from PersonInfoRaw where strftime('%Y',DateDeath) < 1;";
-	$ret = $dbase->querySingle($sql);
-	return $ret;
-}
-?>
-<?php
-function GetRegimentName($myRegimentID, $db) 
-{
-    $sql="select Regiment from PersonInfoRaw where RegimentID = " . $myRegimentID . ";";
-    $ret = $db->querySingle($sql);
-    return $ret;
- }
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
+    }
 
-?>
+    $ch = curl_init($url);
+    $fp = fopen($targetPath, 'wb');
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    $success = curl_exec($ch);
+    curl_close($ch);
+    fclose($fp);
 
-<?php
+    if ($success) {
+        $sql = "UPDATE PersonImages 
+                SET ImgName = :name, ImgPath = :path 
+                WHERE id = :id";
+        db()->execute($sql, [
+            ':name' => $filename,
+            ':path' => $targetDir,
+            ':id'   => (int)$id
+        ]);
+        return true;
+    }
+    return false;
+}
 
-function CalcActualAge($DOB) {
-	list($year, $month, $day) = explode("-", $DOB);
-	$year_diff = date("Y") - $year;
-	$month_diff = date("m") - $month;
-	$day_diff = date("d") - $day;
-	if ($month_diff < 0)
-	$year_diff--;
-	elseif (($month_diff == 0) && ($day_diff < 0))
-	$year_diff--;
-	return $year_diff;
-} //End function
-?>
+/* ================================================================
+   Count / Statistics Functions (now secure)
+   ================================================================ */
 
-<?php
+function CountRecords($table) {
+    $sql = "SELECT COUNT(*) FROM " . preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
 
-function CalcDeathAge($DOB, $DOD) { // DOB=Date of Birth, DOD=Date of Death
-	list($Byear, $Bmonth, $Bday) = explode("-", $DOB);
-	list($Dyear, $Dmonth, $Dday) = explode("-", $DOD);
-	$year_diff = $Dyear - $Byear;
-	$month_diff = $Dmonth - $Bmonth;
-	$day_diff = $Dday - $Bday;
-	if ($month_diff < 0)
-	$year_diff--;
-	elseif (($month_diff == 0) && ($day_diff < 0))
-	$year_diff--;
-	return $year_diff;
-} //End function
-?>
+function CountTotalDeaths() {
+    return CountRecords('PersonInfoRaw');
+}
 
-<?php
-/*== FUNCTIONS ==*/
+function CountNoAge() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE Age < 1 OR Age IS NULL OR Age = ''";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoCause() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE CauseDeath IS NULL OR CauseDeath = '' OR CauseDeath = 'Unknown'";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoCountry() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE CountryID < 1 OR CountryID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoLocality() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE LocalityID < 1 OR LocalityID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoUnit() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE UnitID < 1 OR UnitID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoRegiment() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE RegimentID < 1 OR RegimentID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoCemetery() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE CemeteryID < 1 OR CemeteryID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoRank() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE RankID < 1 OR RankID IS NULL";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountNoYear() {
+    $sql = "SELECT COUNT(*) FROM PersonInfoRaw WHERE DateDeath IS NULL OR DateDeath = '' OR strftime('%Y', DateDeath) < 1";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+function CountDistinct($field) {
+    $safeField = preg_replace('/[^a-zA-Z0-9_]/', '', $field);
+    $sql = "SELECT COUNT(DISTINCT {$safeField}) FROM PersonInfoRaw";
+    $result = db()->fetchOne($sql);
+    return $result ? (int)array_values($result)[0] : 0;
+}
+
+/* ================================================================
+   Lookup & Helper Functions
+   ================================================================ */
+
+function GetRegimentName($regimentID) {
+    $sql = "SELECT RegimentName FROM Regiment WHERE RegimentID = :id";
+    $row = db()->fetchOne($sql, [':id' => (int)$regimentID]);
+    return $row ? $row['RegimentName'] : 'Unknown';
+}
+
+function percent($number) {
+    return round((float)$number * 100, 2) . ' %';
+}
+
+/* ================================================================
+   Date / Age Calculation Functions (improved)
+   ================================================================ */
+
+function CalcActualAge($dob) {
+    if (empty($dob)) return 0;
+    try {
+        $birth = new DateTime($dob);
+        $now = new DateTime();
+        return $birth->diff($now)->y;
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+function CalcDeathAge($dob, $dod) {
+    if (empty($dob) || empty($dod)) return 0;
+    try {
+        $birth = new DateTime($dob);
+        $death = new DateTime($dod);
+        return $birth->diff($death)->y;
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+/* ================================================================
+   General Utility Functions
+   ================================================================ */
+
 function getFileExtension($str) {
-	$i = strrpos($str, ".");
-	if (!$i) {
-		return "";
-	}
-	$l = strlen($str) - $i;
-	$ext = substr($str, $i + 1, $l);
-	return $ext;
+    $i = strrpos($str, ".");
+    if ($i === false) return "";
+    return substr($str, $i + 1);
 }
-?>
 
-<?php
-function MakeNotNull($MyField) {
-	If (!is_Null($MyField)) {
-		return $MyField;
-	} else {
-		return " ";
-	} //end if
-} //End function
-?>
-
-<?
-function GetYesNo($InBool) {
-	if ($InBool == 1) {
-		return "Yes";
-	} else {
-		return "No";
-	} // end if
-} //end Function
-?>
-<?php
-function hideemail($emailaddy){
-	$pieces = explode("@", $emailaddy);
-	$newemailaddy= $pieces[0] . "@xxx"; 
-	return $newemailaddy;
+function MakeNotNull($field) {
+    return $field !== null ? $field : "";
 }
-?>
-<?php
+
+function GetYesNo($bool) {
+    return $bool ? "Yes" : "No";
+}
+
+function hideemail($email) {
+    if (empty($email)) return "";
+    $parts = explode("@", $email);
+    return $parts[0] . "@xxx";
+}
+
 function dirList($directory) {
-	// create an array to hold directory list
-	$results = array();
-	// create a handler for the directory
-	$handler = opendir($directory);
-	// keep going until all files in directory have been read
-	while ($file = readdir($handler)) {
-		// if $file isn't this directory or its parent,
-		// add it to the results array
-		if ($file != '.' && $file != '..')
-		$results[] = $file;
-	}
-	// tidy up: close the handler
-	closedir($handler);
-	// done!
-	return $results;
+    if (!is_dir($directory)) return [];
+    $results = [];
+    $handler = opendir($directory);
+    while ($file = readdir($handler)) {
+        if ($file != "." && $file != "..") {
+            $results[] = $file;
+        }
+    }
+    closedir($handler);
+    return $results;
 }
+
+/* ================================================================
+   Legacy / Deprecated - Keep for compatibility if needed
+   ================================================================ */
+
+// Old global $db is replaced by db() helper
+// Remove or deprecate the old class if still present elsewhere
+
 ?>
