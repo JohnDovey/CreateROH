@@ -1,113 +1,111 @@
 <?php
+/**
+ * chartYear.php
+ * Secure and modern deaths by year chart + table
+ */
+require_once("include/db.php");
 require_once("functions.php");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour: Year Stats</title>
-    <?php
-        require_once("include/bootstrap-head.php");
-    ?>
+    <title>Roll of Honour: Deaths by Year</title>
+    <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 
 <body>
     <div class="container-fluid clearfix">
-        <?php
-require_once("include/menu.php");
-?>
+        <?php require_once("include/menu.php"); ?>
+
+        <h1 class="display-4 text-center my-5">Deaths by Year</h1>
+
         <div class="row justify-content-md-center">
-            <div class="col-md-auto bg-primary">
-                <h2 class="border rounded-circle text-center">Year Stats</h2>
-                <?php
-               // Get Chart Data
-                $sql = "select  strftime('%Y',DateDeath) as Year, count(strftime('%Y',DateDeath)) as CountYearDeath from PersonInfoRaw where strftime('%Y',DateDeath) > 0 group by strftime('%Y',DateDeath) order by strftime('%Y',DateDeath);";
-                $ret = $db->query($sql);
-                $LabelNames="[";
-                $DataPoints="[";
+            <!-- Chart -->
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-primary">
+                    <div class="card-header">
+                        <h5 class="mb-0">Annual Death Toll</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        // Get chart data securely
+                        $sql = "SELECT strftime('%Y', DateDeath) as Year, 
+                                       COUNT(*) as CountYearDeath 
+                                FROM PersonInfoRaw 
+                                WHERE DateDeath IS NOT NULL 
+                                GROUP BY Year 
+                                ORDER BY Year";
+                        
+                        $data = db()->fetchAll($sql);
 
-                while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    // ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    $LabelNames= $LabelNames . "'" . $row['Year'] . "',";
-                    $DataPoints= $DataPoints . "'" . $row['CountYearDeath'] . "',";
-                 }
-                 $LabelNames= $LabelNames . "]";
-                 $DataPoints= $DataPoints . "]";
+                        $LabelNames = json_encode(array_column($data, 'Year'));
+                        $DataPoints = json_encode(array_column($data, 'CountYearDeath'));
+                        ?>
 
-                 
-               ?>
-                <div class="container">
-                    <div class="row py-2">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <canvas id="StatsGraph" width="900"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                        <canvas id="StatsGraph" style="height: 480px; width: 100%;"></canvas>
+
+                        <?php 
+                        $MyChartTitle = "Deaths by Year";
+                        $MyChartType = $_GET['chart'] ?? 'line';
+                        if (!in_array($MyChartType, ['line', 'bar', 'radar'])) {
+                            $MyChartType = 'line';
+                        }
+                        include_once('js/chartGeneric.php'); 
+                        ?>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="?chart=bar" class="btn btn-sm btn-light <?= $MyChartType === 'bar' ? 'active' : '' ?>">Bar</a>
+                        <a href="?chart=line" class="btn btn-sm btn-light <?= $MyChartType === 'line' ? 'active' : '' ?>">Line</a>
+                        <a href="?chart=radar" class="btn btn-sm btn-light <?= $MyChartType === 'radar' ? 'active' : '' ?>">Radar</a>
                     </div>
                 </div>
-                
-                <?php 
-                $MyChartTitle = "Death by Year Stats";
-                $MyChartType = "line";
-                if (isset($_GET['chart'])){
-                    $MyChartType = $_GET['chart'];
-                }
-                
-                include_once('js/chartGeneric.php'); ?>
-<p><a href="<?=$_SERVER['PHP_SELF']?>?chart=bar" class="btn btn-primary" role="button">Bar Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=line" class="btn btn-primary" role="button">Line Graph</a>|<a href="<?=$_SERVER['PHP_SELF']?>?chart=radar" class="btn btn-primary" role="button">Radar Graph</a></p>
-  
-            </div> <!-- end Center Col -->
-            <div class="col col-lg-2">
-                <?php
-                $TotalDeaths = CountTotalDeaths($db);
-                $NoYear = CountNoYear($db);
-                $TotalWithYear=$TotalDeaths - $NoYear;
- $sql = "select  strftime('%Y',DateDeath) as Year, count(strftime('%Y',DateDeath)) as CountYearDeath from PersonInfoRaw where strftime('%Y',DateDeath) > 0 group by strftime('%Y',DateDeath) order by strftime('%Y',DateDeath);";
- $ret = $db->query($sql);
- ?>
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-dark table-fluid">
+            </div>
+
+            <!-- Side Table -->
+            <div class="col-lg-4">
+                <div class="card bg-primary h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">Year Breakdown</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 520px; overflow-y: auto;">
+                        <table class="table table-dark table-striped table-hover">
                             <thead>
-                            <caption>Year Deaths.<br>Total Deaths: <?=$TotalWithYear?><br>Deaths with Year: <?=$TotalWithYear?><br>No Year: <?=$NoYear?></caption>
                                 <tr>
-                                    <th class="text-center">Year</th>
-                                    <th class="text-right">Count</th>
-                                    <th class="text-right">% of <?=$TotalWithYear?></th>
+                                    <th>Year</th>
+                                    <th class="text-end">Deaths</th>
+                                    <th class="text-end">% of Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    ?>
+                            <?php
+                            $totalDeaths = CountTotalDeaths();
+                            foreach ($data as $row):
+                                $percent = $totalDeaths > 0 ? ($row['CountYearDeath'] / $totalDeaths) * 100 : 0;
+                            ?>
                                 <tr>
-                                <td><a href="listPeopleYear.php?Year=<?=$row['Year']?>" class="btn btn-primary"
-                                            role="button"><i class="fa fa-microscope"></i><?=$row['Year']?></a></td>
-                                    
-                                    <td class="text-right"><?=$row['CountYearDeath']?></td>
-                                    <td class="text-right"><?=percent($row['CountYearDeath'] / $TotalDeaths)?></td>
-
+                                    <td>
+                                        <a href="listPeopleYear.php?Year=<?= $row['Year'] ?>" 
+                                           class="btn btn-sm btn-outline-light">
+                                            <?= $row['Year'] ?>
+                                        </a>
+                                    </td>
+                                    <td class="text-end"><?= number_format($row['CountYearDeath']) ?></td>
+                                    <td class="text-end"><?= round($percent, 1) ?>%</td>
                                 </tr>
-                                <?php }  ?>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div> <!-- End Right Col -->
+            </div>
         </div>
-    </div> <!-- End Container -->
+    </div>
+
     <hr>
-    <?php
-require_once("include/footer.php");
-?>
-
-    <?php
-        require_once("include/bootstrap-footer.php");
-    ?>
+    <?php require_once("include/footer.php"); ?>
+    <?php require_once("include/bootstrap-footer.php"); ?>
 </body>
-
 </html>
