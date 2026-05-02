@@ -1,182 +1,138 @@
 <?php
+/**
+ * mainListPeople.php
+ * Secure paginated people list
+ */
+require_once("include/db.php");
 require_once("functions.php");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll of Honour: List People</title>
-    <?php
-        require_once("include/bootstrap-head.php");
-    ?>
+    <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 
 <body>
     <div class="container-fluid clearfix">
-        <?php
-require_once("include/menu.php");
-?>
+        <?php require_once("include/menu.php"); ?>
 
-        <h1 class="display-3 text-center">Roll of Honour: List People</h1>
-        <?php
-            $TotalDeaths = CountTotalDeaths($db);
-            // page is the current page, if there's nothing set, default is page 1
-            $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $SortField = isset($_GET['sort']) ? $_GET['sort'] : "LastName";
-            // set records or rows of data per page
-            $recordsPerPage = 50;
+        <h1 class="display-4 text-center my-5">Roll of Honour — All Personnel</h1>
 
-            // calculate for the query LIMIT clause
-            ?>
-            
-            <?php
-             $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
-            $sql = "Select *, strftime('%Y',DateDeath) as Year from PersonInfoRaw order by {$SortField}, Firstname LIMIT {$fromRecordNum}, {$recordsPerPage};";
-            $ret = $db->query($sql);
- ?>
+        <?php
+        $totalDeaths = CountTotalDeaths();
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $sortField = in_array($_GET['sort'] ?? 'LastName', ['PersonNumber','LastName','FirstName','RankID','DateDeath']) 
+                     ? $_GET['sort'] 
+                     : 'LastName';
+        
+        $recordsPerPage = 50;
+        $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+        ?>
+
         <div class="row justify-content-md-center">
-            <div class="col-md-auto bg-primary">
-                <h2 class="border rounded-circle text-center">Info</h2>
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-dark table-fluid">
-                            <thead>
-                                <caption>List of People</caption>
-                                <tr>
-                                    <th class="text-right"><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=PersonNumber">Person Number</a></th>
-                                    
-                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=LastName">Last Name</a></th>
-                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=FirstName">First Name</a></th>
-                                    <th>Initials</th>
-                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=RankID">Rank</a></th>
-                                    <th><a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$page?>&sort=Year">Year</a></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                    while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-                    ?>
-                                <tr>
-                                    <td class="text-center"><a
-                                            href="person.php?PersonNumber=<?=$row['PersonNumber']?>"><?=$row['PersonNumber']?></a>
-                                    </td>
-                                    
-                                    <td><?=ucwords(strtolower($row['LastName']))?></td>
-                                    <td><?=ucwords(strtolower($row['FirstName']))?></td>
-                                    <td><?=$row['Initials']?></td>
-                                    <td><?=$row['Rank']?></td>
-                                    <td data-toggle="tooltip" title="<?=$row['DateDeath']?>"><?=$row['Year']?></td>
+            <div class="col-md-auto bg-primary p-4 rounded shadow-sm" style="min-width: 1100px;">
 
-
-                                </tr>
-                                <?php }  ?>
-                            </tbody>
-                        </table>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Total Records: <strong><?= number_format($totalDeaths) ?></strong></h4>
+                    <div>
+                        Sorted by: <strong><?= htmlspecialchars($sortField) ?></strong>
                     </div>
-                    <nav aria-label="People Record navigation">
-                        <ul class="pagination  justify-content-center">
-                            
-                    <?php
-                    // *************** <PAGING_SECTION> ***************
-        // ***** for 'first' and 'previous' pages
-        if($page>1){
-            // ********** show the first page
-            ?>
-            <li class="page-item">
-            <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=1&sort=<?=$SortField?>" aria-lable="First Page">
-            <span aria-hidden="true"><<</span>
-            <span class="sr-only">First</span></a>
-            
-            <?php
-             
-            // ********** show the previous page
-            $prev_page = $page - 1;
-            ?>
-            <li class="page-item">
-            <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$prev_page?>&sort=<?=$SortField?>" title="Previous page is <?=$prev_page?>" aria-label="Previous Page is <?=$prev_page?>">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous Page <?=$prev_page?></span>
-                                </a>
-                                </li>
-            <?php 
-        }
-         
-         
-        // ********** show the number paging
-
-        // find out total pages
-    
-        $total_rows= CountTotalDeaths($db);
-        $total_pages = ceil($total_rows / $recordsPerPage);
-
-        // range of num links to show
-        $range = 2;
-
-        // display links to 'range of pages' around 'current page'
-        $initial_num = $page - $range;
-        $condition_limit_num = ($page + $range)  + 1;
-
-        for ($x=$initial_num; $x<$condition_limit_num; $x++) {
-             
-            // be sure '$x is greater than 0' AND 'less than or equal to the $total_pages'
-            if (($x > 0) && ($x <= $total_pages)) {
-             
-                // current page
-                if ($x == $page) {
-                    ?>
-                    <li class="page-item active"><a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>&sort=<?=$SortField?>"><?=$x?></a></li>
-                    <?php
-                }
-                // not current page
-                else { ?>
-                    <li class="page-item"><a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$x?>&sort=<?=$SortField?>"><?=$x?></a></li>
-                <?php
-                }
-            }
-        }
-         
-         
-        // ***** for 'next' and 'last' pages
-        if($page<$total_pages){
-            // ********** show the next page
-            $next_page = $page + 1;
-            ?>
-                    <li class="page-item">
-                                <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$next_page?>&sort=<?=$SortField?>" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-            <?php
-             
-            // ********** show the last page
-            ?>
-            <li class="page-item">
-                                <a class="page-link" href="<?=$_SERVER['PHP_SELF']?>?page=<?=$total_pages?>&sort=<?=$SortField?>" aria-label="Next">
-                                    <span aria-hidden="true">>></span>
-                                    <span class="sr-only">Last page</span>
-                                </a>
-                            </li>
-            </ul>
-      <?php  }
-    // *************** </PAGING_SECTION> ***************
-    ?>        
-                    </nav>
-                    <p class="text-center">(<?=$page?>/<?=$total_pages?>) (Sorted by: <?=$SortField?>)</p>
                 </div>
-            </div> <!-- end Center Col -->
+
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th><a href="?page=<?= $page ?>&sort=PersonNumber" class="text-white">Person #</a></th>
+                            <th><a href="?page=<?= $page ?>&sort=LastName" class="text-white">Last Name</a></th>
+                            <th><a href="?page=<?= $page ?>&sort=FirstName" class="text-white">First Name</a></th>
+                            <th>Initials</th>
+                            <th>Rank</th>
+                            <th><a href="?page=<?= $page ?>&sort=DateDeath" class="text-white">Year</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sql = "SELECT *, strftime('%Y', DateDeath) as Year 
+                            FROM PersonInfoRaw 
+                            ORDER BY {$sortField}, FirstName 
+                            LIMIT :offset, :limit";
+                    
+                    $params = [
+                        ':offset' => $fromRecordNum,
+                        ':limit'  => $recordsPerPage
+                    ];
+
+                    $rows = db()->fetchAll($sql, $params);
+
+                    foreach ($rows as $row):
+                    ?>
+                        <tr>
+                            <td>
+                                <a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" 
+                                   class="text-white">
+                                    <?= $row['PersonNumber'] ?>
+                                </a>
+                            </td>
+                            <td><?= htmlspecialchars(ucwords(strtolower($row['LastName'] ?? ''))) ?></td>
+                            <td><?= htmlspecialchars(ucwords(strtolower($row['FirstName'] ?? ''))) ?></td>
+                            <td><?= htmlspecialchars($row['Initials'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['Rank'] ?? '') ?></td>
+                            <td><?= $row['Year'] ?? '—' ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <?php
+                $total_pages = ceil($totalDeaths / $recordsPerPage);
+                ?>
+                <nav aria-label="People pagination">
+                    <ul class="pagination justify-content-center">
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&sort=<?= $sortField ?>">« First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $page-1 ?>&sort=<?= $sortField ?>">‹ Previous</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php
+                        $range = 2;
+                        $start = max(1, $page - $range);
+                        $end = min($total_pages, $page + $range);
+                        for ($i = $start; $i <= $end; $i++): ?>
+                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>&sort=<?= $sortField ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $page+1 ?>&sort=<?= $sortField ?>">Next ›</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $total_pages ?>&sort=<?= $sortField ?>">Last »</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+
+                <p class="text-center text-muted">
+                    Page <?= $page ?> of <?= $total_pages ?> • <?= number_format($totalDeaths) ?> total records
+                </p>
+
+            </div>
         </div>
-    </div> <!-- End Container -->
+    </div>
+
     <hr>
-    <?php
-require_once("include/footer.php");
-?>
-
-    <?php
-        require_once("include/bootstrap-footer.php");
-    ?>
+    <?php require_once("include/footer.php"); ?>
+    <?php require_once("include/bootstrap-footer.php"); ?>
 </body>
-
 </html>
