@@ -1,41 +1,68 @@
-<hr>
-<!-- Start: Footer Basic -->
-<container>
-<div class="footer-basic">
-<div class="float-right">
-        <a href="mailto:dovey.john@gmail.com?Subject=ROH"><img src="images/my-octocat-1612031153193.png" class="img-responsive" width="150" /></a>
-        </div>
-    <!--Start actual footer-->
-    <footer class="bg-primary text-white">
-        <ul class="list-inline">
-            <li class="list-inline-item">
-                <address><b>Email</b>: <a href="mailto:info@roh.org?Subject='Web Site'">info@roh.org</a>
-                </address>
-            </li>
-            <li class="list-inline-item">
-                <address><b>Phone</b>:<a href="tel:+507xxx">+507 xxx</a></address>
-            </li>
-            <li class="list-inline-item">
-                <address><i class="fa fa-whatsapp green-color icon"></i><b>Whatsapp</b><a
-                        href="https://wa.me/+507xxx"> +507 xxx</a></address>
-            </li>
-            <li class="list-inline-item">
-                <address><b><a href="images/pedasi-map.jpg" target="blank">Calle Las Tablas No. 2</a></b>,  Pedasí, Los Santos, Panamá</address>
-            </li>
-        </ul>
-        <!-- Start: Social Icons -->
-        <div class="text-center">
-            <div class="icons">
-                <a href="https://www.facebook.com/ROH"><i class="fa fa-facebook"></i></a>
-                <a href="https://www.instagram.com/roh/"><i class="fa fa-instagram"></i></a>
-                <a href="https://twitter.com/roh"><i class="fa fa-twitter"></i></a>
-                <a href="https://wa.me/+507xxx"><i class="fa fa-whatsapp"></i></a>
+<?php
+/**
+ * include/footer.php
+ * Modern, respectful, and clean footer
+ */
+?>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+
+            <!-- Left Column - Memorial Message -->
+            <div class="col-md-5 mb-4">
+                <h5 class="text-white">Roll of Honour</h5>
+                <p class="small">
+                    Remembering South African service personnel who made the ultimate sacrifice.<br>
+                    Lest We Forget.
+                </p>
+                <p class="small text-muted">
+                    Originally compiled in the 1990s from official documents.<br>
+                    This is a restoration and modernisation project.
+                </p>
             </div>
-        </div><!-- End: Social Icons -->
-        
-        <!-- Start: Copyright -->
-        <p class="copyright">Roll of Honour <i class="far fa-copyright"></i> 2021</p>
-        <!-- End: Copyright -->
-    </footer>
-</div><!-- End: Footer Basic -->
-</container>
+
+            <!-- Contact -->
+            <div class="col-md-4 mb-4">
+                <h6 class="text-white">Contact</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
+                        <i class="fa fa-envelope me-2"></i>
+                        <a href="mailto:dovey.john@gmail.com" class="text-light text-decoration-none">dovey.john@gmail.com</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fa fa-map-marker me-2"></i>
+                        Pedasí, Los Santos, Panamá
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-3 mb-4">
+                <h6 class="text-white">Quick Links</h6>
+                <ul class="list-unstyled small">
+                    <li><a href="index.php" class="text-light text-decoration-none">Home</a></li>
+                    <li><a href="mainListPeople.php" class="text-light text-decoration-none">Browse Names</a></li>
+                    <li><a href="chartYear.php" class="text-light text-decoration-none">Statistics</a></li>
+                    <li><a href="DataInfo.php" class="text-light text-decoration-none">Database Info</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Bottom Bar -->
+        <hr class="my-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 small text-muted">
+                &copy; <?= date("Y") ?> Roll of Honour Project — All Rights Reserved
+            </div>
+            <div class="col-md-6 text-md-end small text-muted">
+                A personal restoration project • 
+                <a href="https://github.com/JohnDovey/CreateROH" class="text-light text-decoration-none" target="_blank">
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
