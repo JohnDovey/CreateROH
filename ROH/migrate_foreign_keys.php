@@ -1,13 +1,11 @@
 <?php
 /**
  * migrate_foreign_keys.php
- * Full migration: Check orphans + Add Foreign Keys + Create Indexes
+ * Fixed migration with proper orphan check + FKs + Indexes
  */
 require_once("include/db.php");
 
 $pageTitle = "Database Migration - Foreign Keys & Indexes";
-$errors = [];
-$success = [];
 ?>
 
 <!DOCTYPE html>
@@ -34,37 +32,38 @@ $success = [];
                     // === 1. ORPHAN CHECK ===
                     echo '<h4>Step 1: Checking for Orphaned Records...</h4>';
                     $orphanChecks = [
-                        ['table' => 'PersonInfoRaw', 'field' => 'RankID',     'ref' => 'Rank(RankID)'],
-                        ['table' => 'PersonInfoRaw', 'field' => 'RegimentID', 'ref' => 'Regiment(RegimentID)'],
-                        ['table' => 'PersonInfoRaw', 'field' => 'UnitID',     'ref' => 'Unit(UnitID)'],
-                        ['table' => 'PersonInfoRaw', 'field' => 'LocalityID', 'ref' => 'Locality(LocalityID)'],
-                        ['table' => 'PersonInfoRaw', 'field' => 'CountryID',  'ref' => 'Country(CountryID)'],
-                        ['table' => 'PersonInfoRaw', 'field' => 'CemeteryID', 'ref' => 'Cemetery(CemeteryID)'],
+                        ['field' => 'RankID',     'refTable' => 'Rank',     'refField' => 'RankID'],
+                        ['field' => 'RegimentID', 'refTable' => 'Regiment', 'refField' => 'RegimentID'],
+                        ['field' => 'UnitID',     'refTable' => 'Unit',     'refField' => 'UnitID'],
+                        ['field' => 'LocalityID', 'refTable' => 'Locality', 'refField' => 'LocalityID'],
+                        ['field' => 'CountryID',  'refTable' => 'Country',  'refField' => 'CountryID'],
+                        ['field' => 'CemeteryID', 'refTable' => 'Cemetery', 'refField' => 'CemeteryID'],
                     ];
 
                     $hasOrphans = false;
                     foreach ($orphanChecks as $check) {
-                        $sql = "SELECT COUNT(*) as orphans FROM {$check['table']} 
-                                LEFT JOIN {$check['ref']} 
-                                ON {$check['table']}.{$check['field']} = {$check['ref']} 
-                                WHERE {$check['ref']} IS NULL AND {$check['table']}.{$check['field']} IS NOT NULL";
+                        $sql = "SELECT COUNT(*) as orphans 
+                                FROM PersonInfoRaw 
+                                LEFT JOIN {$check['refTable']} ON PersonInfoRaw.{$check['field']} = {$check['refTable']}.{$check['refField']}
+                                WHERE {$check['refTable']}.{$check['refField']} IS NULL 
+                                  AND PersonInfoRaw.{$check['field']} IS NOT NULL";
                         $result = db()->fetchOne($sql);
                         $count = $result['orphans'] ?? 0;
 
                         if ($count > 0) {
                             $hasOrphans = true;
-                            echo "<div class='alert alert-warning'>⚠️ {$count} orphaned records in {$check['table']}.{$check['field']}</div>";
+                            echo "<div class='alert alert-warning'>⚠️ {$count} orphaned records for {$check['field']}</div>";
                         } else {
-                            echo "<div class='alert alert-success'>✅ No orphans in {$check['table']}.{$check['field']}</div>";
+                            echo "<div class='alert alert-success'>✅ No orphans for {$check['field']}</div>";
                         }
                     }
 
                     if ($hasOrphans) {
-                        echo '<div class="alert alert-danger">Migration stopped due to orphaned records. Fix data first.</div>';
+                        echo '<div class="alert alert-danger">Fix orphaned records before continuing.</div>';
                     } else {
                         // === 2. ADD FOREIGN KEYS ===
                         echo '<h4>Step 2: Adding Foreign Keys...</h4>';
-                        $fkMigrations = [
+                        $fkList = [
                             "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_rank FOREIGN KEY (RankID) REFERENCES Rank(RankID)" => "Rank",
                             "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_regiment FOREIGN KEY (RegimentID) REFERENCES Regiment(RegimentID)" => "Regiment",
                             "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_unit FOREIGN KEY (UnitID) REFERENCES Unit(UnitID)" => "Unit",
@@ -75,21 +74,21 @@ $success = [];
                             "ALTER TABLE rawweb ADD CONSTRAINT fk_rawweb_person FOREIGN KEY (PersonNumber) REFERENCES PersonInfoRaw(PersonNumber)" => "rawweb"
                         ];
 
-                        foreach ($fkMigrations as $sql => $name) {
+                        foreach ($fkList as $sql => $name) {
                             try {
                                 $db->exec($sql);
-                                $success[] = "Added FK for $name";
+                                echo "✅ Foreign key added for <strong>$name</strong><br>";
                             } catch (Exception $e) {
                                 if (strpos($e->getMessage(), 'already exists') !== false) {
-                                    $success[] = "FK for $name already exists";
+                                    echo "⚠️ Foreign key for <strong>$name</strong> already exists<br>";
                                 } else {
-                                    $errors[] = "Error on $name: " . $e->getMessage();
+                                    echo "❌ Error on $name: " . htmlspecialchars($e->getMessage()) . "<br>";
                                 }
                             }
                         }
 
-                        // === 3. CREATE INDEXES ===
-                        echo '<h4>Step 3: Creating Recommended Indexes...</h4>';
+                        // === 3. INDEXES ===
+                        echo '<h4>Step 3: Creating Indexes...</h4>';
                         $indexes = [
                             "CREATE INDEX IF NOT EXISTS idx_person_rank ON PersonInfoRaw(RankID)",
                             "CREATE INDEX IF NOT EXISTS idx_person_regiment ON PersonInfoRaw(RegimentID)",
@@ -103,39 +102,26 @@ $success = [];
                         foreach ($indexes as $idx) {
                             try {
                                 $db->exec($idx);
-                                $success[] = "Created index";
+                                echo "✅ Index created<br>";
                             } catch (Exception $e) {
-                                $errors[] = $e->getMessage();
+                                echo "⚠️ Index already exists or error: " . htmlspecialchars($e->getMessage()) . "<br>";
                             }
                         }
 
-                        echo '<div class="alert alert-success">Migration completed successfully!</div>';
+                        echo '<div class="alert alert-success mt-4">✅ Migration completed successfully!</div>';
                     }
                     ?>
-
-                    <?php if (!empty($success)): ?>
-                        <div class="alert alert-success"><?= implode('<br>', $success) ?></div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($errors)): ?>
-                        <div class="alert alert-danger"><?= implode('<br>', $errors) ?></div>
-                    <?php endif; ?>
 
                 <?php else: ?>
 
                     <div class="card">
                         <div class="card-body">
-                            <h5>Database Integrity Migration</h5>
-                            <p>This script will:</p>
-                            <ol>
-                                <li>Check for orphaned records</li>
-                                <li>Add recommended foreign keys</li>
-                                <li>Create performance indexes</li>
-                            </ol>
+                            <h5>Full Database Migration</h5>
+                            <p>This will check for orphaned records, add foreign keys, and create indexes.</p>
                             <form method="post">
                                 <button type="submit" name="run_migration" class="btn btn-danger btn-lg"
-                                        onclick="return confirm('Run full migration? This may take a moment.')">
-                                    🚀 Run Full Migration
+                                        onclick="return confirm('Run full migration now?')">
+                                    🚀 Run Migration
                                 </button>
                             </form>
                         </div>
