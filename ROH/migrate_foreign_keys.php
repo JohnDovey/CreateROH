@@ -1,7 +1,7 @@
 <?php
 /**
  * migrate_foreign_keys.php
- * Fixed migration with proper orphan check + FKs + Indexes
+ * Robust migration: handles missing lookup tables
  */
 require_once("include/db.php");
 
@@ -29,7 +29,7 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
                     <?php
                     $db = db()->getConnection();
 
-                    // === 1. ORPHAN CHECK ===
+                    // === 1. ORPHAN CHECK (safe) ===
                     echo '<h4>Step 1: Checking for Orphaned Records...</h4>';
                     $orphanChecks = [
                         ['field' => 'RankID',     'refTable' => 'Rank',     'refField' => 'RankID'],
@@ -42,26 +42,32 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
 
                     $hasOrphans = false;
                     foreach ($orphanChecks as $check) {
-                        $sql = "SELECT COUNT(*) as orphans 
-                                FROM PersonInfoRaw 
-                                LEFT JOIN {$check['refTable']} ON PersonInfoRaw.{$check['field']} = {$check['refTable']}.{$check['refField']}
-                                WHERE {$check['refTable']}.{$check['refField']} IS NULL 
-                                  AND PersonInfoRaw.{$check['field']} IS NOT NULL";
-                        $result = db()->fetchOne($sql);
-                        $count = $result['orphans'] ?? 0;
+                        // Check if reference table exists
+                        $checkTable = "SELECT name FROM sqlite_master WHERE type='table' AND name='{$check['refTable']}'";
+                        if (db()->fetchOne($checkTable)) {
+                            $sql = "SELECT COUNT(*) as orphans 
+                                    FROM PersonInfoRaw 
+                                    LEFT JOIN {$check['refTable']} ON PersonInfoRaw.{$check['field']} = {$check['refTable']}.{$check['refField']}
+                                    WHERE {$check['refTable']}.{$check['refField']} IS NULL 
+                                      AND PersonInfoRaw.{$check['field']} IS NOT NULL";
+                            $result = db()->fetchOne($sql);
+                            $count = $result['orphans'] ?? 0;
 
-                        if ($count > 0) {
-                            $hasOrphans = true;
-                            echo "<div class='alert alert-warning'>⚠️ {$count} orphaned records for {$check['field']}</div>";
+                            if ($count > 0) {
+                                $hasOrphans = true;
+                                echo "<div class='alert alert-warning'>⚠️ {$count} orphaned records for {$check['field']}</div>";
+                            } else {
+                                echo "<div class='alert alert-success'>✅ No orphans for {$check['field']}</div>";
+                            }
                         } else {
-                            echo "<div class='alert alert-success'>✅ No orphans for {$check['field']}</div>";
+                            echo "<div class='alert alert-info'>⚠️ Lookup table <strong>{$check['refTable']}</strong> does not exist yet — skipping check</div>";
                         }
                     }
 
                     if ($hasOrphans) {
                         echo '<div class="alert alert-danger">Fix orphaned records before continuing.</div>';
                     } else {
-                        // === 2. ADD FOREIGN KEYS ===
+                        // === 2. ADD FOREIGN KEYS (only if tables exist) ===
                         echo '<h4>Step 2: Adding Foreign Keys...</h4>';
                         $fkList = [
                             "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_rank FOREIGN KEY (RankID) REFERENCES Rank(RankID)" => "Rank",
@@ -79,8 +85,8 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
                                 $db->exec($sql);
                                 echo "✅ Foreign key added for <strong>$name</strong><br>";
                             } catch (Exception $e) {
-                                if (strpos($e->getMessage(), 'already exists') !== false) {
-                                    echo "⚠️ Foreign key for <strong>$name</strong> already exists<br>";
+                                if (strpos($e->getMessage(), 'already exists') !== false || strpos($e->getMessage(), 'no such table') !== false) {
+                                    echo "⚠️ Skipped $name (already exists or table missing)<br>";
                                 } else {
                                     echo "❌ Error on $name: " . htmlspecialchars($e->getMessage()) . "<br>";
                                 }
@@ -108,7 +114,7 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
                             }
                         }
 
-                        echo '<div class="alert alert-success mt-4">✅ Migration completed successfully!</div>';
+                        echo '<div class="alert alert-success mt-4">✅ Migration completed!</div>';
                     }
                     ?>
 
@@ -116,11 +122,11 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
 
                     <div class="card">
                         <div class="card-body">
-                            <h5>Full Database Migration</h5>
-                            <p>This will check for orphaned records, add foreign keys, and create indexes.</p>
+                            <h5>Database Migration</h5>
+                            <p>This will safely check for problems, add foreign keys, and create indexes.</p>
                             <form method="post">
                                 <button type="submit" name="run_migration" class="btn btn-danger btn-lg"
-                                        onclick="return confirm('Run full migration now?')">
+                                        onclick="return confirm('Run migration now?')">
                                     🚀 Run Migration
                                 </button>
                             </form>
