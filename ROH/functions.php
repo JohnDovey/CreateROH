@@ -222,7 +222,54 @@ function dirList($directory) {
     closedir($handler);
     return $results;
 }
+/* ================================================================
+   PAGE VIEW COUNTER FUNCTIONS
+   ================================================================ */
 
+function incrementPageView($pageName) {
+    $pageName = basename($pageName);           // Security: only filename
+    $year     = (int)date('Y');
+    $month    = (int)date('n');
+
+    $db = db()->getConnection();
+
+    // Create table if it doesn't exist
+    $db->exec("CREATE TABLE IF NOT EXISTS PageViews (
+        PageName TEXT NOT NULL,
+        Year     INTEGER NOT NULL,
+        Month    INTEGER NOT NULL,
+        ViewCount INTEGER DEFAULT 1,
+        PRIMARY KEY (PageName, Year, Month)
+    )");
+
+    // Try to insert new record, if duplicate → increment
+    try {
+        $sql = "INSERT INTO PageViews (PageName, Year, Month, ViewCount) 
+                VALUES (:page, :year, :month, 1)";
+        db()->execute($sql, [':page' => $pageName, ':year' => $year, ':month' => $month]);
+    } catch (Exception $e) {
+        // Duplicate key → increment existing count
+        if (strpos($e->getMessage(), 'UNIQUE') !== false || strpos($e->getMessage(), 'constraint') !== false) {
+            $sql = "UPDATE PageViews 
+                    SET ViewCount = ViewCount + 1 
+                    WHERE PageName = :page 
+                      AND Year = :year 
+                      AND Month = :month";
+            db()->execute($sql, [':page' => $pageName, ':year' => $year, ':month' => $month]);
+        }
+    }
+}
+
+function getPageViewStats() {
+    $year  = (int)date('Y');
+    $month = (int)date('n');
+
+    return [
+        'total'       => db()->fetchOne("SELECT COALESCE(SUM(ViewCount), 0) as total FROM PageViews")['total'] ?? 0,
+        'thisYear'    => db()->fetchOne("SELECT COALESCE(SUM(ViewCount), 0) as total FROM PageViews WHERE Year = :y", [':y' => $year])['total'] ?? 0,
+        'thisMonth'   => db()->fetchOne("SELECT COALESCE(SUM(ViewCount), 0) as total FROM PageViews WHERE Year = :y AND Month = :m", [':y' => $year, ':m' => $month])['total'] ?? 0,
+    ];
+}
 /* ================================================================
    Legacy / Deprecated - Keep for compatibility if needed
    ================================================================ */
