@@ -5,6 +5,8 @@
  */
 ?>
 <?php
+require_once(__DIR__ . '/../functions.php');   // Ensure functions are loaded
+
 // Increment page view on every page load
 $pageFile = $_SERVER['PHP_SELF'] ?? 'unknown.php';
 incrementPageView($pageFile);
