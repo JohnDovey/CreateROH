@@ -4,7 +4,14 @@
  * Modern, respectful, and clean footer
  */
 ?>
+<?php
+// Increment page view on every page load
+$pageFile = $_SERVER['PHP_SELF'] ?? 'unknown.php';
+incrementPageView($pageFile);
 
+// Get current stats
+$stats = getPageViewStats();
+?>
 <!-- Footer -->
 <footer class="bg-dark text-light py-5 mt-5">
     <div class="container">
@@ -65,4 +72,9 @@
             </div>
         </div>
     </div>
+    <div class="text-center mt-4 small text-muted">
+    Total Page Views: <strong><?= number_format($stats['total']) ?></strong> | 
+    Views this Year: <strong><?= number_format($stats['thisYear']) ?></strong> | 
+    Views this Month: <strong><?= number_format($stats['thisMonth']) ?></strong>
+</div>
 </footer>
