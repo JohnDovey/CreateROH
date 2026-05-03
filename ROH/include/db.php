@@ -1,18 +1,16 @@
 <?php
-// include/db.php - Secure Database Connection
+// include/db.php - Secure Database Connection (Fixed)
 
 class ROHDatabase {
     private static $instance = null;
     private $db;
 
     private function __construct() {
-        $dbPath = __DIR__ . '/../RohData.sql3';   // Adjust path if needed
-        // $dbPath = __DIR__ . '/../bin/debug/RohData.sql3'; // alternative
-
+        $dbPath = __DIR__ . '/../RohData.sql3';
         $this->db = new SQLite3($dbPath);
         $this->db->enableExceptions(true);
         $this->db->exec('PRAGMA foreign_keys = ON;');
-        $this->db->exec('PRAGMA journal_mode = WAL;'); // Better concurrency
+        $this->db->exec('PRAGMA journal_mode = WAL;');
     }
 
     public static function getInstance() {
@@ -26,7 +24,7 @@ class ROHDatabase {
         return $this->db;
     }
 
-    // Secure query helper (prepared statement)
+    // Execute query and return result object
     public function query($sql, $params = []) {
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
@@ -38,16 +36,14 @@ class ROHDatabase {
             $stmt->bindValue($key, $value, $type);
         }
 
-        $result = $stmt->execute();
-        $stmt->close(); // Good practice
-        return $result;
+        return $stmt->execute();   // Returns SQLite3Result
     }
 
-    // Fetch single row as assoc array
+    // Fetch single row
     public function fetchOne($sql, $params = []) {
         $result = $this->query($sql, $params);
         $row = $result->fetchArray(SQLITE3_ASSOC);
-        $result->finalize();
+        $result->finalize();   // Safe here for single row
         return $row ?: null;
     }
 
@@ -62,13 +58,15 @@ class ROHDatabase {
         return $rows;
     }
 
+    // Execute non-select (INSERT/UPDATE/DELETE)
     public function execute($sql, $params = []) {
-        $this->query($sql, $params); // For INSERT/UPDATE/DELETE
+        $result = $this->query($sql, $params);
+        $result->finalize();
         return $this->db->changes();
     }
 }
 
-// Global helper (optional - for backward compatibility)
+// Helper
 function db() {
     return ROHDatabase::getInstance();
 }
