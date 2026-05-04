@@ -1,6 +1,6 @@
 <?php
 /**
- * listPeopleYear.php - SECURE VERSION WITH FLEXIBLE DATE MATCHING
+ * listPeopleYear.php - Improved Version with Clean Year Dropdown
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -22,7 +22,7 @@ require_once("functions.php");
         $Year = isset($_GET['Year']) ? (int)$_GET['Year'] : (int)date('Y');
         $page = max(1, (int)($_GET['page'] ?? 1));
 
-        // STRICT safe sort
+        // Safe sort
         $allowedSort = ['PersonNumber', 'LastName', 'FirstName', 'Rank', 'DateDeath'];
         $sortField = $_GET['sort'] ?? 'LastName';
         if (!in_array($sortField, $allowedSort)) {
@@ -32,7 +32,7 @@ require_once("functions.php");
         $recordsPerPage = 50;
         $offset = ($recordsPerPage * $page) - $recordsPerPage;
 
-        // Count using flexible date matching
+        // Count records for selected year
         $sqlCount = "SELECT COUNT(*) as total 
                      FROM PersonInfoRaw 
                      WHERE DateDeath LIKE :y1 
@@ -53,26 +53,35 @@ require_once("functions.php");
         <div class="row justify-content-md-center">
             <div class="col-md-auto bg-primary p-4 rounded shadow-sm" style="min-width: 1100px;">
 
-                <!-- Year Selector -->
+                <!-- Improved Year Dropdown -->
                 <div class="mb-4">
                     <form method="get" class="d-inline">
-                        <label for="Year" class="me-2">Select Year:</label>
+                        <label for="Year" class="me-2 fw-bold">Select Year:</label>
                         <select name="Year" id="Year" class="form-select d-inline w-auto" onchange="this.form.submit()">
                             <?php
                             $yearsSql = "SELECT DISTINCT substr(DateDeath,1,4) as Year 
                                          FROM PersonInfoRaw 
                                          WHERE DateDeath IS NOT NULL 
+                                           AND substr(DateDeath,1,4) != '' 
                                          ORDER BY Year DESC";
                             $years = db()->fetchAll($yearsSql);
-                            foreach ($years as $y): ?>
-                                <option value="<?= $y['Year'] ?>" <?= $y['Year'] == $Year ? 'selected' : '' ?>>
-                                    <?= $y['Year'] ?>
+
+                            foreach ($years as $y): 
+                                $yValue = (int)$y['Year'];
+                            ?>
+                                <option value="<?= $yValue ?>" <?= $yValue == $Year ? 'selected' : '' ?>>
+                                    <?= $yValue ?> (<?= number_format(
+                                        db()->fetchOne("SELECT COUNT(*) as c FROM PersonInfoRaw 
+                                                        WHERE DateDeath LIKE :y OR substr(DateDeath,1,4) = :y2", 
+                                                        [':y' => $yValue.'%', ':y2' => (string)$yValue])['c'] ?? 0
+                                    ) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </form>
                 </div>
 
+                <!-- Rest of the table and pagination remains the same -->
                 <table class="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
@@ -108,12 +117,7 @@ require_once("functions.php");
                     foreach ($rows as $row):
                     ?>
                         <tr>
-                            <td>
-                                <a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" 
-                                   class="btn btn-sm btn-primary">
-                                    <?= $row['PersonNumber'] ?>
-                                </a>
-                            </td>
+                            <td><a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" class="btn btn-sm btn-primary"><?= $row['PersonNumber'] ?></a></td>
                             <td><?= htmlspecialchars(ucwords(strtolower($row['LastName'] ?? ''))) ?></td>
                             <td><?= htmlspecialchars(ucwords(strtolower($row['FirstName'] ?? ''))) ?></td>
                             <td><?= htmlspecialchars($row['Initials'] ?? '') ?></td>
@@ -125,7 +129,6 @@ require_once("functions.php");
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
                 <?php $total_pages = ceil($totalInYear / $recordsPerPage); ?>
                 <nav class="mt-4">
                     <ul class="pagination justify-content-center">
