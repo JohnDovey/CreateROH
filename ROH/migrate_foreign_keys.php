@@ -1,11 +1,8 @@
 <?php
 /**
- * migrate_foreign_keys.php
- * Robust migration: handles missing lookup tables
+ * migrate_foreign_keys.php - SQLite Compatible Version
  */
 require_once("include/db.php");
-
-$pageTitle = "Database Migration - Foreign Keys & Indexes";
 ?>
 
 <!DOCTYPE html>
@@ -13,14 +10,14 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <title>ROH - Add Foreign Keys</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
-        <h1 class="display-4 text-center my-5"><?= htmlspecialchars($pageTitle) ?></h1>
+        <h1 class="display-4 text-center my-5">Add Foreign Keys (SQLite Version)</h1>
 
         <div class="row justify-content-md-center">
             <div class="col-lg-10">
@@ -28,106 +25,45 @@ $pageTitle = "Database Migration - Foreign Keys & Indexes";
                 <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_migration'])): ?>
                     <?php
                     $db = db()->getConnection();
+                    echo '<h4>Adding Foreign Keys...</h4>';
 
-                    // === 1. ORPHAN CHECK (safe) ===
-                    echo '<h4>Step 1: Checking for Orphaned Records...</h4>';
-                    $orphanChecks = [
-                        ['field' => 'RankID',     'refTable' => 'Rank',     'refField' => 'RankID'],
-                        ['field' => 'RegimentID', 'refTable' => 'Regiment', 'refField' => 'RegimentID'],
-                        ['field' => 'UnitID',     'refTable' => 'Unit',     'refField' => 'UnitID'],
-                        ['field' => 'LocalityID', 'refTable' => 'Locality', 'refField' => 'LocalityID'],
-                        ['field' => 'CountryID',  'refTable' => 'Country',  'refField' => 'CountryID'],
-                        ['field' => 'CemeteryID', 'refTable' => 'Cemetery', 'refField' => 'CemeteryID'],
+                    $statements = [
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (RankID) REFERENCES Rank(RankID)",
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (RegimentID) REFERENCES Regiment(RegimentID)",
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (UnitID) REFERENCES Unit(UnitID)",
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (LocalityID) REFERENCES Locality(LocalityID)",
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (CountryID) REFERENCES Country(CountryID)",
+                        "ALTER TABLE PersonInfoRaw ADD FOREIGN KEY (CemeteryID) REFERENCES Cemetery(CemeteryID)",
+                        "ALTER TABLE PersonImages ADD FOREIGN KEY (PersonNumber) REFERENCES PersonInfoRaw(PersonNumber)",
+                        "ALTER TABLE rawweb ADD FOREIGN KEY (PersonNumber) REFERENCES PersonInfoRaw(PersonNumber)"
                     ];
 
-                    $hasOrphans = false;
-                    foreach ($orphanChecks as $check) {
-                        // Check if reference table exists
-                        $checkTable = "SELECT name FROM sqlite_master WHERE type='table' AND name='{$check['refTable']}'";
-                        if (db()->fetchOne($checkTable)) {
-                            $sql = "SELECT COUNT(*) as orphans 
-                                    FROM PersonInfoRaw 
-                                    LEFT JOIN {$check['refTable']} ON PersonInfoRaw.{$check['field']} = {$check['refTable']}.{$check['refField']}
-                                    WHERE {$check['refTable']}.{$check['refField']} IS NULL 
-                                      AND PersonInfoRaw.{$check['field']} IS NOT NULL";
-                            $result = db()->fetchOne($sql);
-                            $count = $result['orphans'] ?? 0;
-
-                            if ($count > 0) {
-                                $hasOrphans = true;
-                                echo "<div class='alert alert-warning'>⚠️ {$count} orphaned records for {$check['field']}</div>";
+                    foreach ($statements as $sql) {
+                        try {
+                            $db->exec($sql);
+                            echo "✅ Added: " . htmlspecialchars($sql) . "<br>";
+                        } catch (Exception $e) {
+                            if (strpos($e->getMessage(), 'already exists') !== false || strpos($e->getMessage(), 'constraint') !== false) {
+                                echo "⚠️ Already exists: " . htmlspecialchars($sql) . "<br>";
                             } else {
-                                echo "<div class='alert alert-success'>✅ No orphans for {$check['field']}</div>";
+                                echo "❌ Failed: " . htmlspecialchars($e->getMessage()) . "<br>";
                             }
-                        } else {
-                            echo "<div class='alert alert-info'>⚠️ Lookup table <strong>{$check['refTable']}</strong> does not exist yet — skipping check</div>";
                         }
                     }
 
-                    if ($hasOrphans) {
-                        echo '<div class="alert alert-danger">Fix orphaned records before continuing.</div>';
-                    } else {
-                        // === 2. ADD FOREIGN KEYS (only if tables exist) ===
-                        echo '<h4>Step 2: Adding Foreign Keys...</h4>';
-                        $fkList = [
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_rank FOREIGN KEY (RankID) REFERENCES Rank(RankID)" => "Rank",
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_regiment FOREIGN KEY (RegimentID) REFERENCES Regiment(RegimentID)" => "Regiment",
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_unit FOREIGN KEY (UnitID) REFERENCES Unit(UnitID)" => "Unit",
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_locality FOREIGN KEY (LocalityID) REFERENCES Locality(LocalityID)" => "Locality",
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_country FOREIGN KEY (CountryID) REFERENCES Country(CountryID)" => "Country",
-                            "ALTER TABLE PersonInfoRaw ADD CONSTRAINT fk_person_cemetery FOREIGN KEY (CemeteryID) REFERENCES Cemetery(CemeteryID)" => "Cemetery",
-                            "ALTER TABLE PersonImages ADD CONSTRAINT fk_images_person FOREIGN KEY (PersonNumber) REFERENCES PersonInfoRaw(PersonNumber)" => "PersonImages",
-                            "ALTER TABLE rawweb ADD CONSTRAINT fk_rawweb_person FOREIGN KEY (PersonNumber) REFERENCES PersonInfoRaw(PersonNumber)" => "rawweb"
-                        ];
-
-                        foreach ($fkList as $sql => $name) {
-                            try {
-                                $db->exec($sql);
-                                echo "✅ Foreign key added for <strong>$name</strong><br>";
-                            } catch (Exception $e) {
-                                if (strpos($e->getMessage(), 'already exists') !== false || strpos($e->getMessage(), 'no such table') !== false) {
-                                    echo "⚠️ Skipped $name (already exists or table missing)<br>";
-                                } else {
-                                    echo "❌ Error on $name: " . htmlspecialchars($e->getMessage()) . "<br>";
-                                }
-                            }
-                        }
-
-                        // === 3. INDEXES ===
-                        echo '<h4>Step 3: Creating Indexes...</h4>';
-                        $indexes = [
-                            "CREATE INDEX IF NOT EXISTS idx_person_rank ON PersonInfoRaw(RankID)",
-                            "CREATE INDEX IF NOT EXISTS idx_person_regiment ON PersonInfoRaw(RegimentID)",
-                            "CREATE INDEX IF NOT EXISTS idx_person_unit ON PersonInfoRaw(UnitID)",
-                            "CREATE INDEX IF NOT EXISTS idx_person_locality ON PersonInfoRaw(LocalityID)",
-                            "CREATE INDEX IF NOT EXISTS idx_person_country ON PersonInfoRaw(CountryID)",
-                            "CREATE INDEX IF NOT EXISTS idx_person_cemetery ON PersonInfoRaw(CemeteryID)",
-                            "CREATE INDEX IF NOT EXISTS idx_images_person ON PersonImages(PersonNumber)"
-                        ];
-
-                        foreach ($indexes as $idx) {
-                            try {
-                                $db->exec($idx);
-                                echo "✅ Index created<br>";
-                            } catch (Exception $e) {
-                                echo "⚠️ Index already exists or error: " . htmlspecialchars($e->getMessage()) . "<br>";
-                            }
-                        }
-
-                        echo '<div class="alert alert-success mt-4">✅ Migration completed!</div>';
-                    }
+                    echo '<div class="alert alert-success mt-4">Migration finished.</div>';
                     ?>
 
                 <?php else: ?>
 
                     <div class="card">
                         <div class="card-body">
-                            <h5>Database Migration</h5>
-                            <p>This will safely check for problems, add foreign keys, and create indexes.</p>
+                            <h5>SQLite Foreign Key Migration</h5>
+                            <p>This version uses SQLite-compatible syntax.</p>
                             <form method="post">
                                 <button type="submit" name="run_migration" class="btn btn-danger btn-lg"
-                                        onclick="return confirm('Run migration now?')">
-                                    🚀 Run Migration
+                                        onclick="return confirm('Run foreign key migration?')">
+                                    🚀 Add Foreign Keys
                                 </button>
                             </form>
                         </div>
