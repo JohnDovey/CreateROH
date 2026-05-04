@@ -50,9 +50,7 @@ require_once("functions.php");
                             <tr><td>Last Name:</td><td><?= htmlspecialchars($row['LastName'] ?? '') ?></td></tr>
                             <tr><td>First Name:</td><td><?= htmlspecialchars($row['FirstName'] ?? '') ?></td></tr>
                             <tr><td>Initials:</td><td><?= htmlspecialchars($row['Initials'] ?? '') ?></td></tr>
-                            <?php if (!empty($row['DateBirth'])): ?>
                             <tr><td>Born:</td><td><?= htmlspecialchars($row['DateBirth']) ?></td></tr>
-                            <?php endif; ?>
                         </table>
                     </div>
                 </div>
