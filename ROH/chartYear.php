@@ -1,7 +1,6 @@
 <?php
 /**
- * chartYear.php
- * Secure and modern deaths by year chart + table
+ * chartYear.php - Improved with clean year dropdown
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -15,31 +14,61 @@ require_once("functions.php");
     <title>Roll of Honour: Deaths by Year</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
-
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
+        <?php
+        $selectedYear = isset($_GET['Year']) ? (int)$_GET['Year'] : null;
+        ?>
+
         <h1 class="display-4 text-center my-5">Deaths by Year</h1>
 
+        <!-- Year Selector -->
+        <div class="text-center mb-4">
+            <form method="get" class="d-inline">
+                <label for="Year" class="me-2 fw-bold">Select Year:</label>
+                <select name="Year" id="Year" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    <?php
+                    $yearsSql = "SELECT DISTINCT substr(DateDeath,1,4) as Year 
+                                 FROM PersonInfoRaw 
+                                 WHERE DateDeath IS NOT NULL 
+                                 ORDER BY Year DESC";
+                    $years = db()->fetchAll($yearsSql);
+                    foreach ($years as $y): 
+                        $yValue = (int)$y['Year'];
+                    ?>
+                        <option value="<?= $yValue ?>" <?= $yValue == $selectedYear ? 'selected' : '' ?>>
+                            <?= $yValue ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
+        </div>
+
         <div class="row justify-content-md-center">
-            <!-- Chart -->
             <div class="col-lg-8 mb-4">
                 <div class="card bg-primary">
                     <div class="card-header">
-                        <h5 class="mb-0">Annual Death Toll</h5>
+                        <h5>Annual Death Toll</h5>
                     </div>
                     <div class="card-body">
                         <?php
-                        // Get chart data securely
-                        $sql = "SELECT strftime('%Y', DateDeath) as Year, 
-                                       COUNT(*) as CountYearDeath 
+                        $where = "";
+                        $params = [];
+                        if ($selectedYear) {
+                            $where = "WHERE DateDeath LIKE :y1 OR substr(DateDeath,1,4) = :y2";
+                            $params = [':y1' => $selectedYear.'%', ':y2' => (string)$selectedYear];
+                        }
+
+                        $sql = "SELECT substr(DateDeath,1,4) as Year, COUNT(*) as CountYearDeath 
                                 FROM PersonInfoRaw 
-                                WHERE DateDeath IS NOT NULL 
+                                $where 
                                 GROUP BY Year 
                                 ORDER BY Year";
                         
-                        $data = db()->fetchAll($sql);
+                        $data = db()->fetchAll($sql, $params);
 
                         $LabelNames = json_encode(array_column($data, 'Year'));
                         $DataPoints = json_encode(array_column($data, 'CountYearDeath'));
@@ -48,18 +77,10 @@ require_once("functions.php");
                         <canvas id="StatsGraph" style="height: 480px; width: 100%;"></canvas>
 
                         <?php 
-                        $MyChartTitle = "Deaths by Year";
-                        $MyChartType = $_GET['chart'] ?? 'line';
-                        if (!in_array($MyChartType, ['line', 'bar', 'radar'])) {
-                            $MyChartType = 'line';
-                        }
+                        $MyChartTitle = $selectedYear ? "Deaths in $selectedYear" : "Deaths by Year";
+                        $MyChartType = 'bar';
                         include_once('js/chartGeneric.php'); 
                         ?>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="?chart=bar" class="btn btn-sm btn-light <?= $MyChartType === 'bar' ? 'active' : '' ?>">Bar</a>
-                        <a href="?chart=line" class="btn btn-sm btn-light <?= $MyChartType === 'line' ? 'active' : '' ?>">Line</a>
-                        <a href="?chart=radar" class="btn btn-sm btn-light <?= $MyChartType === 'radar' ? 'active' : '' ?>">Radar</a>
                     </div>
                 </div>
             </div>
@@ -68,7 +89,7 @@ require_once("functions.php");
             <div class="col-lg-4">
                 <div class="card bg-primary h-100">
                     <div class="card-header">
-                        <h5 class="mb-0">Year Breakdown</h5>
+                        <h5>Year Breakdown</h5>
                     </div>
                     <div class="card-body" style="max-height: 520px; overflow-y: auto;">
                         <table class="table table-dark table-striped table-hover">
@@ -76,24 +97,17 @@ require_once("functions.php");
                                 <tr>
                                     <th>Year</th>
                                     <th class="text-end">Deaths</th>
-                                    <th class="text-end">% of Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php
-                            $totalDeaths = CountTotalDeaths();
-                            foreach ($data as $row):
-                                $percent = $totalDeaths > 0 ? ($row['CountYearDeath'] / $totalDeaths) * 100 : 0;
-                            ?>
+                            <?php foreach ($data as $row): ?>
                                 <tr>
                                     <td>
-                                        <a href="listPeopleYear.php?Year=<?= $row['Year'] ?>" 
-                                           class="btn btn-sm btn-outline-light">
+                                        <a href="listPeopleYear.php?Year=<?= $row['Year'] ?>" class="btn btn-sm btn-outline-light">
                                             <?= $row['Year'] ?>
                                         </a>
                                     </td>
                                     <td class="text-end"><?= number_format($row['CountYearDeath']) ?></td>
-                                    <td class="text-end"><?= round($percent, 1) ?>%</td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
