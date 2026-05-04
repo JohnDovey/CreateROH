@@ -273,6 +273,21 @@ function getPageViewStats() {
 }
 
 /**
+ * Get view count for the current page
+ */
+function getCurrentPageViews() {
+    $pageName = basename($_SERVER['PHP_SELF'] ?? 'unknown.php');
+    $year  = (int)date('Y');
+    $month = (int)date('n');
+
+    $sql = "SELECT COALESCE(SUM(ViewCount), 0) as views 
+            FROM PageViews 
+            WHERE PageName = :page AND Year = :year AND Month = :month";
+    
+    $result = db()->fetchOne($sql, [':page' => $pageName, ':year' => $year, ':month' => $month]);
+    return $result['views'] ?? 0;
+}
+/**
  * Get ALL-TIME view count for the current page
  */
 function getCurrentPageViewsAllTime() {
