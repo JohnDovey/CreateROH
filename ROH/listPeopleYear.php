@@ -1,6 +1,6 @@
 <?php
 /**
- * listPeopleYear.php - SECURE FINAL VERSION
+ * listPeopleYear.php - SECURE VERSION WITH FLEXIBLE DATE MATCHING
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -32,9 +32,17 @@ require_once("functions.php");
         $recordsPerPage = 50;
         $offset = ($recordsPerPage * $page) - $recordsPerPage;
 
-        // Count records
-        $sqlCount = "SELECT COUNT(*) as total FROM PersonInfoRaw WHERE strftime('%Y', DateDeath) = :year";
-        $totalInYear = db()->fetchOne($sqlCount, [':year' => $Year])['total'] ?? 0;
+        // Count using flexible date matching
+        $sqlCount = "SELECT COUNT(*) as total 
+                     FROM PersonInfoRaw 
+                     WHERE DateDeath LIKE :y1 
+                        OR DateDeath LIKE :y2 
+                        OR substr(DateDeath,1,4) = :y3";
+        $totalInYear = db()->fetchOne($sqlCount, [
+            ':y1' => $Year . '%',
+            ':y2' => '%-' . $Year . '-%',
+            ':y3' => (string)$Year
+        ])['total'] ?? 0;
         ?>
 
         <h1 class="display-4 text-center my-5">
@@ -51,7 +59,7 @@ require_once("functions.php");
                         <label for="Year" class="me-2">Select Year:</label>
                         <select name="Year" id="Year" class="form-select d-inline w-auto" onchange="this.form.submit()">
                             <?php
-                            $yearsSql = "SELECT DISTINCT strftime('%Y', DateDeath) as Year 
+                            $yearsSql = "SELECT DISTINCT substr(DateDeath,1,4) as Year 
                                          FROM PersonInfoRaw 
                                          WHERE DateDeath IS NOT NULL 
                                          ORDER BY Year DESC";
@@ -79,14 +87,18 @@ require_once("functions.php");
                     </thead>
                     <tbody>
                     <?php
-                    $sql = "SELECT *, strftime('%Y', DateDeath) as Year 
+                    $sql = "SELECT *, substr(DateDeath,1,4) as Year 
                             FROM PersonInfoRaw 
-                            WHERE strftime('%Y', DateDeath) = :year 
+                            WHERE DateDeath LIKE :y1 
+                               OR DateDeath LIKE :y2 
+                               OR substr(DateDeath,1,4) = :y3 
                             ORDER BY {$sortField}, FirstName 
                             LIMIT :offset, :limit";
 
                     $params = [
-                        ':year'   => $Year,
+                        ':y1'     => $Year . '%',
+                        ':y2'     => '%-' . $Year . '-%',
+                        ':y3'     => (string)$Year,
                         ':offset' => $offset,
                         ':limit'  => $recordsPerPage
                     ];
