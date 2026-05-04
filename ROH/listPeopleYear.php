@@ -1,7 +1,6 @@
 <?php
 /**
- * listPeopleYear.php
- * Secure list of people by year of death
+ * listPeopleYear.php - SECURE FINAL VERSION
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -15,28 +14,32 @@ require_once("functions.php");
     <title>Roll of Honour: List People by Year</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
-
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
         <?php
-        $Year = isset($_GET['Year']) ? (int)$_GET['Year'] : 1916;
+        $Year = isset($_GET['Year']) ? (int)$_GET['Year'] : (int)date('Y');
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $sortField = in_array($_GET['sort'] ?? 'LastName', ['PersonNumber','LastName','FirstName','Rank','Regiment']) 
-                     ? $_GET['sort'] 
-                     : 'LastName';
+
+        // STRICT safe sort
+        $allowedSort = ['PersonNumber', 'LastName', 'FirstName', 'Rank', 'DateDeath'];
+        $sortField = $_GET['sort'] ?? 'LastName';
+        if (!in_array($sortField, $allowedSort)) {
+            $sortField = 'LastName';
+        }
 
         $recordsPerPage = 50;
-        $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+        $offset = ($recordsPerPage * $page) - $recordsPerPage;
 
-        // Count people in this year
+        // Count records
         $sqlCount = "SELECT COUNT(*) as total FROM PersonInfoRaw WHERE strftime('%Y', DateDeath) = :year";
         $totalInYear = db()->fetchOne($sqlCount, [':year' => $Year])['total'] ?? 0;
         ?>
 
         <h1 class="display-4 text-center my-5">
-            Roll of Honour — <?= $Year ?> <small class="text-muted">(<?= number_format($totalInYear) ?> records)</small>
+            Roll of Honour — <?= $Year ?> 
+            <small class="text-muted">(<?= number_format($totalInYear) ?> records)</small>
         </h1>
 
         <div class="row justify-content-md-center">
@@ -70,7 +73,7 @@ require_once("functions.php");
                             <th><a href="?Year=<?= $Year ?>&sort=FirstName" class="text-white">First Name</a></th>
                             <th>Initials</th>
                             <th>Rank</th>
-                            <th><a href="?Year=<?= $Year ?>&sort=Regiment" class="text-white">Regiment</a></th>
+                            <th>Regiment</th>
                             <th>Date of Death</th>
                         </tr>
                     </thead>
@@ -84,7 +87,7 @@ require_once("functions.php");
 
                     $params = [
                         ':year'   => $Year,
-                        ':offset' => $fromRecordNum,
+                        ':offset' => $offset,
                         ':limit'  => $recordsPerPage
                     ];
 
@@ -111,10 +114,8 @@ require_once("functions.php");
                 </table>
 
                 <!-- Pagination -->
-                <?php
-                $total_pages = ceil($totalInYear / $recordsPerPage);
-                ?>
-                <nav aria-label="Pagination">
+                <?php $total_pages = ceil($totalInYear / $recordsPerPage); ?>
+                <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         <?php if ($page > 1): ?>
                             <li class="page-item"><a class="page-link" href="?Year=<?= $Year ?>&page=1&sort=<?= $sortField ?>">« First</a></li>
@@ -133,7 +134,6 @@ require_once("functions.php");
                         <?php endif; ?>
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>
