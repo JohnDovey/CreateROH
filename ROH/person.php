@@ -67,29 +67,27 @@ require_once("functions.php");
                 </div>
 
                 <!-- Images -->
-                <h3 class="text-center mb-3">Images</h3>
+<h3 class="text-center mb-3">Images</h3>
 
-                <?php
-                $imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
-                $images = db()->fetchAll($imgSql, [':pn' => $PersonNumber]);
+<?php
+$imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
+$images = db()->fetchAll($imgSql, [':pn' => $PersonNumber]);
 
-                if (empty($images)) {
-                    echo '<p class="text-muted text-center">No images available for this person.</p>';
-                } else {
-                    foreach ($images as $img):
-                        $imgSrc = GetImgSrc($img['id']);
-                ?>
-                    <div class="card mb-4 shadow-sm">
-                        <img src="<?= htmlspecialchars($imgSrc) ?>" 
-                             class="card-img-top img-fluid" 
-                             alt="<?= htmlspecialchars($row['Name'] ?? 'Person') ?>"
-                             style="cursor: pointer; max-height: 420px; object-fit: contain;"
-                             onclick="showImageModal('<?= htmlspecialchars($imgSrc) ?>')">
-                        <div class="card-footer small text-muted">
-                            <?= htmlspecialchars($img['ImgUrl'] ?? '') ?>
-                        </div>
-                    </div>
-                <?php endforeach; } ?>
+if (empty($images)) {
+    echo '<p class="text-muted text-center">No images available for this person.</p>';
+} else {
+    foreach ($images as $img):
+        $imgSrc = GetImgSrc($img['id']);
+        $altText = $img['ImgUrl'] ? 'Photo from ' . $img['ImgUrl'] : 'Photo of ' . ($row['Name'] ?? 'person');
+?>
+        <div class="card mb-4 shadow-sm">
+            <img src="<?= htmlspecialchars($imgSrc) ?>" 
+                 class="card-img-top img-fluid" 
+                 alt="<?= htmlspecialchars($altText) ?>"
+                 style="cursor: pointer; max-height: 420px; object-fit: contain;"
+                 onclick="showImageModal('<?= htmlspecialchars($imgSrc) ?>')">
+        </div>
+<?php endforeach; } ?>
 
                 <!-- Navigation -->
                 <?php
