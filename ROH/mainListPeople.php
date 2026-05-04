@@ -1,7 +1,6 @@
 <?php
 /**
- * mainListPeople.php
- * Secure paginated people list
+ * mainListPeople.php - SECURE FINAL VERSION
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -12,7 +11,7 @@ require_once("functions.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roll of Honour: List People</title>
+    <title>Roll of Honour: All Personnel</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
 
@@ -20,38 +19,38 @@ require_once("functions.php");
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
-        <h1 class="display-4 text-center my-5">Roll of Honour — All Personnel</h1>
-
         <?php
         $totalDeaths = CountTotalDeaths();
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $sortField = in_array($_GET['sort'] ?? 'LastName', ['PersonNumber','LastName','FirstName','RankID','DateDeath']) 
+
+        // STRICT whitelisted sort
+        $allowedSort = ['PersonNumber', 'LastName', 'FirstName', 'Rank', 'DateDeath'];
+        $sortField = in_array($_GET['sort'] ?? 'LastName', $allowedSort) 
                      ? $_GET['sort'] 
                      : 'LastName';
-        
+
         $recordsPerPage = 50;
-        $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+        $offset = ($recordsPerPage * $page) - $recordsPerPage;
         ?>
+
+        <h1 class="display-4 text-center my-5">Roll of Honour — All Personnel</h1>
 
         <div class="row justify-content-md-center">
             <div class="col-md-auto bg-primary p-4 rounded shadow-sm" style="min-width: 1100px;">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between mb-3">
                     <h4>Total Records: <strong><?= number_format($totalDeaths) ?></strong></h4>
-                    <div>
-                        Sorted by: <strong><?= htmlspecialchars($sortField) ?></strong>
-                    </div>
                 </div>
 
                 <table class="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
-                            <th><a href="?page=<?= $page ?>&sort=PersonNumber" class="text-white">Person #</a></th>
-                            <th><a href="?page=<?= $page ?>&sort=LastName" class="text-white">Last Name</a></th>
-                            <th><a href="?page=<?= $page ?>&sort=FirstName" class="text-white">First Name</a></th>
+                            <th><a href="?sort=PersonNumber" class="text-white">Person #</a></th>
+                            <th><a href="?sort=LastName" class="text-white">Last Name</a></th>
+                            <th><a href="?sort=FirstName" class="text-white">First Name</a></th>
                             <th>Initials</th>
                             <th>Rank</th>
-                            <th><a href="?page=<?= $page ?>&sort=DateDeath" class="text-white">Year</a></th>
+                            <th><a href="?sort=DateDeath" class="text-white">Year</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,9 +59,9 @@ require_once("functions.php");
                             FROM PersonInfoRaw 
                             ORDER BY {$sortField}, FirstName 
                             LIMIT :offset, :limit";
-                    
+
                     $params = [
-                        ':offset' => $fromRecordNum,
+                        ':offset' => $offset,
                         ':limit'  => $recordsPerPage
                     ];
 
@@ -73,7 +72,7 @@ require_once("functions.php");
                         <tr>
                             <td>
                                 <a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" 
-                                   class="text-white">
+                                   class="btn btn-sm btn-primary">
                                     <?= $row['PersonNumber'] ?>
                                 </a>
                             </td>
@@ -88,44 +87,26 @@ require_once("functions.php");
                 </table>
 
                 <!-- Pagination -->
-                <?php
-                $total_pages = ceil($totalDeaths / $recordsPerPage);
-                ?>
-                <nav aria-label="People pagination">
+                <?php $total_pages = ceil($totalDeaths / $recordsPerPage); ?>
+                <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         <?php if ($page > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1&sort=<?= $sortField ?>">« First</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?= $page-1 ?>&sort=<?= $sortField ?>">‹ Previous</a>
-                            </li>
+                            <li class="page-item"><a class="page-link" href="?page=1&sort=<?= $sortField ?>">« First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $page-1 ?>&sort=<?= $sortField ?>">‹ Prev</a></li>
                         <?php endif; ?>
 
-                        <?php
-                        $range = 2;
-                        $start = max(1, $page - $range);
-                        $end = min($total_pages, $page + $range);
-                        for ($i = $start; $i <= $end; $i++): ?>
+                        <?php for ($i = max(1, $page-2); $i <= min($total_pages, $page+2); $i++): ?>
                             <li class="page-item <?= $i == $page ? 'active' : '' ?>">
                                 <a class="page-link" href="?page=<?= $i ?>&sort=<?= $sortField ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?= $page+1 ?>&sort=<?= $sortField ?>">Next ›</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<?= $total_pages ?>&sort=<?= $sortField ?>">Last »</a>
-                            </li>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $page+1 ?>&sort=<?= $sortField ?>">Next ›</a></li>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $total_pages ?>&sort=<?= $sortField ?>">Last »</a></li>
                         <?php endif; ?>
                     </ul>
                 </nav>
-
-                <p class="text-center text-muted">
-                    Page <?= $page ?> of <?= $total_pages ?> • <?= number_format($totalDeaths) ?> total records
-                </p>
 
             </div>
         </div>
