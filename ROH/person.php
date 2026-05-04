@@ -1,6 +1,6 @@
 <?php
 /**
- * person.php - Updated with DateBirth field + Lightbox
+ * person.php - Final Version with DateBirth always displayed
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -50,7 +50,7 @@ require_once("functions.php");
                             <tr><td>Last Name:</td><td><?= htmlspecialchars($row['LastName'] ?? '') ?></td></tr>
                             <tr><td>First Name:</td><td><?= htmlspecialchars($row['FirstName'] ?? '') ?></td></tr>
                             <tr><td>Initials:</td><td><?= htmlspecialchars($row['Initials'] ?? '') ?></td></tr>
-                            <tr><td>Born:</td><td><?= htmlspecialchars($row['DateBirth']) ?></td></tr>
+                            <tr><td>Born:</td><td><?= htmlspecialchars($row['DateBirth'] ?? 'Unknown') ?></td></tr>
                         </table>
                     </div>
                 </div>
