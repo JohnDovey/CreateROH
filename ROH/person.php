@@ -1,6 +1,6 @@
 <?php
 /**
- * person.php - Clean Version with Stable Image Header
+ * person.php - Final Clean Version
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -67,7 +67,7 @@ require_once("functions.php");
                 </div>
 
                 <!-- Images Section -->
-                <h3 class="alert alert-success text-center mt-4 mb-3">Images</h3>
+                <h3 class="text-center mt-4 mb-3">Images</h3>
 
                 <?php
                 $imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
@@ -113,7 +113,7 @@ require_once("functions.php");
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content bg-dark">
                 <div class="modal-header border-0">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center p-2">
                     <img id="modalImage" src="" class="img-fluid" style="max-height: 85vh;">
