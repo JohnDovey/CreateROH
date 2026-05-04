@@ -1,7 +1,6 @@
 <?php
 /**
- * listPeopleRegiment.php
- * Secure list of people by regiment
+ * listPeopleRegiment.php - SECURE FINAL VERSION
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -15,7 +14,6 @@ require_once("functions.php");
     <title>Roll of Honour: List People by Regiment</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
-
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
@@ -23,17 +21,20 @@ require_once("functions.php");
         <?php
         $RegimentID = isset($_GET['Regiment']) ? (int)$_GET['Regiment'] : 1;
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $sortField = in_array($_GET['sort'] ?? 'LastName', ['PersonNumber','LastName','FirstName','Rank','DateDeath']) 
-                     ? $_GET['sort'] 
-                     : 'LastName';
+
+        // Safe sort
+        $allowedSort = ['PersonNumber', 'LastName', 'FirstName', 'Rank', 'DateDeath'];
+        $sortField = $_GET['sort'] ?? 'LastName';
+        if (!in_array($sortField, $allowedSort)) {
+            $sortField = 'LastName';
+        }
 
         $recordsPerPage = 50;
-        $fromRecordNum = ($recordsPerPage * $page) - $recordsPerPage;
+        $offset = ($recordsPerPage * $page) - $recordsPerPage;
 
-        // Get regiment name
         $regimentName = GetRegimentName($RegimentID);
 
-        // Count people in this regiment
+        // Count
         $sqlCount = "SELECT COUNT(*) as total FROM PersonInfoRaw WHERE RegimentID = :id";
         $totalInRegiment = db()->fetchOne($sqlCount, [':id' => $RegimentID])['total'] ?? 0;
         ?>
@@ -52,9 +53,8 @@ require_once("functions.php");
                         <label for="Regiment" class="me-2">Select Regiment:</label>
                         <select name="Regiment" id="Regiment" class="form-select d-inline w-auto" onchange="this.form.submit()">
                             <?php
-                            $regSql = "SELECT DISTINCT RegimentID, Regiment 
-                                       FROM PersonInfoRaw 
-                                       WHERE RegimentID IS NOT NULL 
+                            $regSql = "SELECT RegimentID, Regiment 
+                                       FROM Regiment 
                                        ORDER BY Regiment";
                             $regiments = db()->fetchAll($regSql);
                             foreach ($regiments as $r): ?>
@@ -69,17 +69,17 @@ require_once("functions.php");
                 <table class="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
-                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=PersonNumber" class="text-white">Person #</a></th>
-                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=LastName" class="text-white">Last Name</a></th>
-                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=FirstName" class="text-white">First Name</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=PersonNumber">Person #</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=LastName">Last Name</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=FirstName">First Name</a></th>
                             <th>Initials</th>
                             <th>Rank</th>
-                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=DateDeath" class="text-white">Year</a></th>
+                            <th><a href="?Regiment=<?= $RegimentID ?>&sort=DateDeath">Year</a></th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $sql = "SELECT *, strftime('%Y', DateDeath) as Year 
+                    $sql = "SELECT *, substr(DateDeath,1,4) as Year 
                             FROM PersonInfoRaw 
                             WHERE RegimentID = :regiment 
                             ORDER BY {$sortField}, FirstName 
@@ -87,7 +87,7 @@ require_once("functions.php");
 
                     $params = [
                         ':regiment' => $RegimentID,
-                        ':offset'   => $fromRecordNum,
+                        ':offset'   => $offset,
                         ':limit'    => $recordsPerPage
                     ];
 
@@ -96,12 +96,7 @@ require_once("functions.php");
                     foreach ($rows as $row):
                     ?>
                         <tr>
-                            <td>
-                                <a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" 
-                                   class="btn btn-sm btn-primary">
-                                    <?= $row['PersonNumber'] ?>
-                                </a>
-                            </td>
+                            <td><a href="person.php?PersonNumber=<?= $row['PersonNumber'] ?>" class="btn btn-sm btn-primary"><?= $row['PersonNumber'] ?></a></td>
                             <td><?= htmlspecialchars(ucwords(strtolower($row['LastName'] ?? ''))) ?></td>
                             <td><?= htmlspecialchars(ucwords(strtolower($row['FirstName'] ?? ''))) ?></td>
                             <td><?= htmlspecialchars($row['Initials'] ?? '') ?></td>
@@ -113,10 +108,8 @@ require_once("functions.php");
                 </table>
 
                 <!-- Pagination -->
-                <?php
-                $total_pages = ceil($totalInRegiment / $recordsPerPage);
-                ?>
-                <nav aria-label="Pagination">
+                <?php $total_pages = ceil($totalInRegiment / $recordsPerPage); ?>
+                <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         <?php if ($page > 1): ?>
                             <li class="page-item"><a class="page-link" href="?Regiment=<?= $RegimentID ?>&page=1&sort=<?= $sortField ?>">« First</a></li>
@@ -135,7 +128,6 @@ require_once("functions.php");
                         <?php endif; ?>
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>
