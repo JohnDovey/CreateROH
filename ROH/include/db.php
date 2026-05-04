@@ -1,5 +1,5 @@
 <?php
-// include/db.php - Secure Database Connection (Fixed)
+// include/db.php - Improved with better locking handling
 
 class ROHDatabase {
     private static $instance = null;
@@ -7,10 +7,14 @@ class ROHDatabase {
 
     private function __construct() {
         $dbPath = __DIR__ . '/../RohData.sql3';
+        
         $this->db = new SQLite3($dbPath);
         $this->db->enableExceptions(true);
-        $this->db->exec('PRAGMA foreign_keys = ON;');
+        
+        // Important settings for concurrency
         $this->db->exec('PRAGMA journal_mode = WAL;');
+        $this->db->exec('PRAGMA busy_timeout = 5000;');   // Wait up to 5 seconds
+        $this->db->exec('PRAGMA foreign_keys = ON;');
     }
 
     public static function getInstance() {
@@ -24,7 +28,6 @@ class ROHDatabase {
         return $this->db;
     }
 
-    // Execute query and return result object
     public function query($sql, $params = []) {
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
@@ -36,18 +39,16 @@ class ROHDatabase {
             $stmt->bindValue($key, $value, $type);
         }
 
-        return $stmt->execute();   // Returns SQLite3Result
+        return $stmt->execute();
     }
 
-    // Fetch single row
     public function fetchOne($sql, $params = []) {
         $result = $this->query($sql, $params);
         $row = $result->fetchArray(SQLITE3_ASSOC);
-        $result->finalize();   // Safe here for single row
+        $result->finalize();
         return $row ?: null;
     }
 
-    // Fetch all rows
     public function fetchAll($sql, $params = []) {
         $result = $this->query($sql, $params);
         $rows = [];
@@ -58,7 +59,6 @@ class ROHDatabase {
         return $rows;
     }
 
-    // Execute non-select (INSERT/UPDATE/DELETE)
     public function execute($sql, $params = []) {
         $result = $this->query($sql, $params);
         $result->finalize();
@@ -66,7 +66,6 @@ class ROHDatabase {
     }
 }
 
-// Helper
 function db() {
     return ROHDatabase::getInstance();
 }
