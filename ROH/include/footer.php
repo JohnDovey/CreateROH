@@ -74,9 +74,23 @@ $stats = getPageViewStats();
             </div>
         </div>
     </div>
-    <div class="text-center mt-4 small text-muted">
-    Total Page Views: <strong><?= number_format($stats['total']) ?></strong> | 
-    Views this Year: <strong><?= number_format($stats['thisYear']) ?></strong> | 
-    Views this Month: <strong><?= number_format($stats['thisMonth']) ?></strong>
+    <?php
+// Increment page view on every load
+$pageFile = $_SERVER['PHP_SELF'] ?? 'unknown.php';
+incrementPageView($pageFile);
+
+// Get stats
+$stats = getPageViewStats();
+$currentPageThisMonth = getCurrentPageViews();
+$currentPageAllTime   = getCurrentPageViewsAllTime();
+?>
+
+<!-- Page View Statistics -->
+<div class="text-center mt-4 small text-muted">
+    <strong>Total Site Views:</strong> <?= number_format($stats['total']) ?> | 
+    <strong>This Year:</strong> <?= number_format($stats['thisYear']) ?> | 
+    <strong>This Month:</strong> <?= number_format($stats['thisMonth']) ?> <br>
+    <strong>This Page (All Time):</strong> <?= number_format($currentPageAllTime) ?> | 
+    <strong>This Page (This Month):</strong> <?= number_format($currentPageThisMonth) ?>
 </div>
 </footer>
