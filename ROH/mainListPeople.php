@@ -1,6 +1,6 @@
 <?php
 /**
- * mainListPeople.php - SECURE FINAL VERSION
+ * mainListPeople.php - ULTRA SAFE VERSION
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -14,7 +14,6 @@ require_once("functions.php");
     <title>Roll of Honour: All Personnel</title>
     <?php require_once("include/bootstrap-head.php"); ?>
 </head>
-
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
@@ -23,11 +22,12 @@ require_once("functions.php");
         $totalDeaths = CountTotalDeaths();
         $page = max(1, (int)($_GET['page'] ?? 1));
 
-        // STRICT whitelisted sort
+        // ULTRA SAFE sort handling
         $allowedSort = ['PersonNumber', 'LastName', 'FirstName', 'Rank', 'DateDeath'];
-        $sortField = in_array($_GET['sort'] ?? 'LastName', $allowedSort) 
-                     ? $_GET['sort'] 
-                     : 'LastName';
+        $sortField = $_GET['sort'] ?? 'LastName';
+        if (!in_array($sortField, $allowedSort)) {
+            $sortField = 'LastName';
+        }
 
         $recordsPerPage = 50;
         $offset = ($recordsPerPage * $page) - $recordsPerPage;
@@ -107,7 +107,6 @@ require_once("functions.php");
                         <?php endif; ?>
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>
