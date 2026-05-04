@@ -1,6 +1,6 @@
 <?php
 /**
- * person.php - Clean Headers + Lightbox
+ * person.php - Updated with DateBirth field + Lightbox
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -50,6 +50,9 @@ require_once("functions.php");
                             <tr><td>Last Name:</td><td><?= htmlspecialchars($row['LastName'] ?? '') ?></td></tr>
                             <tr><td>First Name:</td><td><?= htmlspecialchars($row['FirstName'] ?? '') ?></td></tr>
                             <tr><td>Initials:</td><td><?= htmlspecialchars($row['Initials'] ?? '') ?></td></tr>
+                            <?php if (!empty($row['DateBirth'])): ?>
+                            <tr><td>Born:</td><td><?= htmlspecialchars($row['DateBirth']) ?></td></tr>
+                            <?php endif; ?>
                         </table>
                     </div>
                 </div>
@@ -60,34 +63,34 @@ require_once("functions.php");
                     <div class="card-body">
                         <table class="table table-dark table-striped">
                             <tr><td>Date of Death:</td><td><?= htmlspecialchars($row['DateDeath'] ?? 'Unknown') ?></td></tr>
-                            <tr><td>Age:</td><td><?= htmlspecialchars($row['Age'] ?? 'Unknown') ?></td></tr>
+                            <tr><td>Age at Death:</td><td><?= htmlspecialchars($row['Age'] ?? 'Unknown') ?></td></tr>
                             <tr><td>Cause of Death:</td><td><?= htmlspecialchars($row['CauseDeath'] ?? 'Unknown') ?></td></tr>
                         </table>
                     </div>
                 </div>
 
                 <!-- Images -->
-<h3 class="text-center mb-3">Images</h3>
+                <h3 class="text-center mb-3">Images</h3>
 
-<?php
-$imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
-$images = db()->fetchAll($imgSql, [':pn' => $PersonNumber]);
+                <?php
+                $imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
+                $images = db()->fetchAll($imgSql, [':pn' => $PersonNumber]);
 
-if (empty($images)) {
-    echo '<p class="text-muted text-center">No images available for this person.</p>';
-} else {
-    foreach ($images as $img):
-        $imgSrc = GetImgSrc($img['id']);
-        $altText = $img['ImgUrl'] ? 'Photo from ' . $img['ImgUrl'] : 'Photo of ' . ($row['Name'] ?? 'person');
-?>
-        <div class="card mb-4 shadow-sm">
-            <img src="<?= htmlspecialchars($imgSrc) ?>" 
-                 class="card-img-top img-fluid" 
-                 alt="<?= htmlspecialchars($altText) ?>"
-                 style="cursor: pointer; max-height: 420px; object-fit: contain;"
-                 onclick="showImageModal('<?= htmlspecialchars($imgSrc) ?>')">
-        </div>
-<?php endforeach; } ?>
+                if (empty($images)) {
+                    echo '<p class="text-muted text-center">No images available for this person.</p>';
+                } else {
+                    foreach ($images as $img):
+                        $imgSrc = GetImgSrc($img['id']);
+                        $altText = $img['ImgUrl'] ? 'Photo from ' . $img['ImgUrl'] : 'Photo of ' . ($row['Name'] ?? 'person');
+                ?>
+                    <div class="card mb-4 shadow-sm">
+                        <img src="<?= htmlspecialchars($imgSrc) ?>" 
+                             class="card-img-top img-fluid" 
+                             alt="<?= htmlspecialchars($altText) ?>"
+                             style="cursor: pointer; max-height: 420px; object-fit: contain;"
+                             onclick="showImageModal('<?= htmlspecialchars($imgSrc) ?>')">
+                    </div>
+                <?php endforeach; } ?>
 
                 <!-- Navigation -->
                 <?php
@@ -103,7 +106,7 @@ if (empty($images)) {
             <div class="col col-lg-2"></div>
         </div>
 
-        <?php } ?>
+        <?php } // end if $row ?>
     </div>
 
     <!-- Image Lightbox Modal -->
