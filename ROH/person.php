@@ -1,6 +1,6 @@
 <?php
 /**
- * person.php - Final Clean Version
+ * person.php - Clean Headers + Lightbox
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -19,7 +19,7 @@ require_once("functions.php");
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
-        <h1 class="display-3 text-center">Roll of Honour: Person Info</h1>
+        <h1 class="display-3 text-center my-5">Roll of Honour: Person Info</h1>
 
         <?php
         $PersonNumber = isset($_GET['PersonNumber']) ? (int)$_GET['PersonNumber'] : 1;
@@ -41,9 +41,9 @@ require_once("functions.php");
             <div class="col-md-auto bg-primary p-4 rounded">
 
                 <!-- Personal Details -->
-                <div class="card mb-3">
+                <h3 class="text-center mb-3">Personal Details</h3>
+                <div class="card mb-4">
                     <div class="card-body">
-                        <h3 class="alert alert-success">Personal Details</h3>
                         <table class="table table-dark table-striped">
                             <tr><td>Service No:</td><td><?= htmlspecialchars($row['ServiceNo'] ?? 'Unknown') ?></td></tr>
                             <tr><td>Rank:</td><td><?= htmlspecialchars($row['Rank'] ?? 'Unknown') ?></td></tr>
@@ -55,19 +55,19 @@ require_once("functions.php");
                 </div>
 
                 <!-- Death Details -->
-                <div class="card mb-3">
+                <h3 class="text-center mb-3">Death Details</h3>
+                <div class="card mb-4">
                     <div class="card-body">
-                        <h3 class="alert alert-success">Death Details</h3>
                         <table class="table table-dark table-striped">
                             <tr><td>Date of Death:</td><td><?= htmlspecialchars($row['DateDeath'] ?? 'Unknown') ?></td></tr>
                             <tr><td>Age:</td><td><?= htmlspecialchars($row['Age'] ?? 'Unknown') ?></td></tr>
-                            <tr><td>Cause:</td><td><?= htmlspecialchars($row['CauseDeath'] ?? 'Unknown') ?></td></tr>
+                            <tr><td>Cause of Death:</td><td><?= htmlspecialchars($row['CauseDeath'] ?? 'Unknown') ?></td></tr>
                         </table>
                     </div>
                 </div>
 
-                <!-- Images Section -->
-                <h3 class="text-center mt-4 mb-3">Images</h3>
+                <!-- Images -->
+                <h3 class="text-center mb-3">Images</h3>
 
                 <?php
                 $imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
@@ -105,7 +105,7 @@ require_once("functions.php");
             <div class="col col-lg-2"></div>
         </div>
 
-        <?php } // end if $row ?>
+        <?php } ?>
     </div>
 
     <!-- Image Lightbox Modal -->
