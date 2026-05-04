@@ -149,11 +149,12 @@ function CountDistinct($field) {
 /* ================================================================
    Lookup & Helper Functions
    ================================================================ */
-
 function GetRegimentName($regimentID) {
-    $sql = "SELECT RegimentName FROM Regiment WHERE RegimentID = :id";
+    if (empty($regimentID)) return 'Unknown';
+    
+    $sql = "SELECT Regiment FROM Regiment WHERE RegimentID = :id";
     $row = db()->fetchOne($sql, [':id' => (int)$regimentID]);
-    return $row ? $row['RegimentName'] : 'Unknown';
+    return $row ? $row['Regiment'] : 'Unknown';
 }
 
 function percent($number) {
