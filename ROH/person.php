@@ -1,6 +1,6 @@
 <?php
 /**
- * person.php - Updated with Image Lightbox Modal
+ * person.php - Clean Version with Stable Image Header
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -66,14 +66,15 @@ require_once("functions.php");
                     </div>
                 </div>
 
-                <!-- Images Section with Lightbox -->
-                <h3 class="alert alert-success text-center">Images</h3>
+                <!-- Images Section -->
+                <h3 class="alert alert-success text-center mt-4 mb-3">Images</h3>
+
                 <?php
                 $imgSql = "SELECT * FROM PersonImages WHERE PersonNumber = :pn";
                 $images = db()->fetchAll($imgSql, [':pn' => $PersonNumber]);
 
                 if (empty($images)) {
-                    echo '<p class="text-muted">No images available for this person.</p>';
+                    echo '<p class="text-muted text-center">No images available for this person.</p>';
                 } else {
                     foreach ($images as $img):
                         $imgSrc = GetImgSrc($img['id']);
@@ -95,7 +96,7 @@ require_once("functions.php");
                 $prev = max(1, $PersonNumber - 1);
                 $next = $PersonNumber + 1;
                 ?>
-                <div class="text-center mb-4">
+                <div class="text-center my-4">
                     <a href="person.php?PersonNumber=<?= $prev ?>" class="btn btn-secondary">← Previous</a>
                     <a href="person.php?PersonNumber=<?= $next ?>" class="btn btn-secondary">Next →</a>
                 </div>
@@ -112,9 +113,9 @@ require_once("functions.php");
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content bg-dark">
                 <div class="modal-header border-0">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center p-0">
+                <div class="modal-body text-center p-2">
                     <img id="modalImage" src="" class="img-fluid" style="max-height: 85vh;">
                 </div>
             </div>
