@@ -271,6 +271,20 @@ function getPageViewStats() {
         'thisMonth'   => db()->fetchOne("SELECT COALESCE(SUM(ViewCount), 0) as total FROM PageViews WHERE Year = :y AND Month = :m", [':y' => $year, ':m' => $month])['total'] ?? 0,
     ];
 }
+
+/**
+ * Get ALL-TIME view count for the current page
+ */
+function getCurrentPageViewsAllTime() {
+    $pageName = basename($_SERVER['PHP_SELF'] ?? 'unknown.php');
+
+    $sql = "SELECT COALESCE(SUM(ViewCount), 0) as total 
+            FROM PageViews 
+            WHERE PageName = :page";
+    
+    $result = db()->fetchOne($sql, [':page' => $pageName]);
+    return $result['total'] ?? 0;
+}
 /* ================================================================
    Legacy / Deprecated - Keep for compatibility if needed
    ================================================================ */
