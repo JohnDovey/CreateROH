@@ -1,19 +1,22 @@
 <?php
 /**
  * include/footer.php
- * Modern, respectful, and clean footer
+ * Modern, respectful, and clean footer with Page View Stats
  */
-?>
-<?php
-require_once(__DIR__ . '/../functions.php');   // Ensure functions are loaded
+
+// Ensure functions are loaded
+require_once(__DIR__ . '/../functions.php');
 
 // Increment page view on every page load
 $pageFile = $_SERVER['PHP_SELF'] ?? 'unknown.php';
 incrementPageView($pageFile);
 
-// Get current stats
+// Get statistics
 $stats = getPageViewStats();
+$currentPageThisMonth = getCurrentPageViews();
+$currentPageAllTime   = getCurrentPageViewsAllTime();
 ?>
+
 <!-- Footer -->
 <footer class="bg-dark text-light py-5 mt-5">
     <div class="container">
@@ -73,24 +76,14 @@ $stats = getPageViewStats();
                 </a>
             </div>
         </div>
+
+        <!-- Page View Statistics -->
+        <div class="text-center mt-4 small text-muted">
+            <strong>Total Site Views:</strong> <?= number_format($stats['total']) ?> | 
+            <strong>This Year:</strong> <?= number_format($stats['thisYear']) ?> | 
+            <strong>This Month:</strong> <?= number_format($stats['thisMonth']) ?> <br>
+            <strong>This Page (All Time):</strong> <?= number_format($currentPageAllTime) ?> | 
+            <strong>This Page (This Month):</strong> <?= number_format($currentPageThisMonth) ?>
+        </div>
     </div>
-    <?php
-// Increment page view on every load
-$pageFile = $_SERVER['PHP_SELF'] ?? 'unknown.php';
-incrementPageView($pageFile);
-
-// Get stats
-$stats = getPageViewStats();
-$currentPageThisMonth = getCurrentPageViews();
-$currentPageAllTime   = getCurrentPageViewsAllTime();
-?>
-
-<!-- Page View Statistics -->
-<div class="text-center mt-4 small text-muted">
-    <strong>Total Site Views:</strong> <?= number_format($stats['total']) ?> | 
-    <strong>This Year:</strong> <?= number_format($stats['thisYear']) ?> | 
-    <strong>This Month:</strong> <?= number_format($stats['thisMonth']) ?> <br>
-    <strong>This Page (All Time):</strong> <?= number_format($currentPageAllTime) ?> | 
-    <strong>This Page (This Month):</strong> <?= number_format($currentPageThisMonth) ?>
-</div>
 </footer>
