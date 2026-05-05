@@ -51,6 +51,7 @@
                         <li><a class="dropdown-item" href="listPeopleYear.php">By Year of Death</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="person.php">Single Person Lookup</a></li>
+                        <li><a class="dropdown-item" href="listOnThisDay.php">On This Day</a></li>
                     </ul>
                 </li>
 
