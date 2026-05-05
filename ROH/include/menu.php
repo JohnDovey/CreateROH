@@ -32,6 +32,13 @@
                     </a>
                 </li>
 
+                <!-- Search -->
+                <li class="nav-item">
+                    <a class="nav-link" href="search.php">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+
                 <!-- Browse -->
                 <li class="nav-item">
                     <a class="nav-link" href="mainListPeople.php">
@@ -49,9 +56,9 @@
                     <ul class="dropdown-menu" aria-labelledby="listsDropdown">
                         <li><a class="dropdown-item" href="listPeopleRegiment.php">By Regiment</a></li>
                         <li><a class="dropdown-item" href="listPeopleYear.php">By Year of Death</a></li>
+                        <li><a class="dropdown-item" href="listOnThisDay.php">On This Day</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="person.php">Single Person Lookup</a></li>
-                        <li><a class="dropdown-item" href="listOnThisDay.php">On This Day</a></li>
                     </ul>
                 </li>
 
@@ -66,14 +73,10 @@
                         <li><a class="dropdown-item" href="chartYear.php">By Year</a></li>
                         <li><a class="dropdown-item" href="chartAge.php">By Age</a></li>
                         <li><a class="dropdown-item" href="chartCauseOfDeath.php">Cause of Death</a></li>
-                        <li><a class="dropdown-item" href="chartCauseOfDeathYear.php">Cause by Year</a></li>
-                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="chartRegiment.php">By Regiment</a></li>
-                        <li><a class="dropdown-item" href="chartRank.php">By Rank</a></li>
                         <li><a class="dropdown-item" href="chartCountry.php">By Country</a></li>
-                        <li><a class="dropdown-item" href="chartCemetery.php">By Cemetery</a></li>
-                        <li><a class="dropdown-item" href="chartUnit.php">By Unit</a></li>
-                        <li><a class="dropdown-item" href="chartLocality.php">By Locality</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="pageviews.php">Page Views</a></li>
                     </ul>
                 </li>
 
@@ -86,8 +89,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="utilsDropdown">
                         <li><a class="dropdown-item" href="DataInfo.php">Database Info</a></li>
-                        <li><a class="dropdown-item" href="pageviews.php">Page Views Statistics</a></li>
-                        <li><a class="dropdown-item" href="chart_views.php">Page Views History</a></li>
+                        <li><a class="dropdown-item" href="search.php">Advanced Search</a></li>
                     </ul>
                 </li>
 
