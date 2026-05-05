@@ -1,6 +1,6 @@
 <?php
 /**
- * listOnThisDay.php - Lightweight Version
+ * listOnThisDay.php - Enhanced with Monthly Death Trends
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -134,7 +134,7 @@ require_once("functions.php");
             </div>
         </div>
 
-        <!-- Yearly Graph for this Day -->
+        <!-- Yearly Trend Graph -->
         <h4 class="mt-5 text-center">Deaths on <?= date('d F', mktime(0,0,0,$selectedMonth,$selectedDay)) ?> by Year</h4>
         <?php
         $graphData = db()->fetchAll("SELECT strftime('%Y', DateDeath) as Year, COUNT(*) as Count 
@@ -147,7 +147,7 @@ require_once("functions.php");
             ':day'   => sprintf('%02d', $selectedDay)
         ]);
         ?>
-        <canvas id="dayChart" height="380"></canvas>
+        <canvas id="trendChart" height="380"></canvas>
 
     </div>
 
@@ -157,14 +157,16 @@ require_once("functions.php");
 
     <script>
     window.addEventListener('load', function() {
-        new Chart(document.getElementById('dayChart'), {
-            type: 'bar',
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
             data: {
                 labels: <?= json_encode(array_column($graphData, 'Year')) ?>,
                 datasets: [{
                     label: 'Deaths on this Day',
                     data: <?= json_encode(array_column($graphData, 'Count')) ?>,
-                    backgroundColor: '#0d6efd'
+                    borderColor: '#0dcaf0',
+                    tension: 0.3,
+                    fill: false
                 }]
             },
             options: {
