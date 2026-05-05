@@ -1,7 +1,6 @@
 <?php
 /**
- * chartCountry.php
- * Secure and modern deaths by country chart
+ * chartCountry.php - With Country Flags
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -14,8 +13,11 @@ require_once("functions.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll of Honour: Deaths by Country</title>
     <?php require_once("include/bootstrap-head.php"); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        .flag { font-size: 1.4em; margin-left: 8px; }
+    </style>
 </head>
-
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
@@ -27,11 +29,10 @@ require_once("functions.php");
             <div class="col-lg-8 mb-4">
                 <div class="card bg-primary">
                     <div class="card-header">
-                        <h5 class="mb-0">Deaths by Country of Commemoration</h5>
+                        <h5>Deaths by Country of Commemoration</h5>
                     </div>
                     <div class="card-body">
                         <?php
-                        // Get chart data securely
                         $sql = "SELECT Country, COUNT(*) as CountCountry 
                                 FROM PersonInfoRaw 
                                 WHERE CountryID > 0 
@@ -44,30 +45,22 @@ require_once("functions.php");
                         $DataPoints = json_encode(array_column($data, 'CountCountry'));
                         ?>
 
-                        <canvas id="StatsGraph" style="height: 520px; width: 100%;"></canvas>
+                        <canvas id="countryChart" style="height: 520px; width: 100%;"></canvas>
 
                         <?php 
                         $MyChartTitle = "Deaths by Country";
-                        $MyChartType = $_GET['chart'] ?? 'bar';
-                        if (!in_array($MyChartType, ['bar', 'line', 'radar'])) {
-                            $MyChartType = 'bar';
-                        }
+                        $MyChartType = 'bar';
                         include_once('js/chartGeneric.php'); 
                         ?>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="?chart=bar" class="btn btn-sm btn-light <?= $MyChartType === 'bar' ? 'active' : '' ?>">Bar</a>
-                        <a href="?chart=line" class="btn btn-sm btn-light <?= $MyChartType === 'line' ? 'active' : '' ?>">Line</a>
-                        <a href="?chart=radar" class="btn btn-sm btn-light <?= $MyChartType === 'radar' ? 'active' : '' ?>">Radar</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Side Table -->
+            <!-- Side Table with Flags -->
             <div class="col-lg-4">
                 <div class="card bg-primary h-100">
                     <div class="card-header">
-                        <h5 class="mb-0">Detailed Breakdown</h5>
+                        <h5>Detailed Breakdown</h5>
                     </div>
                     <div class="card-body" style="max-height: 560px; overflow-y: auto;">
                         <?php
@@ -81,23 +74,23 @@ require_once("functions.php");
                                     <th>Country</th>
                                     <th class="text-end">Deaths</th>
                                     <th class="text-end">% of Total</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                             <?php foreach ($data as $row): 
-                                $percent = $withCountry > 0 ? ($row['CountCountry'] / $withCountry) * 100 : 0;
+                                $percent = $withCountry > 0 ? round(($row['CountCountry'] / $withCountry) * 100, 1) : 0;
+                                $flag = getCountryFlag($row['Country']);
                             ?>
                                 <tr>
                                     <td><?= htmlspecialchars($row['Country']) ?></td>
                                     <td class="text-end"><?= number_format($row['CountCountry']) ?></td>
-                                    <td class="text-end"><?= round($percent, 1) ?>%</td>
+                                    <td class="text-end"><?= $percent ?>%</td>
+                                    <td class="text-end flag"><?= $flag ?></td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="card-footer small text-muted">
-                        Total with Country: <?= number_format($withCountry) ?> | No Country: <?= number_format($noCountry) ?>
                     </div>
                 </div>
             </div>
@@ -107,5 +100,6 @@ require_once("functions.php");
     <hr>
     <?php require_once("include/footer.php"); ?>
     <?php require_once("include/bootstrap-footer.php"); ?>
+
 </body>
 </html>
