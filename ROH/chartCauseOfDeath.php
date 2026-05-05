@@ -1,6 +1,6 @@
 <?php
 /**
- * chartCauseOfDeath.php - Safe Version
+ * chartCauseOfDeath.php - Optimized Lightweight Version
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -13,6 +13,10 @@ require_once("functions.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll of Honour: Cause of Death</title>
     <?php require_once("include/bootstrap-head.php"); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        canvas { max-height: 420px; }
+    </style>
 </head>
 <body>
     <div class="container-fluid clearfix">
@@ -20,39 +24,26 @@ require_once("functions.php");
 
         <h1 class="display-4 text-center my-5">Cause of Death Statistics</h1>
 
-        <div class="row justify-content-md-center">
-            <div class="col-lg-8 mb-4">
-                <div class="card bg-primary">
-                    <div class="card-header">
-                        <h5>Distribution by Cause of Death</h5>
-                    </div>
-                    <div class="card-body">
-                        <?php
-                        $sql = "SELECT CauseDeath, COUNT(*) as CountCause 
+        <?php
+        $data = db()->fetchAll("SELECT CauseDeath, COUNT(*) as CountCause 
                                 FROM PersonInfoRaw 
                                 WHERE CauseDeath IS NOT NULL 
                                   AND CauseDeath != '' 
                                   AND CauseDeath != 'Unknown'
                                 GROUP BY CauseDeath 
-                                ORDER BY CountCause DESC";
-                        
-                        $data = db()->fetchAll($sql);
+                                ORDER BY CountCause DESC");
+        ?>
 
-                        $LabelNames = json_encode(array_column($data, 'CauseDeath'));
-                        $DataPoints = json_encode(array_column($data, 'CountCause'));
-                        ?>
-
-                        <canvas id="StatsGraph" style="height: 520px; width: 100%;"></canvas>
-
-                        <?php 
-                        $MyChartTitle = "Deaths by Cause of Death";
-                        $MyChartType = 'pie';
-                        include_once('js/chartGeneric.php'); 
-                        ?>
+        <div class="row justify-content-md-center">
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-primary">
+                    <div class="card-body">
+                        <canvas id="causeChart"></canvas>
                     </div>
                 </div>
             </div>
 
+            <!-- Summary Table -->
             <div class="col-lg-4">
                 <div class="card bg-primary h-100">
                     <div class="card-header">
@@ -62,6 +53,7 @@ require_once("functions.php");
                         <?php
                         $total = CountTotalDeaths();
                         $noCause = CountNoCause();
+                        $withCause = $total - $noCause;
                         ?>
                         <table class="table table-dark table-striped table-hover">
                             <thead>
@@ -73,7 +65,7 @@ require_once("functions.php");
                             </thead>
                             <tbody>
                             <?php foreach ($data as $row): 
-                                $percent = ($total - $noCause) > 0 ? round(($row['CountCause'] / ($total - $noCause)) * 100, 1) : 0;
+                                $percent = $withCause > 0 ? round(($row['CountCause'] / $withCause) * 100, 1) : 0;
                             ?>
                                 <tr>
                                     <td><?= htmlspecialchars($row['CauseDeath']) ?></td>
@@ -92,5 +84,33 @@ require_once("functions.php");
     <hr>
     <?php require_once("include/footer.php"); ?>
     <?php require_once("include/bootstrap-footer.php"); ?>
+
+    <script>
+    window.addEventListener('load', function() {
+        new Chart(document.getElementById('causeChart'), {
+            type: 'pie',
+            data: {
+                labels: <?= json_encode(array_column($data, 'CauseDeath')) ?>,
+                datasets: [{
+                    data: <?= json_encode(array_column($data, 'CountCause')) ?>,
+                    backgroundColor: [
+                        '#0d6efd', '#0dcaf0', '#ffc107', '#198754', 
+                        '#dc3545', '#6f42c1', '#fd7e14', '#20c997'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#ddd', padding: 15 }
+                    }
+                }
+            }
+        });
+    });
+    </script>
 </body>
 </html>
