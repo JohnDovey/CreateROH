@@ -1,6 +1,6 @@
 <?php
 /**
- * listOnThisDay.php - Enhanced with Monthly Death Trends
+ * listOnThisDay.php - Final Version with Dynamic Infographic Header
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -15,7 +15,22 @@ require_once("functions.php");
     <?php require_once("include/bootstrap-head.php"); ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        canvas { max-height: 380px; }
+        .infographic {
+            background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+            border: 3px solid #8B0000;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .death-count {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #ffdd57;
+            line-height: 1;
+        }
     </style>
 </head>
 <body>
@@ -41,10 +56,17 @@ require_once("functions.php");
         ])['total'] ?? 0;
         ?>
 
-        <h1 class="display-4 text-center my-5">
-            On This Day — <?= date('d F', mktime(0,0,0,$selectedMonth,$selectedDay)) ?> 
-            <small class="text-muted">(<?= number_format($totalOnThisDay) ?> records)</small>
-        </h1>
+        <!-- Dynamic Infographic Header -->
+        <div class="infographic">
+            <h2 style="color:#ffdd57; margin:0;">ON THIS DAY</h2>
+            <h3 style="margin:8px 0 15px 0; color:#ddd;">
+                <?= date('d F', mktime(0,0,0,$selectedMonth,$selectedDay)) ?>
+            </h3>
+            <div class="death-count"><?= number_format($totalOnThisDay) ?></div>
+            <p style="margin:5px 0 0 0; font-size:1.1rem; color:#aaa;">
+                South Africans who made the ultimate sacrifice
+            </p>
+        </div>
 
         <!-- Date Selector -->
         <div class="text-center mb-4">
@@ -158,24 +180,18 @@ require_once("functions.php");
     <script>
     window.addEventListener('load', function() {
         new Chart(document.getElementById('trendChart'), {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: <?= json_encode(array_column($graphData, 'Year')) ?>,
                 datasets: [{
                     label: 'Deaths on this Day',
                     data: <?= json_encode(array_column($graphData, 'Count')) ?>,
-                    borderColor: '#0dcaf0',
-                    tension: 0.3,
-                    fill: false
+                    backgroundColor: '#0d6efd'
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: { beginAtZero: true },
-                    x: { }
-                }
+                maintainAspectRatio: true
             }
         });
     });
