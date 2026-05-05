@@ -86,6 +86,7 @@
                     <ul class="dropdown-menu" aria-labelledby="utilsDropdown">
                         <li><a class="dropdown-item" href="DataInfo.php">Database Info</a></li>
                         <li><a class="dropdown-item" href="pageviews.php">Page Views Statistics</a></li>
+                        <li><a class="dropdown-item" href="chart_views.php">Page Views History</a></li>
                     </ul>
                 </li>
 
