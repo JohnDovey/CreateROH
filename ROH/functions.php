@@ -301,23 +301,114 @@ function getCurrentPageViewsAllTime() {
     return $result['total'] ?? 0;
 }
 
+/**
+ * Returns emoji flag for a country name
+ */
 function getCountryFlag($country) {
     $flags = [
-        'South Africa' => '🇿🇦',
-        'France' => '🇫🇷',
-        'Belgium' => '🇧🇪',
-        'Italy' => '🇮🇹',
-        'Egypt' => '🇪🇬',
-        'Kenya' => '🇰🇪',
-        'Tanzania' => '🇹🇿',
-        'United Kingdom' => '🇬🇧',
-        'Germany' => '🇩🇪',
-        'Greece' => '🇬🇷',
-        'Libya' => '🇱🇾',
-        'Tunisia' => '🇹🇳',
-        'Namibia' => '🇳🇦',
+        'South Africa'                  => '🇿🇦',
+        'France'                        => '🇫🇷',
+        'Egypt'                         => '🇪🇬',
+        'Zimbabwe'                      => '🇿🇼',
+        'United Kingdom'                => '🇬🇧',
+        'Tanzania'                      => '🇹🇿',
+        'Italy'                         => '🇮🇹',
+        'Belgium'                       => '🇧🇪',
+        'Kenya'                         => '🇰🇪',
+        'Namibia'                       => '🇳🇦',
+        'Libya'                         => '🇱🇾',
+        'Zambia'                        => '🇿🇲',
+        'Israel'                        => '🇮🇱',
+        'Malta'                         => '🇲🇹',
+        'Germany'                       => '🇩🇪',
+        'Myanmar'                       => '🇲🇲',
+        'Malawi'                        => '🇲🇼',
+        'Mozambique'                    => '🇲🇿',
+        'Greece'                        => '🇬🇷',
+        'Ethiopia'                      => '🇪🇹',
+        'Tunisia'                       => '🇹🇳',
+        'Somalia'                       => '🇸🇴',
+        'Netherlands'                   => '🇳🇱',
+        'Turkey'                        => '🇹🇷',
+        'Sudan'                         => '🇸🇩',
+        'Poland'                        => '🇵🇱',
+        'Lesotho'                       => '🇱🇸',
+        'India'                         => '🇮🇳',
+        'Serbia & Montenegro'           => '🇷🇸',
+        'Eritrea'                       => '🇪🇷',
+        'South Korea'                   => '🇰🇷',
+        'Singapore'                     => '🇸🇬',
+        'Iraq'                          => '🇮🇶',
+        'Madagascar'                    => '🇲🇬',
+        'Algeria'                       => '🇩🇿',
+        'Australia'                     => '🇦🇺',
+        'Austria'                       => '🇦🇹',
+        'Nigeria'                       => '🇳🇬',
+        'Hungary'                       => '🇭🇺',
+        'Czech Republic'                => '🇨🇿',
+        'Malaysia'                      => '🇲🇾',
+        'Lebanese Republic'             => '🇱🇧',
+        'Ghana'                         => '🇬🇭',
+        'Sri Lanka'                     => '🇱🇰',
+        'Papua New Guinea'              => '🇵🇬',
+        'United States of America'      => '🇺🇸',
+        'Yemen'                         => '🇾🇪',
+        'Thailand'                      => '🇹🇭',
+        'Liberia'                       => '🇱🇷',
+        'Canada'                        => '🇨🇦',
+        'Bangladesh'                    => '🇧🇩',
+        'Union of the Comoros'          => '🇰🇲',
+        'Bulgaria'                      => '🇧🇬',
+        'Sierra Leone'                  => '🇸🇱',
+        'Morocco'                       => '🇲🇦',
+        'Syria'                         => '🇸🇾',
+        'Pakistan'                      => '🇵🇰',
+        'New Zealand'                   => '🇳🇿',
+        'China'                         => '🇨🇳',
+        'Romania'                       => '🇷🇴',
+        'Portugal'                      => '🇵🇹',
+        'Norway'                        => '🇳🇴',
+        'Indonesia'                     => '🇮🇩',
+        'East Africa'                   => '🌍',
+        'Denmark'                       => '🇩🇰',
+        'Cyprus'                        => '🇨🇾',
+        'Congo'                         => '🇨🇩',
+        'Botswana'                      => '🇧🇼',
+        'Russia'                        => '🇷🇺',
+        'Switzerland'                   => '🇨🇭',
+        'Mauritius'                     => '🇲🇺',
+        'Japan'                         => '🇯🇵',
+        'Ireland'                       => '🇮🇪',
+        'Sweden'                        => '🇸🇪',
+        'Iran'                          => '🇮🇷',
+        'Bermuda'                       => '🇧🇲',
+        'Argentina'                     => '🇦🇷',
+        'United Arab Emirates'          => '🇦🇪',
+        'Togo'                          => '🇹🇬',
+        'Swaziland'                     => '🇸🇿',
+        'Spain'                         => '🇪🇸',
+        'Oman'                          => '🇴🇲',
+        'Gambia'                        => '🇬🇲',
+        'Bahamas'                       => '🇧🇸',
+        'At Sea'                        => '🌊',
+        'Ascension Island'              => '🌍',
+        'Lost at Sea'                   => '🌊',
+        'Unknown'                       => '🌍',
     ];
-    return $flags[$country] ?? '🌍';
+
+    // Try exact match first
+    if (isset($flags[$country])) {
+        return $flags[$country];
+    }
+
+    // Try partial match
+    foreach ($flags as $key => $flag) {
+        if (stripos($country, $key) !== false) {
+            return $flag;
+        }
+    }
+
+    return '🌍'; // Default globe for unknown countries
 }
 /* ================================================================
    Legacy / Deprecated - Keep for compatibility if needed
