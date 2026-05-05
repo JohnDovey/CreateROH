@@ -1,9 +1,11 @@
 <?php
 /**
- * chartYear.php - Improved with clean year dropdown
+ * chartYear.php - Self-contained with Yellow Axis Labels
  */
 require_once("include/db.php");
 require_once("functions.php");
+
+$selectedYear = isset($_GET['Year']) ? (int)$_GET['Year'] : null;
 ?>
 
 <!DOCTYPE html>
@@ -13,34 +15,28 @@ require_once("functions.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll of Honour: Deaths by Year</title>
     <?php require_once("include/bootstrap-head.php"); ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container-fluid clearfix">
         <?php require_once("include/menu.php"); ?>
 
-        <?php
-        $selectedYear = isset($_GET['Year']) ? (int)$_GET['Year'] : null;
-        ?>
-
         <h1 class="display-4 text-center my-5">Deaths by Year</h1>
 
-        <!-- Year Selector -->
+        <!-- Year Filter -->
         <div class="text-center mb-4">
             <form method="get" class="d-inline">
                 <label for="Year" class="me-2 fw-bold">Select Year:</label>
                 <select name="Year" id="Year" class="form-select d-inline w-auto" onchange="this.form.submit()">
                     <option value="">All Years</option>
                     <?php
-                    $yearsSql = "SELECT DISTINCT substr(DateDeath,1,4) as Year 
-                                 FROM PersonInfoRaw 
-                                 WHERE DateDeath IS NOT NULL 
-                                 ORDER BY Year DESC";
-                    $years = db()->fetchAll($yearsSql);
-                    foreach ($years as $y): 
-                        $yValue = (int)$y['Year'];
-                    ?>
-                        <option value="<?= $yValue ?>" <?= $yValue == $selectedYear ? 'selected' : '' ?>>
-                            <?= $yValue ?>
+                    $years = db()->fetchAll("SELECT DISTINCT substr(DateDeath,1,4) as Year 
+                                             FROM PersonInfoRaw 
+                                             WHERE DateDeath IS NOT NULL 
+                                             ORDER BY Year DESC");
+                    foreach ($years as $y): ?>
+                        <option value="<?= $y['Year'] ?>" <?= $y['Year'] == $selectedYear ? 'selected' : '' ?>>
+                            <?= $y['Year'] ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -48,11 +44,8 @@ require_once("functions.php");
         </div>
 
         <div class="row justify-content-md-center">
-            <div class="col-lg-8 mb-4">
+            <div class="col-lg-10">
                 <div class="card bg-primary">
-                    <div class="card-header">
-                        <h5>Annual Death Toll</h5>
-                    </div>
                     <div class="card-body">
                         <?php
                         $where = "";
@@ -62,61 +55,59 @@ require_once("functions.php");
                             $params = [':y1' => $selectedYear.'%', ':y2' => (string)$selectedYear];
                         }
 
-                        $sql = "SELECT substr(DateDeath,1,4) as Year, COUNT(*) as CountYearDeath 
-                                FROM PersonInfoRaw 
-                                $where 
-                                GROUP BY Year 
-                                ORDER BY Year";
-                        
-                        $data = db()->fetchAll($sql, $params);
-
-                        $LabelNames = json_encode(array_column($data, 'Year'));
-                        $DataPoints = json_encode(array_column($data, 'CountYearDeath'));
+                        $data = db()->fetchAll("SELECT substr(DateDeath,1,4) as Year, COUNT(*) as Count 
+                                                FROM PersonInfoRaw 
+                                                $where 
+                                                GROUP BY Year 
+                                                ORDER BY Year", $params);
                         ?>
 
-                        <canvas id="StatsGraph" style="height: 480px; width: 100%;"></canvas>
-
-                        <?php 
-                        $MyChartTitle = $selectedYear ? "Deaths in $selectedYear" : "Deaths by Year";
-                        $MyChartType = 'bar';
-                        include_once('js/chartGeneric.php'); 
-                        ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Side Table -->
-            <div class="col-lg-4">
-                <div class="card bg-primary h-100">
-                    <div class="card-header">
-                        <h5>Year Breakdown</h5>
-                    </div>
-                    <div class="card-body" style="max-height: 520px; overflow-y: auto;">
-                        <table class="table table-dark table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th class="text-end">Deaths</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($data as $row): ?>
-                                <tr>
-                                    <td>
-                                        <a href="listPeopleYear.php?Year=<?= $row['Year'] ?>" class="btn btn-sm btn-outline-light">
-                                            <?= $row['Year'] ?>
-                                        </a>
-                                    </td>
-                                    <td class="text-end"><?= number_format($row['CountYearDeath']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                        <canvas id="yearChart" height="500"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+    new Chart(document.getElementById('yearChart'), {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode(array_column($data, 'Year')) ?>,
+            datasets: [{
+                label: 'Number of Deaths',
+                data: <?= json_encode(array_column($data, 'Count')) ?>,
+                backgroundColor: '#0d6efd',
+                borderColor: '#0d6efd',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: <?= json_encode($selectedYear ? "Deaths in " . $selectedYear : "Deaths by Year") ?>,
+                    color: '#fff',
+                    font: { size: 18 }
+                }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#ffdd57' }   // Yellow
+                },
+                x: { 
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: '#ffdd57' }   // Yellow
+                }
+            }
+        }
+    });
+    </script>
 
     <hr>
     <?php require_once("include/footer.php"); ?>
