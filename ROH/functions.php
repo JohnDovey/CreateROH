@@ -300,6 +300,25 @@ function getCurrentPageViewsAllTime() {
     $result = db()->fetchOne($sql, [':page' => $pageName]);
     return $result['total'] ?? 0;
 }
+
+function getCountryFlag($country) {
+    $flags = [
+        'South Africa' => '🇿🇦',
+        'France' => '🇫🇷',
+        'Belgium' => '🇧🇪',
+        'Italy' => '🇮🇹',
+        'Egypt' => '🇪🇬',
+        'Kenya' => '🇰🇪',
+        'Tanzania' => '🇹🇿',
+        'United Kingdom' => '🇬🇧',
+        'Germany' => '🇩🇪',
+        'Greece' => '🇬🇷',
+        'Libya' => '🇱🇾',
+        'Tunisia' => '🇹🇳',
+        'Namibia' => '🇳🇦',
+    ];
+    return $flags[$country] ?? '🌍';
+}
 /* ================================================================
    Legacy / Deprecated - Keep for compatibility if needed
    ================================================================ */
