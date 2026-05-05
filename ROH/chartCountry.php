@@ -1,6 +1,6 @@
 <?php
 /**
- * chartCountry.php - With Country Flags
+ * chartCountry.php - Self-contained with Flags
  */
 require_once("include/db.php");
 require_once("functions.php");
@@ -15,7 +15,7 @@ require_once("functions.php");
     <?php require_once("include/bootstrap-head.php"); ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        .flag { font-size: 1.4em; margin-left: 8px; }
+        .flag { font-size: 1.5em; margin-left: 8px; }
     </style>
 </head>
 <body>
@@ -46,12 +46,6 @@ require_once("functions.php");
                         ?>
 
                         <canvas id="countryChart" style="height: 520px; width: 100%;"></canvas>
-
-                        <?php 
-                        $MyChartTitle = "Deaths by Country";
-                        $MyChartType = 'bar';
-                        include_once('js/chartGeneric.php'); 
-                        ?>
                     </div>
                 </div>
             </div>
@@ -101,5 +95,28 @@ require_once("functions.php");
     <?php require_once("include/footer.php"); ?>
     <?php require_once("include/bootstrap-footer.php"); ?>
 
+    <script>
+    window.addEventListener('load', function() {
+        new Chart(document.getElementById('countryChart'), {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode(array_column($data, 'Country')) ?>,
+                datasets: [{
+                    label: 'Deaths',
+                    data: <?= json_encode(array_column($data, 'CountCountry')) ?>,
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#ffdd57' }},
+                    x: { ticks: { color: '#ffdd57' }}
+                }
+            }
+        });
+    });
+    </script>
 </body>
 </html>
