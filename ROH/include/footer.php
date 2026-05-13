@@ -45,7 +45,7 @@ $currentPageThisMonth = getCurrentPageViews();
                     </li>
                     <li class="mb-2">
                         <i class="fa fa-map-marker me-2"></i>
-                        Pedasí, Los Santos, Panamá
+                        Lanseria, Gauteng, South Africa
                     </li>
                 </ul>
             </div>

@@ -25,6 +25,15 @@
 <!-- Custom Styles -->
 <link rel="stylesheet" href="include/styles.min.css">
 
+<style>
+    .infographic {
+        transition: transform 0.3s ease;
+    }
+    .infographic:hover {
+        transform: scale(1.02);
+    }
+</style>
+
 <!-- Optional: Open Graph / Social Meta -->
 <meta property="og:title" content="Roll of Honour - South Africa">
 <meta property="og:description" content="Commemorating South African service personnel">

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- Optional: Google Analytics (consider privacy - move to consent-based loading) -->
-<!-- 
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CRBDFN0CZZ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -41,4 +41,3 @@ document.addEventListener('DOMContentLoaded', function() {
   gtag('js', new Date());
   gtag('config', 'G-CRBDFN0CZZ');
 </script>
--->

@@ -42,6 +42,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="chartYear.php">By Year</a></li>
                         <li><a class="dropdown-item" href="chartCauseOfDeath.php">Cause of Death</a></li>
+                        <li><a class="dropdown-item" href="chartRank.php">Deaths by Rank</a></li>
                         <li><a class="dropdown-item" href="chartCountry.php">By Country</a></li>
                         <li><a class="dropdown-item" href="pageviews.php">Page Views</a></li>
                     </ul>
