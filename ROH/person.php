@@ -59,19 +59,20 @@ $images = db()->fetchAll("SELECT * FROM PersonImages WHERE PersonNumber = :pn", 
                     <h3 class="text-center mb-3">Images</h3>
                     <div class="row g-3">
                         <?php foreach ($images as $img): 
-                            $localPath = "DownLoadImage/" . basename($img['ImgUrlComplete']);
-                            $fullLocalPath = __DIR__ . "/" . $localPath;
+                            $remoteUrl = $img['ImgUrlComplete'] ?? '';
+                            $pathPart = parse_url((string) $remoteUrl, PHP_URL_PATH);
+                            $baseName = $pathPart ? basename($pathPart) : '';
+                            if ($baseName === '' || strpos($baseName, '..') !== false) {
+                                $baseName = 'person_' . $PersonNumber . '_' . substr(md5($remoteUrl), 0, 12) . '.img';
+                            }
+                            $localPath = 'DownLoadImage/' . $baseName;
+                            $fullLocalPath = __DIR__ . '/' . $localPath;
 
-                            // Automatic download if file doesn't exist locally
-                            if (!file_exists($fullLocalPath) && !empty($img['ImgUrlComplete'])) {
-                                @mkdir(__DIR__ . "/DownLoadImage", 0755, true);
-                                $imageData = @file_get_contents($img['ImgUrlComplete']);
-                                if ($imageData !== false) {
-                                    file_put_contents($fullLocalPath, $imageData);
-                                }
+                            if (!file_exists($fullLocalPath) && $remoteUrl !== '') {
+                                roh_download_remote_image_safe($remoteUrl, $fullLocalPath);
                             }
 
-                            $displaySrc = file_exists($fullLocalPath) ? $localPath : $img['ImgUrlComplete'];
+                            $displaySrc = file_exists($fullLocalPath) ? $localPath : $remoteUrl;
                         ?>
                             <div class="col-md-6 col-lg-4">
                                 <div class="card bg-dark">
